@@ -2,11 +2,16 @@ package com.fajar.schoolmanagement.dto;
 
 import java.io.Serializable;
 
+import org.apache.commons.math3.stat.descriptive.summary.Product;
+
 import com.fajar.schoolmanagement.annotation.Dto;
 import com.fajar.schoolmanagement.entity.BaseEntity;
+import com.fajar.schoolmanagement.entity.Menu;
+import com.fajar.schoolmanagement.entity.Page;
 import com.fajar.schoolmanagement.entity.RegisteredRequest;
 import com.fajar.schoolmanagement.entity.SchoolProfile;
 import com.fajar.schoolmanagement.entity.User;
+import com.fajar.schoolmanagement.entity.UserRole;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -33,9 +38,13 @@ public class WebRequest implements Serializable {
 
 	private String entity;
 	 
-	private SchoolProfile shopprofile;
+	private SchoolProfile schoolprofile;
 	private RegisteredRequest registeredRequest;
-	private User user;
+	private User user;   
+	private Menu menu; 
+	private Product product;
+	private UserRole userrole;    
+	private Page page;
 	 
 	/**
 	 * ==========end entity============

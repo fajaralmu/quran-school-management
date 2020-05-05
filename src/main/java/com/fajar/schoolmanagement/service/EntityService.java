@@ -17,6 +17,7 @@ import com.fajar.schoolmanagement.dto.Filter;
 import com.fajar.schoolmanagement.dto.WebRequest;
 import com.fajar.schoolmanagement.dto.WebResponse;
 import com.fajar.schoolmanagement.entity.BaseEntity;
+import com.fajar.schoolmanagement.entity.UserRole;
 import com.fajar.schoolmanagement.entity.setting.EntityManagementConfig;
 import com.fajar.schoolmanagement.repository.EntityRepository;
 import com.fajar.schoolmanagement.repository.RepositoryCustomImpl;
@@ -168,10 +169,11 @@ public class EntityService {
 			return WebResponse.builder().code("01").message("failed: "+ex.getMessage()).build();
 		}
 	}
+ 
 
-//	public List<UserRole> getAllUserRole() {
-//		return entityRepository.findAll(UserRole.class);
-//	}
+	public List<UserRole> getAllUserRole() {
+		return entityRepository.findAll(UserRole.class);
+	}
 //	
 //	public List<Cost> getAllCostType() {
 //		return entityRepository.findAll(Cost.class);

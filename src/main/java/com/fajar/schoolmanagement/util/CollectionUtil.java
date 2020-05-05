@@ -30,7 +30,7 @@ public class CollectionUtil {
 	}
  
 
-	public static <T> List<T> convertList(List list) {
+	public static <T> List  convertList(List list) {
 		List<T> newList = new ArrayList<T>();
 		for (Object object : list) {
 			newList.add((T) object);

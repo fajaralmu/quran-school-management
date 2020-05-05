@@ -13,7 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.fajar.schoolmanagement.annotation.Dto;
 import com.fajar.schoolmanagement.config.LogProxyFactory;
 import com.fajar.schoolmanagement.entity.SchoolProfile;
-import com.fajar.schoolmanagement.repository.ShopProfileRepository;
+import com.fajar.schoolmanagement.repository.SchoolProfileRepository;
 import com.fajar.schoolmanagement.util.EntityUtil;
 
 import lombok.Data;
@@ -29,7 +29,7 @@ import lombok.Data;
 public class WebConfigService {
 
 	@Autowired
-	private ShopProfileRepository shopProfileRepository;
+	private SchoolProfileRepository shopProfileRepository;
 
 	private String basePage;
 	private String uploadedImageRealPath;

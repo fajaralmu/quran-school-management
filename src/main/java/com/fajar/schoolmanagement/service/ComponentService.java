@@ -8,7 +8,6 @@ import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.fajar.schoolmanagement.entity.BaseEntity;
 import com.fajar.schoolmanagement.entity.Menu;
 import com.fajar.schoolmanagement.entity.Page;
 import com.fajar.schoolmanagement.entity.User;
@@ -22,6 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class ComponentService { 
 	
+	private static final String SETTING = "setting";
 	@Autowired
 	private MenuRepository menuRepository; 
 	@Autowired
@@ -33,12 +33,40 @@ public class ComponentService {
 		
 		boolean hasSession = userSessionService.hasSession(request);
 		
-		if(hasSession)
-			return pageRepository.findAll();
+		if(hasSession) {
+			List<Page> pages = pageRepository.findAll();
+			
+			if(pages == null || pages.size() == 0) {
+				
+				Page page = defaultSettingPage();
+				
+				final Page savedPage = pageRepository.save(page);
+				return new ArrayList<Page>() { 
+					private static final long serialVersionUID = 1L;
+
+					{
+						add(savedPage);
+					}
+				};
+			}
+			
+			return pages;
+		}
 		else
 			return pageRepository.findByAuthorized(0);
 	}
 	
+	private Page defaultSettingPage() {
+		Page page = new Page();
+		page.setName("Setting");
+		page.setCode(SETTING);
+		page.setAuthorized(1);
+		page.setDescription("Default App Setting");
+		page.setLink("/webapp/page/setting");
+		page.setNonMenuPage(0);
+		return page;
+	}
+
 	/**
 	 * get page code
 	 * @param request
@@ -80,11 +108,37 @@ public class ComponentService {
 	public List<Menu > getMenuByPageCode(String pageCode){
 		
 		List<Menu> menus = menuRepository.findByMenuPage_code(pageCode);
+		
+		if(menus == null || menus.size() == 0) {
+			
+			if(pageCode.equals(SETTING)) {
+				Menu menu = defaultMenu();
+				final Menu savedMenu = menuRepository.save(menu);
+				return new ArrayList<Menu>() { 
+					private static final long serialVersionUID = -6867018433722897471L;
+
+					{
+						add(savedMenu);
+					}
+				};
+			}
+		}
+		
 		EntityUtil.validateDefaultValues(menus);
 		return menus;
 	}
 	
 	 
+	private Menu defaultMenu() {
+		Menu menu = new Menu();
+		menu.setCode("000");
+		menu.setName("Menu Management");
+		menu.setUrl("/management/menu");
+		Page menuPage = pageRepository.findByCode(SETTING);
+		menu.setMenuPage(menuPage );
+		return menu;
+	}
+
 	private boolean hasAccess(User user, String menuAccess) {
 		boolean hasAccess = false;
 		
@@ -101,18 +155,18 @@ public class ComponentService {
 	private List<Menu> getAvailableMenusForUser(User user, List<Menu> menus) {
 		List<Menu> newMenus = new ArrayList<>();
 		
-		for (Menu menu : menus) {
-			String[] menuAccess = menu.getPage().split("-");
-			if (menuAccess.length <= 1) {
-				newMenus.add(menu);
-				continue;
-			} else if (hasAccess(user, menuAccess[1])) {
-				newMenus.add(menu);
-				continue;
-			}
-
-		}
-		return newMenus;
+//		for (Menu menu : menus) {
+//			String[] menuAccess = menu.getPage().split("-");
+//			if (menuAccess.length <= 1) {
+//				newMenus.add(menu);
+//				continue;
+//			} else if (hasAccess(user, menuAccess[1])) {
+//				newMenus.add(menu);
+//				continue;
+//			}
+//
+//		}
+		return menus;
 	}
 
 	  
@@ -123,7 +177,7 @@ public class ComponentService {
 			throw new Exception("Not Found");
 
 		}
-		String[] menuAccess = menu.getPage().split("-");
+		String[] menuAccess = {};// menu.getPage().split("-");
 		if (menuAccess.length > 1) {
 			String access 			= menuAccess[1];
 			String[] userAccesses 	= user.getRole().getAccess().split(",");

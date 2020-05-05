@@ -24,6 +24,7 @@ com\fajar\schoolmanagement\dto\Filter.class
 com\fajar\schoolmanagement\entity\SchoolProfile$SchoolProfileBuilder.class
 com\fajar\schoolmanagement\repository\UserRoleRepository.class
 com\fajar\schoolmanagement\util\DateUtil.class
+com\fajar\schoolmanagement\controller\RestPublicController.class
 com\fajar\schoolmanagement\repository\MenuRepository.class
 com\fajar\schoolmanagement\service\UserAccountService.class
 com\fajar\schoolmanagement\dto\RegistryModel.class
@@ -33,6 +34,7 @@ com\fajar\schoolmanagement\service\ProgressService.class
 com\fajar\schoolmanagement\entity\setting\EntityElement$EntityElementBuilder.class
 com\fajar\schoolmanagement\entity\StudentParent.class
 com\fajar\schoolmanagement\repository\RepositoryCustomImpl.class
+com\fajar\schoolmanagement\controller\RestAccountController.class
 com\fajar\schoolmanagement\dto\FormInputColumn.class
 com\fajar\schoolmanagement\service\RealtimeService2.class
 com\fajar\schoolmanagement\util\StringUtil.class
@@ -44,6 +46,7 @@ com\fajar\schoolmanagement\annotation\FormField.class
 com\fajar\schoolmanagement\util\QueryUtil.class
 com\fajar\schoolmanagement\service\RegistryService.class
 com\fajar\schoolmanagement\config\WebSocketConfig.class
+com\fajar\schoolmanagement\controller\MvcPagesController.class
 com\fajar\schoolmanagement\repository\StudentRepository.class
 com\fajar\schoolmanagement\entity\BaseEntity.class
 com\fajar\schoolmanagement\repository\EntityRepository.class
@@ -62,8 +65,12 @@ com\fajar\schoolmanagement\entity\setting\EntityManagementConfig.class
 com\fajar\schoolmanagement\dto\WebResponse$WebResponseBuilder.class
 com\fajar\schoolmanagement\entity\Page$PageBuilder.class
 com\fajar\schoolmanagement\dto\SessionData$SessionDataBuilder.class
+com\fajar\schoolmanagement\controller\RestAdminController.class
+com\fajar\schoolmanagement\controller\MvcUtilController.class
 com\fajar\schoolmanagement\entity\StudentParent$StudentParentBuilder.class
 com\fajar\schoolmanagement\config\CustomFilter.class
+com\fajar\schoolmanagement\controller\MvcAccountController.class
+com\fajar\schoolmanagement\controller\MvcAdminController.class
 com\fajar\schoolmanagement\dto\WebResponse.class
 com\fajar\schoolmanagement\entity\Teacher.class
 com\fajar\schoolmanagement\annotation\CustomEntity.class
@@ -83,4 +90,5 @@ com\fajar\schoolmanagement\repository\RegisteredRequestRepository.class
 com\fajar\schoolmanagement\service\FileService.class
 com\fajar\schoolmanagement\entity\RegisteredRequest$RegisteredRequestBuilder.class
 com\fajar\schoolmanagement\entity\Student$StudentBuilder.class
+com\fajar\schoolmanagement\controller\MvcPublicController.class
 com\fajar\schoolmanagement\util\ExcelReportUtil.class

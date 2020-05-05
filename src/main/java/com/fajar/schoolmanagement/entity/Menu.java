@@ -40,11 +40,7 @@ public class Menu extends BaseEntity implements Serializable {
 	private String description;
 	@FormField
 	@Column
-	private String url;
-	//TODO: remove
-	@FormField
-	@Column
-	private String page;
+	private String url; 
 	@JoinColumn(name="page_id", nullable = false)
 	@ManyToOne
 	@FormField(lableName="Page",   type=FormField.FIELD_TYPE_FIXED_LIST, optionItemName="name")

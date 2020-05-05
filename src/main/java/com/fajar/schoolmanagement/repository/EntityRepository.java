@@ -20,9 +20,16 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 
 import com.fajar.schoolmanagement.entity.BaseEntity;
+import com.fajar.schoolmanagement.entity.Menu;
+import com.fajar.schoolmanagement.entity.Page;
+import com.fajar.schoolmanagement.entity.SchoolProfile;
+import com.fajar.schoolmanagement.entity.User;
 import com.fajar.schoolmanagement.entity.setting.EntityManagementConfig;
 import com.fajar.schoolmanagement.service.entity.BaseEntityUpdateService;
 import com.fajar.schoolmanagement.service.entity.CommonUpdateService;
+import com.fajar.schoolmanagement.service.entity.MenuUpdateService;
+import com.fajar.schoolmanagement.service.entity.SchoolProfileUpdateService;
+import com.fajar.schoolmanagement.service.entity.UserUpdateService;
 
 import lombok.AccessLevel;
 import lombok.Data;
@@ -45,8 +52,17 @@ public class EntityRepository {
 	@Autowired
 	private StudentParentRepository studentParentRepository;
 	@Autowired
-	private ShopProfileRepository shopProfileRepository;
-	 
+	private SchoolProfileRepository shopProfileRepository;
+	@Autowired
+	private RegisteredRequestRepository registeredRequestRepository; 
+	@Autowired
+	private MenuRepository menuRepository; 
+	@Autowired
+	private UserRepository userRepository;
+	@Autowired
+	private UserRoleRepository userRoleRepository; 
+	@Autowired
+	private PageRepository pageRepository;
 	
 	/**
 	 * end jpa repos
@@ -55,7 +71,12 @@ public class EntityRepository {
 	
 	@Autowired
 	private CommonUpdateService commonUpdateService;
-	
+	@Autowired
+	private MenuUpdateService menuUpdateService;
+	@Autowired
+	private UserUpdateService userUpdateService;
+	@Autowired
+	private SchoolProfileUpdateService schoolProfileUpdateService;
 	
 	@PersistenceContext
 	private EntityManager entityManager;
@@ -79,16 +100,16 @@ public class EntityRepository {
 //		entityConfiguration.put("userrole", config("userrole", UserRole.class, commonUpdateService));
 //		entityConfiguration.put("capital", config("capital", Capital.class, commonUpdateService));
 //		entityConfiguration.put("cost", config("cost", Cost.class, commonUpdateService));
-//		entityConfiguration.put("page", config("page", Page.class, commonUpdateService));
+		entityConfiguration.put("page", config("page", Page.class, commonUpdateService));
 		
 		/**
 		 * special
 		 */
 //		entityConfiguration.put("product", config("product", Product.class, productUpdateService)); 
 //		entityConfiguration.put("supplier", config("supplier", Supplier.class, supplierUpdateService));
-//		entityConfiguration.put("user", config("user", User.class, userUpdateService));
-//		entityConfiguration.put("menu", config("menu", Menu.class, menuUpdateService));
-//		entityConfiguration.put("shopprofile", config("shopprofile", ShopProfile.class, shopProfileUpdateService));
+		entityConfiguration.put("user", config("user", User.class, userUpdateService));
+		entityConfiguration.put("menu", config("menu", Menu.class, menuUpdateService));
+		entityConfiguration.put("schoolprofile", config("shopprofile", SchoolProfile.class, schoolProfileUpdateService));
 //		entityConfiguration.put("costflow", config("costflow", CostFlow.class, costFlowUpdateService));
 //		entityConfiguration.put("voucher", config("voucher", Voucher.class, voucherUpdateService));
 //		entityConfiguration.put("capitalflow", config("capitalflow", CapitalFlow.class, capitalUpdateService));

@@ -1,28 +1,11 @@
 var stompClient = null;
-
-function updateMovement() {
-	stompClient.send("/app/move", {}, JSON.stringify({
-		'entity' : {
-			'id' : entity.id * 1,
-			'life' : entity.life,
-			'active' : true,
-			'physical' : {
-				'x' : entity.physical.x,
-				'y' : entity.physical.y,
-				'direction' : entity.physical.direction,
-				'color' : entity.physical.color,
-				'lastUpdated' : new Date()
-			},
-			'missiles' : entity.missiles
-		}
-	}));
-}
+ 
 
 function connectToWebsocket(callback1, callback2, callback3) {
 	let stompClients;
 	const requestIdElement = document.getElementById("request-id");
 	 
-	var socket = new SockJS('/universal-good-shop/shop-app');
+	var socket = new SockJS('/schoolmanagement/school-app');
 	stompClients = Stomp.over(socket);
 	stompClients.connect({}, function(frame) {
 		// setConnected(true);

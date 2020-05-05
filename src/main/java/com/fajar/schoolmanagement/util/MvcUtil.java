@@ -48,7 +48,7 @@ public class MvcUtil {
 			}
 		}
 		model.addAttribute("title", title);
-		model.addAttribute("pageUrl", "shop/entity-management-page");
+		model.addAttribute("pageUrl", "school/entity-management-page");
 		model.addAttribute("entityProperty", entityProperty);
 		model.addAttribute("page", page);
 		
