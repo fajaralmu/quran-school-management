@@ -8,11 +8,14 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
+import org.springframework.stereotype.Service;
+
 import com.fajar.schoolmanagement.annotation.CustomEntity;
 
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
+@Service
 public class RepositoryCustomImpl<T> implements RepositoryCustom<T> {
 
 	@PersistenceContext

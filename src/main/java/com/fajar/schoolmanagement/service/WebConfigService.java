@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.fajar.schoolmanagement.annotation.Dto;
 import com.fajar.schoolmanagement.config.LogProxyFactory;
-import com.fajar.schoolmanagement.entity.ShopProfile;
+import com.fajar.schoolmanagement.entity.SchoolProfile;
 import com.fajar.schoolmanagement.repository.ShopProfileRepository;
 import com.fajar.schoolmanagement.util.EntityUtil;
 
@@ -121,20 +121,20 @@ public class WebConfigService {
 	@PostConstruct
 	public void init() {
 		LogProxyFactory.setLoggers(this);
-		ShopProfile dbProfile = shopProfileRepository.findByMartCode(martCode);
+		SchoolProfile dbProfile = shopProfileRepository.findByMartCode(martCode);
 		if (null == dbProfile) {
 			shopProfileRepository.save(defaultProfile());
 		}
 	} 
 	
-	public ShopProfile getProfile() {
-		ShopProfile dbProfile = shopProfileRepository.findByMartCode(martCode);
+	public SchoolProfile getProfile() {
+		SchoolProfile dbProfile = shopProfileRepository.findByMartCode(martCode);
 
 		/*return getShopProfileFromSession(); */ return  EntityUtil.validateDefaultValue(dbProfile);
 	}
 
-	private ShopProfile defaultProfile() {
-		ShopProfile profile = new ShopProfile();
+	private SchoolProfile defaultProfile() {
+		SchoolProfile profile = new SchoolProfile();
 		profile.setName("Universal Good Shop");
 		profile.setAddress("Spring Mvc, Java Virtual Machine, Win 10 64");
 		profile.setContact("087737666614");

@@ -2,10 +2,10 @@ package com.fajar.schoolmanagement.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.fajar.schoolmanagement.entity.ShopProfile;
+import com.fajar.schoolmanagement.entity.SchoolProfile;
 
-public interface ShopProfileRepository extends JpaRepository<ShopProfile, Long>{
+public interface ShopProfileRepository extends JpaRepository<SchoolProfile, Long>{
 
-	ShopProfile findByMartCode(String martCode);
+	SchoolProfile findByMartCode(String martCode);
 
 }

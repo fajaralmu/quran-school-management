@@ -4,7 +4,9 @@ import java.io.Serializable;
 
 import com.fajar.schoolmanagement.annotation.Dto;
 import com.fajar.schoolmanagement.entity.BaseEntity;
-import com.fajar.schoolmanagement.entity.ShopProfile;
+import com.fajar.schoolmanagement.entity.RegisteredRequest;
+import com.fajar.schoolmanagement.entity.SchoolProfile;
+import com.fajar.schoolmanagement.entity.User;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -31,7 +33,9 @@ public class WebRequest implements Serializable {
 
 	private String entity;
 	 
-	private ShopProfile shopprofile;
+	private SchoolProfile shopprofile;
+	private RegisteredRequest registeredRequest;
+	private User user;
 	 
 	/**
 	 * ==========end entity============

@@ -8,6 +8,7 @@ import java.util.Map;
 
 import com.fajar.schoolmanagement.annotation.Dto;
 import com.fajar.schoolmanagement.entity.BaseEntity;
+import com.fajar.schoolmanagement.entity.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.AllArgsConstructor;
@@ -47,7 +48,10 @@ public class WebResponse implements Serializable {
 	private double percentage;
 	private String requestId;
 	private int[] transactionYears;
-//	private SessionData sessionData;
+	
+	private SessionData sessionData;
+	private User user;
+	
 	@JsonIgnore
 	private Class<? extends BaseEntity> entityClass; 
 	
