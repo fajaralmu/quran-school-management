@@ -23,6 +23,9 @@ import com.fajar.schoolmanagement.entity.BaseEntity;
 import com.fajar.schoolmanagement.entity.Menu;
 import com.fajar.schoolmanagement.entity.Page;
 import com.fajar.schoolmanagement.entity.Profile;
+import com.fajar.schoolmanagement.entity.Student;
+import com.fajar.schoolmanagement.entity.StudentParent;
+import com.fajar.schoolmanagement.entity.Teacher;
 import com.fajar.schoolmanagement.entity.User;
 import com.fajar.schoolmanagement.entity.setting.EntityManagementConfig;
 import com.fajar.schoolmanagement.service.entity.BaseEntityUpdateService;
@@ -101,6 +104,9 @@ public class EntityRepository {
 //		entityConfiguration.put("capital", config("capital", Capital.class, commonUpdateService));
 //		entityConfiguration.put("cost", config("cost", Cost.class, commonUpdateService));
 		entityConfiguration.put("page", config("page", Page.class, commonUpdateService));
+		entityConfiguration.put("student", config("student", Student.class, commonUpdateService));
+		entityConfiguration.put("studentparent", config("studentparent", StudentParent.class, commonUpdateService));
+		entityConfiguration.put("teacher", config("teacher", Teacher.class, commonUpdateService)); 
 		
 		/**
 		 * special

@@ -76,24 +76,14 @@ public class EntityUtil {
 				}else if (fieldType.equals(FIELD_TYPE_CURRENCY)) {
 					entityProperty.getCurrencyElements().add(entityElementId);
 					fieldType = FIELD_TYPE_NUMBER;
-				}
+				} 
 
 				/**
 				 * add field names
 				 */
 				fieldNames.add(field.getName());
 				
-				final EntityElement entityElement = new EntityElement();
-				
-				entityElement.setId(entityElementId );
-				entityElement.setIdentity(isIdField);
-				entityElement.setLableName(lableName.toUpperCase());
-				entityElement.setRequired(formField.required());
-				entityElement.setType(isIdField ? FIELD_TYPE_HIDDEN : fieldType);
-				entityElement.setMultiple(formField.multiple());
-				entityElement.setClassName(field.getType().getCanonicalName());
-				entityElement.setShowDetail(formField.showDetail());
-				
+				final EntityElement entityElement = new EntityElement(); 
 				if (formField.detailFields().length > 0) {
 					entityElement.setDetailFields(String.join("~", formField.detailFields()));
 				}
@@ -135,7 +125,17 @@ public class EntityUtil {
 				}
 				if (field.getType().equals(Date.class) && field.getAnnotation(JsonFormat.class) == null) {
 					dateElements.add(entityElement.getId());
+					fieldType = FormField.FIELD_TYPE_DATE;
 				}
+				
+				entityElement.setId(entityElementId );
+				entityElement.setIdentity(isIdField);
+				entityElement.setLableName(lableName.toUpperCase());
+				entityElement.setRequired(formField.required());
+				entityElement.setType(isIdField ? FIELD_TYPE_HIDDEN : fieldType);
+				entityElement.setMultiple(formField.multiple());
+				entityElement.setClassName(field.getType().getCanonicalName());
+				entityElement.setShowDetail(formField.showDetail());
 				
 				entityElements.add(entityElement);
 			}

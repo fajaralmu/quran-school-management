@@ -35,7 +35,7 @@ public class Teacher extends BaseEntity {/**
 	private String placeOfBirth;
 	
 	@Column(name="date_of_birth")
-	@FormField
+	@FormField(type = FormField.FIELD_TYPE_DATE)
 	private Date dateOfBirth;
 	
 	@Column
