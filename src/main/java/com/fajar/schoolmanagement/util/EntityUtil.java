@@ -84,6 +84,7 @@ public class EntityUtil {
 				fieldNames.add(field.getName());
 				
 				final EntityElement entityElement = new EntityElement(); 
+				
 				if (formField.detailFields().length > 0) {
 					entityElement.setDetailFields(String.join("~", formField.detailFields()));
 				}
@@ -124,7 +125,7 @@ public class EntityUtil {
 					
 				}
 				if (field.getType().equals(Date.class) && field.getAnnotation(JsonFormat.class) == null) {
-					dateElements.add(entityElement.getId());
+					dateElements.add(entityElementId);
 					fieldType = FormField.FIELD_TYPE_DATE;
 				}
 				
