@@ -303,15 +303,24 @@
 				//handle if currency value
 				//else if (isCurrency(fieldNames[j])) {
 				else if(typeof (entityValue) == "number" && entityValue != null){
-					entityValue = "<span style=\"font-family:consolas\">"+ beautifyNominal(entityValue) +"</span>";
+					var dom = createHtmlTag("span",{
+						 style:"font-family:consolas",
+						 innerHTML:beautifyNominal(entityValue)
+					});
+					entityValue = domToString(dom);//"<span style=\"font-family:consolas\">"+ beautifyNominal(entityValue) +"</span>";
 				}
 				//handle image type value
 				else if (isImage(fieldNames[j])) {
 					if (entityValue.split("~") != null) {
 						entityValue = entityValue.split("~")[0];
 					}
-					entityValue = "<img width=\"30\" height=\"30\" src=\"${host}/${contextPath}/${imagePath}/"
-							+ (entityValue) + "\" />";
+					var dom = createHtmlTag("img",{
+						 width:30,
+						 height:30,
+						 src:"${host}${contextPath}/${imagePath}/" + (entityValue)
+					});
+					entityValue = domToString(dom);
+						//"<img width=\"30\" height=\"30\" src=\"${host}/${contextPath}/${imagePath}/" + (entityValue) + "\" />";
 				}
 				//regular value
 				else if (  entityValue != null) {

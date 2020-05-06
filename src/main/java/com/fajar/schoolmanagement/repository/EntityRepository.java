@@ -109,7 +109,7 @@ public class EntityRepository {
 //		entityConfiguration.put("supplier", config("supplier", Supplier.class, supplierUpdateService));
 		entityConfiguration.put("user", config("user", User.class, userUpdateService));
 		entityConfiguration.put("menu", config("menu", Menu.class, menuUpdateService));
-		entityConfiguration.put("schoolprofile", config("shopprofile", Profile.class, schoolProfileUpdateService));
+		entityConfiguration.put("profile", config("profile", Profile.class, schoolProfileUpdateService));
 //		entityConfiguration.put("costflow", config("costflow", CostFlow.class, costFlowUpdateService));
 //		entityConfiguration.put("voucher", config("voucher", Voucher.class, voucherUpdateService));
 //		entityConfiguration.put("capitalflow", config("capitalflow", CapitalFlow.class, capitalUpdateService));

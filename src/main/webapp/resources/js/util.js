@@ -1,3 +1,4 @@
+const tempComponent = document.createElement("div");
 
 function _byId(id){
 	return document.getElementById(id);
@@ -12,17 +13,26 @@ function infoDone() {
 	document.getElementById("loading-div").innerHTML = "";
 }
 
-function createTag(tagName, object){
+function domToString(dom){
+	tempComponent.innerHTML = "";
+	tempComponent.appendChild(dom);
+	
+	return tempComponent.innerHTML;
+}
+
+function createHtmlTag(tagName, object){
 	var tag = document.createElement(tagName);
 	
 	for(let key in object){
-		if(key == "html"){
+		if(key == "innerHTML" || key == "child"){
 			continue;
 		}
 		tag.setAttribute(key, object[key]);
 	}
 	
-	tag.innerHTML = object["html"];
+	tag.innerHTML = object["innerHTML"];
+	if(object["child"])
+		tag.appendChild(object["child"]);
 	return tag;
 }
 
@@ -404,3 +414,8 @@ function createNavigationButtons(navigationPanel,currentPage,totalData,limit,but
 const monthNames = ["January", "February", "March", "April", "May", "June",
 	  "July", "August", "September", "October", "November", "December"
 	];
+
+/**
+ * 
+ * init..
+*/

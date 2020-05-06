@@ -38,7 +38,7 @@ public class WebRequest implements Serializable {
 
 	private String entity;
 	 
-	private Profile schoolprofile;
+	private Profile profile;
 	private RegisteredRequest registeredRequest;
 	private User user;   
 	private Menu menu; 
