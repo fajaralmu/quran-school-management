@@ -32,7 +32,6 @@ import lombok.extern.slf4j.Slf4j;
 public class EntityService {
  
 	public static final String ORIGINAL_PREFFIX = "{ORIGINAL>>";
-	public static final String PRODUCT_IMG_PREFFIX = "product";
 	  
 	@Autowired
 	private RepositoryCustomImpl repositoryCustom;   

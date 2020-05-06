@@ -12,8 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.fajar.schoolmanagement.annotation.Dto;
 import com.fajar.schoolmanagement.config.LogProxyFactory;
-import com.fajar.schoolmanagement.entity.SchoolProfile;
-import com.fajar.schoolmanagement.repository.SchoolProfileRepository;
+import com.fajar.schoolmanagement.entity.Profile;
+import com.fajar.schoolmanagement.repository.ProfileRepository;
 import com.fajar.schoolmanagement.util.EntityUtil;
 
 import lombok.Data;
@@ -29,7 +29,7 @@ import lombok.Data;
 public class WebConfigService {
 
 	@Autowired
-	private SchoolProfileRepository shopProfileRepository;
+	private ProfileRepository shopProfileRepository;
 
 	private String basePage;
 	private String uploadedImageRealPath;
@@ -121,20 +121,20 @@ public class WebConfigService {
 	@PostConstruct
 	public void init() {
 		LogProxyFactory.setLoggers(this);
-		SchoolProfile dbProfile = shopProfileRepository.findByMartCode(martCode);
+		Profile dbProfile = shopProfileRepository.findByMartCode(martCode);
 		if (null == dbProfile) {
 			shopProfileRepository.save(defaultProfile());
 		}
 	} 
 	
-	public SchoolProfile getProfile() {
-		SchoolProfile dbProfile = shopProfileRepository.findByMartCode(martCode);
+	public Profile getProfile() {
+		Profile dbProfile = shopProfileRepository.findByMartCode(martCode);
 
 		/*return getShopProfileFromSession(); */ return  EntityUtil.validateDefaultValue(dbProfile);
 	}
 
-	private SchoolProfile defaultProfile() {
-		SchoolProfile profile = new SchoolProfile();
+	private Profile defaultProfile() {
+		Profile profile = new Profile();
 		profile.setName("Universal Good Shop");
 		profile.setAddress("Spring Mvc, Java Virtual Machine, Win 10 64");
 		profile.setContact("087737666614");

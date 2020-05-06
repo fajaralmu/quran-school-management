@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import com.fajar.schoolmanagement.config.LogProxyFactory;
 import com.fajar.schoolmanagement.entity.BaseEntity;
 import com.fajar.schoolmanagement.entity.Menu;
-import com.fajar.schoolmanagement.entity.SchoolProfile;
+import com.fajar.schoolmanagement.entity.Profile;
 import com.fajar.schoolmanagement.entity.User;
 import com.fajar.schoolmanagement.entity.setting.EntityProperty;
 import com.fajar.schoolmanagement.service.EntityManagementPageService;
@@ -86,7 +86,7 @@ public class MvcManagementController extends BaseController {
 		} catch (Exception e) {
 			return ERROR_404_PAGE;
 		}
-		EntityProperty entityProperty = EntityUtil.createEntityProperty(SchoolProfile.class, null);
+		EntityProperty entityProperty = EntityUtil.createEntityProperty(Profile.class, null);
 
 		model = constructCommonModel(request, entityProperty, model, "shopProfile", "management");
 		// override singleObject

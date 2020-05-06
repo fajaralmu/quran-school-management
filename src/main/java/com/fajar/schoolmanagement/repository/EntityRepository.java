@@ -22,13 +22,13 @@ import org.springframework.stereotype.Service;
 import com.fajar.schoolmanagement.entity.BaseEntity;
 import com.fajar.schoolmanagement.entity.Menu;
 import com.fajar.schoolmanagement.entity.Page;
-import com.fajar.schoolmanagement.entity.SchoolProfile;
+import com.fajar.schoolmanagement.entity.Profile;
 import com.fajar.schoolmanagement.entity.User;
 import com.fajar.schoolmanagement.entity.setting.EntityManagementConfig;
 import com.fajar.schoolmanagement.service.entity.BaseEntityUpdateService;
 import com.fajar.schoolmanagement.service.entity.CommonUpdateService;
 import com.fajar.schoolmanagement.service.entity.MenuUpdateService;
-import com.fajar.schoolmanagement.service.entity.SchoolProfileUpdateService;
+import com.fajar.schoolmanagement.service.entity.ProfileUpdateService;
 import com.fajar.schoolmanagement.service.entity.UserUpdateService;
 
 import lombok.AccessLevel;
@@ -52,7 +52,7 @@ public class EntityRepository {
 	@Autowired
 	private StudentParentRepository studentParentRepository;
 	@Autowired
-	private SchoolProfileRepository shopProfileRepository;
+	private ProfileRepository shopProfileRepository;
 	@Autowired
 	private RegisteredRequestRepository registeredRequestRepository; 
 	@Autowired
@@ -76,7 +76,7 @@ public class EntityRepository {
 	@Autowired
 	private UserUpdateService userUpdateService;
 	@Autowired
-	private SchoolProfileUpdateService schoolProfileUpdateService;
+	private ProfileUpdateService schoolProfileUpdateService;
 	
 	@PersistenceContext
 	private EntityManager entityManager;
@@ -109,7 +109,7 @@ public class EntityRepository {
 //		entityConfiguration.put("supplier", config("supplier", Supplier.class, supplierUpdateService));
 		entityConfiguration.put("user", config("user", User.class, userUpdateService));
 		entityConfiguration.put("menu", config("menu", Menu.class, menuUpdateService));
-		entityConfiguration.put("schoolprofile", config("shopprofile", SchoolProfile.class, schoolProfileUpdateService));
+		entityConfiguration.put("schoolprofile", config("shopprofile", Profile.class, schoolProfileUpdateService));
 //		entityConfiguration.put("costflow", config("costflow", CostFlow.class, costFlowUpdateService));
 //		entityConfiguration.put("voucher", config("voucher", Voucher.class, voucherUpdateService));
 //		entityConfiguration.put("capitalflow", config("capitalflow", CapitalFlow.class, capitalUpdateService));

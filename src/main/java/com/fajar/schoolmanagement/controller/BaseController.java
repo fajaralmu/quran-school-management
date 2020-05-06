@@ -14,7 +14,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
 import com.fajar.schoolmanagement.entity.Page;
-import com.fajar.schoolmanagement.entity.SchoolProfile;
+import com.fajar.schoolmanagement.entity.Profile;
 import com.fajar.schoolmanagement.entity.User;
 import com.fajar.schoolmanagement.service.ComponentService;
 import com.fajar.schoolmanagement.service.RegistryService;
@@ -44,7 +44,7 @@ public class BaseController {
 
 
 	@ModelAttribute("shopProfile")
-	public SchoolProfile getProfile(HttpServletRequest request) {
+	public Profile getProfile(HttpServletRequest request) {
 //		System.out.println("Has Session: "+userSessionService.hasSession(request, false));
 		return webAppConfiguration.getProfile();
 	}

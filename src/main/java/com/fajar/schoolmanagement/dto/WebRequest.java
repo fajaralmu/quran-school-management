@@ -9,7 +9,7 @@ import com.fajar.schoolmanagement.entity.BaseEntity;
 import com.fajar.schoolmanagement.entity.Menu;
 import com.fajar.schoolmanagement.entity.Page;
 import com.fajar.schoolmanagement.entity.RegisteredRequest;
-import com.fajar.schoolmanagement.entity.SchoolProfile;
+import com.fajar.schoolmanagement.entity.Profile;
 import com.fajar.schoolmanagement.entity.User;
 import com.fajar.schoolmanagement.entity.UserRole;
 
@@ -38,7 +38,7 @@ public class WebRequest implements Serializable {
 
 	private String entity;
 	 
-	private SchoolProfile schoolprofile;
+	private Profile schoolprofile;
 	private RegisteredRequest registeredRequest;
 	private User user;   
 	private Menu menu; 

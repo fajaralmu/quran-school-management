@@ -21,7 +21,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class SchoolProfile extends BaseEntity implements Serializable{
+public class Profile extends BaseEntity implements Serializable{
 
 	 /**
 	 * 

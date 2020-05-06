@@ -8,18 +8,18 @@ import org.springframework.stereotype.Service;
 
 import com.fajar.schoolmanagement.dto.WebResponse;
 import com.fajar.schoolmanagement.entity.BaseEntity;
-import com.fajar.schoolmanagement.entity.SchoolProfile;
-import com.fajar.schoolmanagement.repository.SchoolProfileRepository;
+import com.fajar.schoolmanagement.entity.Profile;
+import com.fajar.schoolmanagement.repository.ProfileRepository;
 
 @Service
-public class SchoolProfileUpdateService extends BaseEntityUpdateService{
+public class ProfileUpdateService extends BaseEntityUpdateService{
 
 	@Autowired
-	private SchoolProfileRepository SchoolProfileRepository;
+	private ProfileRepository SchoolProfileRepository;
 	
 	@Override
 	public WebResponse saveEntity(BaseEntity baseEntity, boolean newRecord) {
-		SchoolProfile SchoolProfile = (SchoolProfile) copyNewElement(baseEntity, newRecord);
+		Profile SchoolProfile = (Profile) copyNewElement(baseEntity, newRecord);
 		String base64Image = SchoolProfile.getIconUrl();
 		if (base64Image != null && !base64Image.equals("")) {
 			try {
@@ -32,13 +32,13 @@ public class SchoolProfileUpdateService extends BaseEntityUpdateService{
 			}
 		} else {
 			if (!newRecord) {
-				Optional<SchoolProfile> dbSchoolProfile = SchoolProfileRepository.findById(SchoolProfile.getId());
+				Optional<Profile> dbSchoolProfile = SchoolProfileRepository.findById(SchoolProfile.getId());
 				if (dbSchoolProfile.isPresent()) {
 					SchoolProfile.setIconUrl(dbSchoolProfile.get().getIconUrl());
 				}
 			}
 		}
-		SchoolProfile newSchoolProfile = SchoolProfileRepository.save(SchoolProfile);
+		Profile newSchoolProfile = SchoolProfileRepository.save(SchoolProfile);
 		return WebResponse.builder().entity(newSchoolProfile).build();
 	}
 	
