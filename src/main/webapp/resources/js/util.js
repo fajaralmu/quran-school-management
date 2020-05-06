@@ -12,6 +12,20 @@ function infoDone() {
 	document.getElementById("loading-div").innerHTML = "";
 }
 
+function createTag(tagName, object){
+	var tag = document.createElement(tagName);
+	
+	for(let key in object){
+		if(key == "html"){
+			continue;
+		}
+		tag.setAttribute(key, object[key]);
+	}
+	
+	tag.innerHTML = object["html"];
+	return tag;
+}
+
 /** ***************COMPONENT*************** */
 function createAnchor(id, html, url){
 	var a = document.createElement("a");
