@@ -15,6 +15,7 @@ import com.fajar.schoolmanagement.repository.MenuRepository;
 import com.fajar.schoolmanagement.repository.PageRepository;
 import com.fajar.schoolmanagement.util.EntityUtil;
 
+import javassist.NotFoundException;
 import lombok.extern.slf4j.Slf4j;
 
 @Service
@@ -92,8 +93,12 @@ public class ComponentService {
 		return pageRepository.findAll(); 
 	} 
 	
-	public Page getPage(String code, HttpServletRequest request) { 
+	public Page getPage(String code, HttpServletRequest request) throws NotFoundException { 
 		Page page = pageRepository.findByCode(code); 
+		
+		if(null == page) {
+			throw new NotFoundException("Page Not Found");
+		}
 		
 		if (page.getAuthorized() == 1 && !userSessionService.hasSession(request)) {
 			

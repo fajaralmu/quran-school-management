@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import com.fajar.schoolmanagement.config.LogProxyFactory;
 import com.fajar.schoolmanagement.entity.Page;
 
+import javassist.NotFoundException;
 import lombok.extern.slf4j.Slf4j;
 
 @Controller
@@ -33,7 +34,7 @@ public class MvcPagesController extends BaseController{
  
 	 
 	@RequestMapping(value = { "/page/{code}" })
-	public String suppliers(@PathVariable(name = "code") String code,  Model model, HttpServletRequest request, HttpServletResponse response) throws IOException {
+	public String page(@PathVariable(name = "code") String code,  Model model, HttpServletRequest request, HttpServletResponse response) throws IOException, NotFoundException {
 		
 		Page page = componentService.getPage(code, request);
 		
