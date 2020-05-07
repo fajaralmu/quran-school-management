@@ -51,6 +51,7 @@ public class BaseController {
 	
 	@ModelAttribute("timeGreeting")
 	public String timeGreeting(HttpServletRequest request) {
+		 
 		return DateUtil.getTimeGreeting();
 	}
 	

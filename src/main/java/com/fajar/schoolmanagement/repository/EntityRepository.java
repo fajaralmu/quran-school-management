@@ -32,6 +32,8 @@ import com.fajar.schoolmanagement.service.entity.BaseEntityUpdateService;
 import com.fajar.schoolmanagement.service.entity.CommonUpdateService;
 import com.fajar.schoolmanagement.service.entity.MenuUpdateService;
 import com.fajar.schoolmanagement.service.entity.ProfileUpdateService;
+import com.fajar.schoolmanagement.service.entity.StudentUpdateService;
+import com.fajar.schoolmanagement.service.entity.TeacherUpdateService;
 import com.fajar.schoolmanagement.service.entity.UserUpdateService;
 
 import lombok.AccessLevel;
@@ -46,7 +48,7 @@ import lombok.extern.slf4j.Slf4j;
 public class EntityRepository {
 
 	/**
-	 * Jpa Repositories
+	 * jpaRepositories
 	 */
 	@Autowired
 	private StudentRepository studentRepository;
@@ -68,7 +70,7 @@ public class EntityRepository {
 	private PageRepository pageRepository;
 	
 	/**
-	 * end jpa repos
+	 * end jpaRepositories
 	 */
 	
 	
@@ -80,6 +82,10 @@ public class EntityRepository {
 	private UserUpdateService userUpdateService;
 	@Autowired
 	private ProfileUpdateService schoolProfileUpdateService;
+	@Autowired
+	private StudentUpdateService studentUpdateService;
+	@Autowired
+	private TeacherUpdateService teacherUpdateService;
 	
 	@PersistenceContext
 	private EntityManager entityManager;
@@ -104,15 +110,13 @@ public class EntityRepository {
 //		entityConfiguration.put("capital", config("capital", Capital.class, commonUpdateService));
 //		entityConfiguration.put("cost", config("cost", Cost.class, commonUpdateService));
 		entityConfiguration.put("page", config("page", Page.class, commonUpdateService));
-		entityConfiguration.put("student", config("student", Student.class, commonUpdateService));
 		entityConfiguration.put("studentparent", config("studentparent", StudentParent.class, commonUpdateService));
-		entityConfiguration.put("teacher", config("teacher", Teacher.class, commonUpdateService)); 
 		
 		/**
 		 * special
 		 */
-//		entityConfiguration.put("product", config("product", Product.class, productUpdateService)); 
-//		entityConfiguration.put("supplier", config("supplier", Supplier.class, supplierUpdateService));
+		entityConfiguration.put("student", config("student", Student.class, studentUpdateService));
+		entityConfiguration.put("teacher", config("teacher", Teacher.class, teacherUpdateService));  
 		entityConfiguration.put("user", config("user", User.class, userUpdateService));
 		entityConfiguration.put("menu", config("menu", Menu.class, menuUpdateService));
 		entityConfiguration.put("profile", config("profile", Profile.class, schoolProfileUpdateService));

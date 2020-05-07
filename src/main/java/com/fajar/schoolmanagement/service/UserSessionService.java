@@ -94,7 +94,7 @@ public class UserSessionService {
 	}
 
 	public boolean hasSession(HttpServletRequest request, boolean setRequestURI) {
-		if (setRequestURI && request.getMethod().toLowerCase().equals("get")) {
+		if (setRequestURI && request.getMethod().toLowerCase().equals("get") && request.getRequestURI().contains("login") == false) {
 
 			request.getSession().setAttribute(ATTR_REQUEST_URI, request.getRequestURI());
 			log.info("REQUESTED URI: " + request.getSession(false).getAttribute(ATTR_REQUEST_URI));
