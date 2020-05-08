@@ -10,6 +10,7 @@ import javax.persistence.Table;
 
 import com.fajar.schoolmanagement.annotation.Dto;
 import com.fajar.schoolmanagement.annotation.FormField;
+import com.fajar.schoolmanagement.dto.FieldType;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -51,11 +52,11 @@ public class Student extends BaseEntity {
 	private String gender;
 	
 	@Column(name="sibling_seq")
-	@FormField(type = FormField.FIELD_TYPE_NUMBER)
+	@FormField(type = FieldType.FIELD_TYPE_NUMBER)
 	private int siblingSequence;
 	
 	@Column(name="siblings_count")
-	@FormField(type = FormField.FIELD_TYPE_NUMBER)
+	@FormField(type = FieldType.FIELD_TYPE_NUMBER)
 	private int siblingsCount;
 	
 	@Column
@@ -63,16 +64,16 @@ public class Student extends BaseEntity {
 	private String school;
 	
 	@Column
-	@FormField(type = FormField.FIELD_TYPE_TEXTAREA)
+	@FormField(type = FieldType.FIELD_TYPE_TEXTAREA)
 	private String address;
 	
 	@Column(name = "image_url", unique = true)
-	@FormField(type = FormField.FIELD_TYPE_IMAGE, required = false, multiple = false, defaultValue = "Default.BMP")
+	@FormField(type = FieldType.FIELD_TYPE_IMAGE, required = false, multiple = false, defaultValue = "Default.BMP")
 	private String imageUrl;
 	
 	@JoinColumn(name = "parent_id")
 	@ManyToOne
-	@FormField(optionItemName = "fatherName", type = FormField.FIELD_TYPE_DYNAMIC_LIST)
+	@FormField(optionItemName = "fatherName", type = FieldType.FIELD_TYPE_DYNAMIC_LIST)
 	private StudentParent studentParent;
 
 }

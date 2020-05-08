@@ -12,6 +12,7 @@ import javax.persistence.PrePersist;
 
 import com.fajar.schoolmanagement.annotation.Dto;
 import com.fajar.schoolmanagement.annotation.FormField;
+import com.fajar.schoolmanagement.dto.FieldType;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Dto
@@ -29,10 +30,10 @@ public class BaseEntity implements Serializable{
 	@Column
 	private Long id;
 	@Column(name="general_color")
-	@FormField(type="color", defaultValue = "green")
+	@FormField(type = FieldType.FIELD_TYPE_COLOR, defaultValue = "green")
 	private String color;
 	@Column(name="font_color")
-	@FormField(type="color", defaultValue = "yellow")
+	@FormField(type = FieldType.FIELD_TYPE_COLOR, defaultValue = "yellow")
 	private String fontColor;
 	@Column(name="created_date")
 	@JsonIgnore

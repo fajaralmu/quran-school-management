@@ -5,6 +5,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import com.fajar.schoolmanagement.dto.FieldType;
+
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
 public @interface FormField {
@@ -12,7 +14,7 @@ public @interface FormField {
 	public static final String FIELD_TYPE_TEXTAREA = "textarea";
 	public static final String FIELD_TYPE_DATE = "date";
 	
-	public String type() default FIELD_TYPE_TEXT;
+	public FieldType type() default FieldType.FIELD_TYPE_TEXT;
 	
 	public boolean showDetail() default false;
 	

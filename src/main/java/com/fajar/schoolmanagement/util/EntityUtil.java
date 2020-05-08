@@ -1,6 +1,8 @@
 package com.fajar.schoolmanagement.util;
 
-import static com.fajar.schoolmanagement.annotation.FormField.*; 
+import static com.fajar.schoolmanagement.annotation.FormField.FIELD_TYPE_DYNAMIC_LIST;
+import static com.fajar.schoolmanagement.annotation.FormField.FIELD_TYPE_FIXED_LIST;
+
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -15,6 +17,7 @@ import javax.persistence.JoinColumn;
 
 import com.fajar.schoolmanagement.annotation.Dto;
 import com.fajar.schoolmanagement.annotation.FormField;
+import com.fajar.schoolmanagement.dto.FieldType;
 import com.fajar.schoolmanagement.entity.BaseEntity;
 import com.fajar.schoolmanagement.entity.setting.EntityElement;
 import com.fajar.schoolmanagement.entity.setting.EntityProperty;
@@ -57,7 +60,7 @@ public class EntityUtil {
 				}
 				
 				String lableName = field.getName();
-				String fieldType = formField.type();
+				FieldType fieldType = formField.type();
 				
 				if (!formField.lableName().equals("")) {
 					lableName = formField.lableName();
@@ -65,17 +68,17 @@ public class EntityUtil {
 				
 				final String entityElementId = field.getName();
 				
-				if (fieldType.equals("") || fieldType.equals(FIELD_TYPE_TEXT)) {
+				if (fieldType.equals("") || fieldType.equals(FieldType.FIELD_TYPE_TEXT)) {
 					if (isNumber(field)) {
-						fieldType = FIELD_TYPE_NUMBER;
+						fieldType = FieldType.FIELD_TYPE_NUMBER;
 					}
 					
-				} else if (fieldType.equals(FIELD_TYPE_IMAGE)) {
+				} else if (fieldType.equals(FieldType.FIELD_TYPE_IMAGE)) {
 					entityProperty.getImageElements().add(entityElementId);
 					
-				}else if (fieldType.equals(FIELD_TYPE_CURRENCY)) {
+				}else if (fieldType.equals(FieldType.FIELD_TYPE_CURRENCY)) {
 					entityProperty.getCurrencyElements().add(entityElementId);
-					fieldType = FIELD_TYPE_NUMBER;
+					fieldType = FieldType.FIELD_TYPE_NUMBER;
 				} 
 
 				/**
@@ -126,14 +129,14 @@ public class EntityUtil {
 				}
 				if (field.getType().equals(Date.class) && field.getAnnotation(JsonFormat.class) == null) {
 					dateElements.add(entityElementId);
-					fieldType = FormField.FIELD_TYPE_DATE;
+					fieldType = FieldType.FIELD_TYPE_DATE;
 				}
 				
 				entityElement.setId(entityElementId );
 				entityElement.setIdentity(isIdField);
-				entityElement.setLableName(lableName.toUpperCase());
+				entityElement.setLableName(StringUtil.extractCamelCase(lableName));
 				entityElement.setRequired(formField.required());
-				entityElement.setType(isIdField ? FIELD_TYPE_HIDDEN : fieldType);
+				entityElement.setType(isIdField ? FieldType.FIELD_TYPE_HIDDEN.value : fieldType.value);
 				entityElement.setMultiple(formField.multiple());
 				entityElement.setClassName(field.getType().getCanonicalName());
 				entityElement.setShowDetail(formField.showDetail());

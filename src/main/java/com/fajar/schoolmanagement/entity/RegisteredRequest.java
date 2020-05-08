@@ -18,33 +18,35 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
 @Dto
 @Entity
-@Table (name="registered_request")
+@Table(name = "registered_request")
 @Data
-@Builder	
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class RegisteredRequest extends BaseEntity implements Serializable, Remote{/**
-	 * 
-	 */
-	private static final long serialVersionUID = -2584171097698972770L; 
-	@Column(name="request_id")
+public class RegisteredRequest extends BaseEntity implements Serializable, Remote {
+	/**
+	* 
+	*/
+	private static final long serialVersionUID = -2584171097698972770L;
+	@Column(name = "request_id")
 	@FormField(required = true)
 	private String requestId;
-	@Column(name="value")
+	@Column(name = "value")
 	@FormField(required = true)
 	private String value;
 	@Transient
 	@JsonFormat(pattern = "dd-MM-yyyy' 'hh:mm:ss")
 	private Date created;
-	@Column(name="referrer")
+	@Column(name = "referrer")
 	private String referrer;
-	@Column(name="user_agent")
+	@Column(name = "user_agent")
 	private String userAgent;
-	@Column(name="ip_address")
+	@Column(name = "ip_address")
 	private String ipAddress;
 	@Transient
-	private  List<? extends BaseEntity> messages;
-	
+	private List<? extends BaseEntity> messages;
+
 }

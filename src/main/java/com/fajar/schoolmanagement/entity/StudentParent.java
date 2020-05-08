@@ -8,6 +8,7 @@ import javax.persistence.Table;
 
 import com.fajar.schoolmanagement.annotation.Dto;
 import com.fajar.schoolmanagement.annotation.FormField;
+import com.fajar.schoolmanagement.dto.FieldType;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -67,7 +68,7 @@ public class StudentParent extends BaseEntity{
 	@Column(name="mother_occupation")
 	private String motherOccupation;
 	
-	@FormField(type = FormField.FIELD_TYPE_TEXTAREA)
+	@FormField(type = FieldType.FIELD_TYPE_TEXTAREA)
 	@Column(name="address")
 	private String address;
 	

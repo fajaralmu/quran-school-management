@@ -58,11 +58,11 @@
 	
 	<div class="container">
 		<div class="page-header" style="color:${shopProfile.fontColor}">
+			<img  width="70" height="70" src="${host}/${contextPath}/${imagePath}/${shopProfile.iconUrl }"/>
 			<div>
 				<h1>${shopProfile.name } </h1>
 				<p>${shopProfile.shortDescription }</p>
 			</div>
-			<img  width="70" height="70" src="${host}/${contextPath}/${imagePath}/${shopProfile.iconUrl }"/>
 			
 		</div>
 		<div id = "layout">
