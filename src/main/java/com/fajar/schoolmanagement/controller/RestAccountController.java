@@ -42,13 +42,13 @@ public class RestAccountController {
 		LogProxyFactory.setLoggers(this);
 	}
 
-	@PostMapping(value =  "/register", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public WebResponse register(@RequestBody WebRequest request, HttpServletRequest httpRequest,
-			HttpServletResponse httpResponse) throws IOException {
-		log.info("register {}", request);
-		WebResponse response = accountService.registerUser(request);
-		return response;
-	}
+//	@PostMapping(value =  "/register", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+//	public WebResponse register(@RequestBody WebRequest request, HttpServletRequest httpRequest,
+//			HttpServletResponse httpResponse) throws IOException {
+//		log.info("register {}", request);
+//		WebResponse response = accountService.registerUser(request);
+//		return response;
+//	}
 	
 	@PostMapping(value = "/login", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public WebResponse login(@RequestBody WebRequest request, HttpServletRequest httpRequest,

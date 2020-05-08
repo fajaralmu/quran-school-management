@@ -172,7 +172,7 @@
 					<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
 				</c:if>
 				<c:if test="${singleRecord == true }">
-					<a role="button" class="btn btn-secondary" href="<spring:url value="/admin/management" />">Back</a>
+					<a role="button" class="btn btn-secondary" href="<spring:url value="/admin/home" />">Back</a>
 				</c:if>
 			</div>
 		</div>

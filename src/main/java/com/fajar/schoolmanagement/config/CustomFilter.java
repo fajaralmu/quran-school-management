@@ -29,6 +29,7 @@ public class CustomFilter implements javax.servlet.Filter {
         HttpServletResponse res = (HttpServletResponse) response;
         
         boolean isRestEndpoint = req.getMethod().toLowerCase().equals("post");
+        log.info("USER PRINCIPAL: {} {}", req.getUserPrincipal(), req.getClass());
         
         if(isRestEndpoint) {
 	        log.info("=====================BEGIN API==================");

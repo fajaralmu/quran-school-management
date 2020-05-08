@@ -5,11 +5,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
-<div class="header" style="height:auto">
-	<div class="page-header" style="color:${shopProfile.color}">
-		<h1>${shopProfile.name }</h1>
-		<p>${shopProfile.shortDescription }</p>
-	</div>
+<div class="header" style="height:auto"> 
 
 	<div>
 	<!-- <ul class="nav nav-tabs"> -->

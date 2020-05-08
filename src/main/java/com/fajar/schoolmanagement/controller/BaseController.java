@@ -22,8 +22,11 @@ import com.fajar.schoolmanagement.service.UserAccountService;
 import com.fajar.schoolmanagement.service.UserSessionService;
 import com.fajar.schoolmanagement.service.WebConfigService;
 import com.fajar.schoolmanagement.util.DateUtil;
-import com.fajar.schoolmanagement.util.MvcUtil; 
+import com.fajar.schoolmanagement.util.MvcUtil;
+
+import lombok.extern.slf4j.Slf4j; 
 @Controller 
+@Slf4j
 public class BaseController {
 	
 	protected String basePage;
@@ -85,7 +88,7 @@ public class BaseController {
 	
 	@ModelAttribute("pageToken")
 	public String pageToken(HttpServletRequest request) {
-		  return accountService.getToken(request);
+		  return userSessionService.getToken(request);
 	}
 	
 	@ModelAttribute("requestId")
@@ -143,6 +146,8 @@ public class BaseController {
 	 * @param url
 	 */
 	public static void sendRedirect(HttpServletResponse response ,String url)  {
+		
+		log.info("Will sendRedirect to : {}", url);
 		try {
 			response.sendRedirect(url);
 		} catch (IOException e) {

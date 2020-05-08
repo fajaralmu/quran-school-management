@@ -26,7 +26,7 @@
 <script src="<c:url value="/res/js/ajax.js?v=1"></c:url >"></script>
 <script src="<c:url value="/res/js/util.js?v=1"></c:url >"></script> 
 <style>
-	.container{
+	#layout{
 		display: grid;
 		grid-template-columns: 20% 80%
 	}
@@ -50,19 +50,25 @@
 	<input id="token-value" value="${pageToken }" type="hidden" />
 	<input id="request-id" value="${requestId }" type="hidden" />
 	<div id="loading-div"></div>
+	
 	<div class="container">
-		<div>
-			<jsp:include page="include/head.jsp"></jsp:include>
+		<div class="page-header" style="color:${shopProfile.fontColor}">
+			<h1>${shopProfile.name }</h1>
+			<p>${shopProfile.shortDescription }</p>
 		</div>
-		<div>
-			<jsp:include page="${pageUrl == null? 'error/notfound': pageUrl}.jsp"></jsp:include>
+		<div id = "layout">
+			<div>
+				<jsp:include page="include/head.jsp"></jsp:include>
+			</div>
+			<div>
+				<jsp:include page="${pageUrl == null? 'error/notfound': pageUrl}.jsp"></jsp:include>
+			</div>
+			<div>
+			</div>
+			<div>
+				<jsp:include page="include/foot.jsp"></jsp:include>
+			</div>
 		</div>
-		<div>
-		</div>
-		<div>
-			<jsp:include page="include/foot.jsp"></jsp:include>
-		</div>
-		
 	</div>
 	<script type="text/javascript">
 	function initProgressWebsocket(){
