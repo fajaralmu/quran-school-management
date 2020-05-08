@@ -1,7 +1,7 @@
 package com.fajar.schoolmanagement.util;
 
-import static com.fajar.schoolmanagement.annotation.FormField.FIELD_TYPE_DYNAMIC_LIST;
-import static com.fajar.schoolmanagement.annotation.FormField.FIELD_TYPE_FIXED_LIST;
+import static com.fajar.schoolmanagement.dto.FieldType.FIELD_TYPE_DYNAMIC_LIST;
+import static com.fajar.schoolmanagement.dto.FieldType.FIELD_TYPE_FIXED_LIST;
 
 import java.lang.reflect.Field;
 import java.math.BigDecimal;

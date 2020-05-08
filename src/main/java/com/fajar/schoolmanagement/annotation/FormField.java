@@ -11,8 +11,7 @@ import com.fajar.schoolmanagement.dto.FieldType;
 @Target(ElementType.FIELD)
 public @interface FormField {
 
-	public static final String FIELD_TYPE_TEXTAREA = "textarea";
-	public static final String FIELD_TYPE_DATE = "date";
+
 	
 	public FieldType type() default FieldType.FIELD_TYPE_TEXT;
 	
@@ -35,15 +34,6 @@ public @interface FormField {
 
 	public String[] defaultValues() default {};
 	//the value is result of array of fields multiplication
-	public String[] multiply() default {};
-	
-	public static final String FIELD_TYPE_TEXT = "text";
-	public static final String FIELD_TYPE_IMAGE = "img";
-	public static final String FIELD_TYPE_CURRENCY = "currency";
-	public static final String FIELD_TYPE_NUMBER = "number";
-	public static final String FIELD_TYPE_HIDDEN = "hidden";
-	public static final String FIELD_TYPE_COLOR = "color";
-	public static final String FIELD_TYPE_FIXED_LIST ="fixedlist";
-	public static final String FIELD_TYPE_DYNAMIC_LIST = "dynamiclist";
+	public String[] multiply() default {}; 
 
 }

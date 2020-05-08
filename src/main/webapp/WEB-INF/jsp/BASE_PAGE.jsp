@@ -30,9 +30,9 @@
 		display: grid;
 		grid-template-columns: 20% 80%
 	}
-	.page-header{
+	.title-header{
 		display: grid;
-		grid-template-columns: 80% 20%;
+		grid-template-columns: 20% 80%;
 		padding: 10px;
 	}
 	/**
@@ -57,8 +57,8 @@
 	<div id="loading-div"></div>
 	
 	<div class="container">
-		<div class="page-header" style="color:${shopProfile.fontColor}">
-			<img  width="70" height="70" src="${host}/${contextPath}/${imagePath}/${shopProfile.iconUrl }"/>
+		<div class="title-header" style="color:${shopProfile.fontColor}">
+			<img  width="90" height="90" src="${host}/${contextPath}/${imagePath}/${shopProfile.iconUrl }"/>
 			<div>
 				<h1>${shopProfile.name } </h1>
 				<p>${shopProfile.shortDescription }</p>
