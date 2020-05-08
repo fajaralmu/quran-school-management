@@ -30,6 +30,11 @@
 		display: grid;
 		grid-template-columns: 20% 80%
 	}
+	.page-header{
+		display: grid;
+		grid-template-columns: 80% 20%;
+		padding: 10px;
+	}
 	/**
 		active menu when using vertical aligment
 	**/
@@ -53,8 +58,12 @@
 	
 	<div class="container">
 		<div class="page-header" style="color:${shopProfile.fontColor}">
-			<h1>${shopProfile.name }</h1>
-			<p>${shopProfile.shortDescription }</p>
+			<div>
+				<h1>${shopProfile.name } </h1>
+				<p>${shopProfile.shortDescription }</p>
+			</div>
+			<img  width="70" height="70" src="${host}/${contextPath}/${imagePath}/${shopProfile.iconUrl }"/>
+			
 		</div>
 		<div id = "layout">
 			<div>
