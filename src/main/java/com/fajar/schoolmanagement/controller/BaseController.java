@@ -2,6 +2,8 @@ package com.fajar.schoolmanagement.controller;
 
 
 import java.io.IOException;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -84,6 +86,11 @@ public class BaseController {
 	@ModelAttribute("imagePath")
 	public String getUploadedImagePath(HttpServletRequest request) {
 		return webAppConfiguration.getUploadedImagePath();
+	}
+	
+	@ModelAttribute("currentYear")
+	public int currentYear(HttpServletRequest request) {
+		return DateUtil.getCalendarItem(new Date(), Calendar.YEAR);
 	}
 	
 	@ModelAttribute("pageToken")

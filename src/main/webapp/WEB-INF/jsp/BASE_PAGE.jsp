@@ -28,7 +28,8 @@
 <style>
 	#layout{
 		display: grid;
-		grid-template-columns: 20% 80%
+		grid-template-columns: 20% 80%;
+		padding: 10px;
 	}
 	.title-header{
 		display: grid;
@@ -40,6 +41,11 @@
 	**/
 	.active{
 		font-weight: bold;
+	}
+	
+	.centered-align{
+		text-align: center;
+		width: 100%;
 	}
 </style>
 </head>
@@ -58,15 +64,17 @@
 	
 	<div class="container">
 		<div class="title-header" style="color:${shopProfile.fontColor}">
-			<img  width="90" height="90" src="${host}/${contextPath}/${imagePath}/${shopProfile.iconUrl }"/>
-			<div>
+			<div class="centered-align">
+				<img  width="90" height="90" src="${host}/${contextPath}/${imagePath}/${shopProfile.iconUrl }"/>
+			</div>
+			<div >
 				<h1>${shopProfile.name } </h1>
 				<p>${shopProfile.shortDescription }</p>
 			</div>
 			
 		</div>
 		<div id = "layout">
-			<div>
+			<div class="centered-align">
 				<jsp:include page="include/head.jsp"></jsp:include>
 			</div>
 			<div>
