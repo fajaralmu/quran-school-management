@@ -6,6 +6,10 @@ import org.apache.commons.math3.stat.descriptive.summary.Product;
 
 import com.fajar.schoolmanagement.annotation.Dto;
 import com.fajar.schoolmanagement.entity.BaseEntity;
+import com.fajar.schoolmanagement.entity.Capital;
+import com.fajar.schoolmanagement.entity.CapitalFlow;
+import com.fajar.schoolmanagement.entity.Cost;
+import com.fajar.schoolmanagement.entity.CostFlow;
 import com.fajar.schoolmanagement.entity.Menu;
 import com.fajar.schoolmanagement.entity.Page;
 import com.fajar.schoolmanagement.entity.RegisteredRequest;
@@ -51,6 +55,10 @@ public class WebRequest implements Serializable {
 	private StudentParent studentparent;
 	private Student student;
 	private Teacher teacher;
+	private Cost cost;
+	private Capital capital;
+	private CostFlow costflow;
+	private CapitalFlow capitalflow;
 	 
 	/**
 	 * ==========end entity============

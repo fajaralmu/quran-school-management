@@ -20,6 +20,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 
 import com.fajar.schoolmanagement.entity.BaseEntity;
+import com.fajar.schoolmanagement.entity.Capital;
+import com.fajar.schoolmanagement.entity.CapitalFlow;
+import com.fajar.schoolmanagement.entity.CashBalance;
+import com.fajar.schoolmanagement.entity.Cost;
+import com.fajar.schoolmanagement.entity.CostFlow;
 import com.fajar.schoolmanagement.entity.Menu;
 import com.fajar.schoolmanagement.entity.Page;
 import com.fajar.schoolmanagement.entity.Profile;
@@ -29,7 +34,9 @@ import com.fajar.schoolmanagement.entity.Teacher;
 import com.fajar.schoolmanagement.entity.User;
 import com.fajar.schoolmanagement.entity.setting.EntityManagementConfig;
 import com.fajar.schoolmanagement.service.entity.BaseEntityUpdateService;
+import com.fajar.schoolmanagement.service.entity.CapitalFlowUpdateService;
 import com.fajar.schoolmanagement.service.entity.CommonUpdateService;
+import com.fajar.schoolmanagement.service.entity.CostFlowUpdateService;
 import com.fajar.schoolmanagement.service.entity.MenuUpdateService;
 import com.fajar.schoolmanagement.service.entity.ProfileUpdateService;
 import com.fajar.schoolmanagement.service.entity.StudentUpdateService;
@@ -68,6 +75,14 @@ public class EntityRepository {
 	private UserRoleRepository userRoleRepository; 
 	@Autowired
 	private PageRepository pageRepository;
+	@Autowired
+	private CostRepository costRepository;
+	@Autowired
+	private CostFlowRepository CostFlowRepository;
+	@Autowired
+	private CapitalRepository CapitalRepository;
+	@Autowired
+	private CapitalFlowRepository CapitalFlowRepository;
 	
 	/**
 	 * end jpaRepositories
@@ -86,6 +101,12 @@ public class EntityRepository {
 	private StudentUpdateService studentUpdateService;
 	@Autowired
 	private TeacherUpdateService teacherUpdateService;
+	@Autowired
+	private CostFlowUpdateService costFlowUpdateService;
+	@Autowired
+	private CapitalFlowUpdateService capitalUpdateService;
+	@Autowired
+	private BaseEntityUpdateService baseEntityUpdateService;
 	
 	@PersistenceContext
 	private EntityManager entityManager;
@@ -94,6 +115,11 @@ public class EntityRepository {
 	@Getter(value = AccessLevel.NONE)
 	private final Map<String, EntityManagementConfig> entityConfiguration = new HashMap<String, EntityManagementConfig>();
 
+	private void put(Class<? extends BaseEntity> _class , BaseEntityUpdateService updateService) {
+		String key = _class.getSimpleName().toLowerCase();
+		entityConfiguration.put(key, config( key, _class, updateService));
+	}
+	
 	@PostConstruct
 	public void init() {
 		entityConfiguration.clear();
@@ -107,26 +133,26 @@ public class EntityRepository {
 //		entityConfiguration.put("registeredrequest", config("registeredRequest", RegisteredRequest.class, commonUpdateService));
 //		entityConfiguration.put("customervoucher", config("customervoucher", CustomerVoucher.class, commonUpdateService));
 //		entityConfiguration.put("userrole", config("userrole", UserRole.class, commonUpdateService));
-//		entityConfiguration.put("capital", config("capital", Capital.class, commonUpdateService));
-//		entityConfiguration.put("cost", config("cost", Cost.class, commonUpdateService));
-		entityConfiguration.put("page", config("page", Page.class, commonUpdateService));
-		entityConfiguration.put("studentparent", config("studentparent", StudentParent.class, commonUpdateService));
+		put(Capital.class, commonUpdateService);
+		put(Page.class, commonUpdateService);
+		put(Page.class, commonUpdateService);
+		put(StudentParent.class, commonUpdateService); 
 		
 		/**
 		 * special
 		 */
-		entityConfiguration.put("student", config("student", Student.class, studentUpdateService));
-		entityConfiguration.put("teacher", config("teacher", Teacher.class, teacherUpdateService));  
-		entityConfiguration.put("user", config("user", User.class, userUpdateService));
-		entityConfiguration.put("menu", config("menu", Menu.class, menuUpdateService));
-		entityConfiguration.put("profile", config("profile", Profile.class, schoolProfileUpdateService));
-//		entityConfiguration.put("costflow", config("costflow", CostFlow.class, costFlowUpdateService));
+		put(Student.class, studentUpdateService) ;
+		put(Teacher.class, teacherUpdateService) ;  
+		put( User.class, userUpdateService) ;
+		put( Menu.class, menuUpdateService);
+		put(Profile.class, schoolProfileUpdateService);
+		put(CostFlow.class, costFlowUpdateService);
 //		entityConfiguration.put("voucher", config("voucher", Voucher.class, voucherUpdateService));
-//		entityConfiguration.put("capitalflow", config("capitalflow", CapitalFlow.class, capitalUpdateService));
+		put(CapitalFlow.class, capitalUpdateService);
 		/**
 		 * unable to update
 		 */
-//		entityConfiguration.put("cashbalance", config("cashbalance", CashBalance.class, baseEntityUpdateService));
+		put(CashBalance.class, baseEntityUpdateService);
 //		entityConfiguration.put("transaction", config(null, Transaction.class, baseEntityUpdateService));
 //		entityConfiguration.put("productflow", config(null, ProductFlow.class, baseEntityUpdateService));
 //		entityConfiguration.put("message", config(null, Message.class, commonUpdateService));

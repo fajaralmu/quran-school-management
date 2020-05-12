@@ -17,7 +17,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.fajar.schoolmanagement.config.LogProxyFactory;
-import com.fajar.schoolmanagement.entity.BaseEntity;
+import com.fajar.schoolmanagement.entity.CapitalFlow;
+import com.fajar.schoolmanagement.entity.CostFlow;
 import com.fajar.schoolmanagement.entity.Menu;
 import com.fajar.schoolmanagement.entity.Profile;
 import com.fajar.schoolmanagement.entity.User;
@@ -26,7 +27,6 @@ import com.fajar.schoolmanagement.service.EntityManagementPageService;
 import com.fajar.schoolmanagement.service.EntityService;
 import com.fajar.schoolmanagement.util.CollectionUtil;
 import com.fajar.schoolmanagement.util.EntityUtil;
-import com.fajar.schoolmanagement.util.MyJsonUtil;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -113,6 +113,48 @@ public class MvcManagementController extends BaseController {
 		listObject.put("menuPage", pages );
 		EntityProperty entityProperty = EntityUtil.createEntityProperty(Menu.class, listObject);
 		model = constructCommonModel(request, entityProperty, model, "Menu", "management");
+		return basePage;
+	}
+	
+	@RequestMapping(value = { "/fundflow" })
+	public String fundflow(Model model, HttpServletRequest request, HttpServletResponse response) throws IOException {
+
+		if (!userService.hasSession(request)) {
+			sendRedirectLogin(request, response);
+			return basePage;
+		}
+		try {
+			checkUserAccess(userService.getUserFromSession(request), "/management/fundflow");
+		} catch (Exception e) {
+			return ERROR_404_PAGE;
+		}
+		HashMap<String, List> listObject = new HashMap<>();
+		List fundTypes = componentService.getAllFundTypes();
+		log.debug("fundTypes: {}", fundTypes);
+		listObject.put("fundType", fundTypes );
+		EntityProperty entityProperty = EntityUtil.createEntityProperty(CapitalFlow.class, listObject);
+		model = constructCommonModel(request, entityProperty, model, "Fund Flow", "management");
+		return basePage;
+	}
+	
+	@RequestMapping(value = { "/costflow" })
+	public String costflow(Model model, HttpServletRequest request, HttpServletResponse response) throws IOException {
+
+		if (!userService.hasSession(request)) {
+			sendRedirectLogin(request, response);
+			return basePage;
+		}
+		try {
+			checkUserAccess(userService.getUserFromSession(request), "/management/costflow");
+		} catch (Exception e) {
+			return ERROR_404_PAGE;
+		}
+		HashMap<String, List> listObject = new HashMap<>();
+		List costTypes = componentService.getAllCostTypes();
+		log.debug("costTypes: {}", costTypes);
+		listObject.put("costType", costTypes );
+		EntityProperty entityProperty = EntityUtil.createEntityProperty(CostFlow.class, listObject);
+		model = constructCommonModel(request, entityProperty, model, "Cost Flow", "management");
 		return basePage;
 	}
 

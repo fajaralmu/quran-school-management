@@ -11,6 +11,8 @@ import org.springframework.stereotype.Service;
 import com.fajar.schoolmanagement.entity.Menu;
 import com.fajar.schoolmanagement.entity.Page;
 import com.fajar.schoolmanagement.entity.User;
+import com.fajar.schoolmanagement.repository.CapitalRepository;
+import com.fajar.schoolmanagement.repository.CostRepository;
 import com.fajar.schoolmanagement.repository.MenuRepository;
 import com.fajar.schoolmanagement.repository.PageRepository;
 import com.fajar.schoolmanagement.util.EntityUtil;
@@ -29,6 +31,10 @@ public class ComponentService {
 	private UserSessionService userSessionService; 
 	@Autowired
 	private PageRepository pageRepository;
+	@Autowired
+	private CostRepository costRepository;
+	@Autowired
+	private CapitalRepository capitalRepository;
 
 	public List<Page> getPages(HttpServletRequest request){
 		
@@ -192,6 +198,14 @@ public class ComponentService {
 			}
 		}
 
+	}
+
+	public List getAllCostTypes() { 
+		return costRepository.findByDeletedFalse();
+	}
+
+	public List getAllFundTypes() { 
+		return capitalRepository.findByDeletedFalse();
 	}
 
 	

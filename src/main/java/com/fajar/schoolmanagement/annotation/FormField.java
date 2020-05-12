@@ -24,9 +24,7 @@ public @interface FormField {
 
 	public String lableName() default "";
 
-	public String optionItemName() default "";
-
-//	public String entityReferenceName() default "";
+	public String optionItemName() default ""; 
 
 	public String defaultValue() default "";
 
