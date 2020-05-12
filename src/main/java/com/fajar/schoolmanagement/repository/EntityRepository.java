@@ -126,13 +126,7 @@ public class EntityRepository {
 		
 		/**
 		 * commons
-		 */
-//		entityConfiguration.put("unit", config("unit", Unit.class, commonUpdateService));
-//		entityConfiguration.put("customer", config("customer", Customer.class, commonUpdateService));
-//		entityConfiguration.put("category", config("category", Category.class, commonUpdateService));
-//		entityConfiguration.put("registeredrequest", config("registeredRequest", RegisteredRequest.class, commonUpdateService));
-//		entityConfiguration.put("customervoucher", config("customervoucher", CustomerVoucher.class, commonUpdateService));
-//		entityConfiguration.put("userrole", config("userrole", UserRole.class, commonUpdateService));
+		 */ 
 		put(Capital.class, commonUpdateService);
 		put(Cost.class, commonUpdateService);
 		put(Page.class, commonUpdateService);
@@ -147,15 +141,11 @@ public class EntityRepository {
 		put( Menu.class, menuUpdateService);
 		put(Profile.class, schoolProfileUpdateService);
 		put(CostFlow.class, costFlowUpdateService);
-//		entityConfiguration.put("voucher", config("voucher", Voucher.class, voucherUpdateService));
 		put(CapitalFlow.class, capitalUpdateService);
 		/**
 		 * unable to update
 		 */
-		put(CashBalance.class, baseEntityUpdateService);
-//		entityConfiguration.put("transaction", config(null, Transaction.class, baseEntityUpdateService));
-//		entityConfiguration.put("productflow", config(null, ProductFlow.class, baseEntityUpdateService));
-//		entityConfiguration.put("message", config(null, Message.class, commonUpdateService));
+		put(CashBalance.class, baseEntityUpdateService); 
 	}
 	
 	public EntityManagementConfig getConfig(String key) {
@@ -163,8 +153,7 @@ public class EntityRepository {
 	}
 
 	private EntityManagementConfig config(String object, Class<? extends BaseEntity> class1,
-			BaseEntityUpdateService commonUpdateService2) {
-
+			BaseEntityUpdateService commonUpdateService2) { 
 		return new EntityManagementConfig(object, class1, commonUpdateService2);
 	}
 

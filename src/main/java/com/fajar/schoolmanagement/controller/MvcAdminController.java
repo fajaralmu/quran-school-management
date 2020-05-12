@@ -1,28 +1,17 @@
 package com.fajar.schoolmanagement.controller;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.math3.stat.descriptive.summary.Product;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.fajar.schoolmanagement.config.LogProxyFactory;
-import com.fajar.schoolmanagement.dto.Filter;
-import com.fajar.schoolmanagement.dto.WebRequest;
-import com.fajar.schoolmanagement.dto.WebResponse;
-import com.fajar.schoolmanagement.util.CollectionUtil;
-import com.fajar.schoolmanagement.util.DateUtil;
 
 import lombok.extern.slf4j.Slf4j;
 

@@ -19,7 +19,7 @@ import com.fajar.schoolmanagement.entity.Page;
 import com.fajar.schoolmanagement.entity.Profile;
 import com.fajar.schoolmanagement.entity.User;
 import com.fajar.schoolmanagement.service.ComponentService;
-import com.fajar.schoolmanagement.service.RegistryService;
+import com.fajar.schoolmanagement.service.RuntimeService;
 import com.fajar.schoolmanagement.service.UserAccountService;
 import com.fajar.schoolmanagement.service.UserSessionService;
 import com.fajar.schoolmanagement.service.WebConfigService;
@@ -40,7 +40,7 @@ public class BaseController {
 	@Autowired
 	protected UserAccountService accountService;
 	@Autowired
-	protected RegistryService registryService; 
+	protected RuntimeService registryService; 
 	@Autowired
 	protected UserSessionService userService; 
 	@Autowired
@@ -100,7 +100,7 @@ public class BaseController {
 	
 	@ModelAttribute("requestId")
 	public String requestId(HttpServletRequest request) {
-		Cookie cookie = getCookie(RegistryService.JSESSSIONID, request.getCookies());
+		Cookie cookie = getCookie(RuntimeService.JSESSSIONID, request.getCookies());
 		String cookieValue = cookie == null ? UUID.randomUUID().toString():cookie.getValue();
 		return	registryService.addPageRequest(  cookieValue);
 		 
@@ -111,6 +111,11 @@ public class BaseController {
 		
 		return componentService.getPages(request);
 	}
+	
+	/**
+	 * =============== End Model Attributes ===============
+	 * 
+	 */
 	 
 	public String activePage(HttpServletRequest request) {
 		return userSessionService.getPageCode(request);

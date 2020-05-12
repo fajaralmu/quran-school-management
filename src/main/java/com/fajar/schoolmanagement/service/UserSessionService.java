@@ -47,7 +47,7 @@ public class UserSessionService {
 	private RealtimeService2 realtimeService;
 
 	@Autowired
-	private RegistryService registryService;
+	private RuntimeService registryService;
 	
 	@Autowired
 	private MessagingService messagingService;
@@ -237,7 +237,7 @@ public class UserSessionService {
 	}
 
 	public boolean validatePageRequest(HttpServletRequest req) {
-		final String requestId = req.getHeader(RegistryService.PAGE_REQUEST_ID);
+		final String requestId = req.getHeader(RuntimeService.PAGE_REQUEST_ID);
 		log.info("Page request id: " + requestId);
 		
 		if(null == requestId) {
@@ -292,7 +292,7 @@ public class UserSessionService {
 
 	public WebResponse requestId(HttpServletRequest servletRequest, HttpServletResponse servletResponse) {
 		if(validatePageRequest(servletRequest)) {
-			 String requestId = servletRequest.getHeader(RegistryService.PAGE_REQUEST_ID);
+			 String requestId = servletRequest.getHeader(RuntimeService.PAGE_REQUEST_ID);
 			 
 			 if(hasSession(servletRequest)) {
 				 servletResponse.addHeader(HEADER_LOGIN_KEY,servletRequest.getHeader(HEADER_LOGIN_KEY));
