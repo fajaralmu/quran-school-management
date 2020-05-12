@@ -34,7 +34,7 @@
 <%-- </c:if> --%>
 <!-- CONTENT -->
 <div class="content">
-	<h2>${entityProperty.entityName.toUpperCase()}-Management</h2>
+	<h2>${entityProperty.entityName.toUpperCase()}-MANAGEMENT</h2>
 	<p></p>
 	<c:if test="${entityProperty.editable == true }">
 		<button type="btn-show-form" class="btn btn-primary"

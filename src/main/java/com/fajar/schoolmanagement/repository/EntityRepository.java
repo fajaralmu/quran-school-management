@@ -23,6 +23,7 @@ import com.fajar.schoolmanagement.entity.BaseEntity;
 import com.fajar.schoolmanagement.entity.Capital;
 import com.fajar.schoolmanagement.entity.CapitalFlow;
 import com.fajar.schoolmanagement.entity.CashBalance;
+import com.fajar.schoolmanagement.entity.Cost;
 import com.fajar.schoolmanagement.entity.CostFlow;
 import com.fajar.schoolmanagement.entity.Menu;
 import com.fajar.schoolmanagement.entity.Page;
@@ -133,7 +134,7 @@ public class EntityRepository {
 //		entityConfiguration.put("customervoucher", config("customervoucher", CustomerVoucher.class, commonUpdateService));
 //		entityConfiguration.put("userrole", config("userrole", UserRole.class, commonUpdateService));
 		put(Capital.class, commonUpdateService);
-		put(Page.class, commonUpdateService);
+		put(Cost.class, commonUpdateService);
 		put(Page.class, commonUpdateService);
 		put(StudentParent.class, commonUpdateService); 
 		
