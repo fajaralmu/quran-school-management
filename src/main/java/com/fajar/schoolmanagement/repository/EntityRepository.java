@@ -23,7 +23,6 @@ import com.fajar.schoolmanagement.entity.BaseEntity;
 import com.fajar.schoolmanagement.entity.Capital;
 import com.fajar.schoolmanagement.entity.CapitalFlow;
 import com.fajar.schoolmanagement.entity.CashBalance;
-import com.fajar.schoolmanagement.entity.Cost;
 import com.fajar.schoolmanagement.entity.CostFlow;
 import com.fajar.schoolmanagement.entity.Menu;
 import com.fajar.schoolmanagement.entity.Page;

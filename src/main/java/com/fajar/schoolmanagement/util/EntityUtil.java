@@ -15,6 +15,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 
+import com.fajar.schoolmanagement.annotation.BaseField;
 import com.fajar.schoolmanagement.annotation.Dto;
 import com.fajar.schoolmanagement.annotation.FormField;
 import com.fajar.schoolmanagement.dto.FieldType;
@@ -35,6 +36,7 @@ public class EntityUtil {
 		}
 		
 		Dto dto = (Dto) clazz.getAnnotation(Dto.class);
+		final boolean ignoreBaseField = dto.ignoreBaseField();
 		
 		EntityProperty entityProperty = EntityProperty.builder().entityName(clazz.getSimpleName().toLowerCase()).build();
 		try {
@@ -48,8 +50,9 @@ public class EntityUtil {
 			for (Field field : fieldList) {
 
 				FormField formField = field.getAnnotation(FormField.class);
+				BaseField baseField = field.getAnnotation(BaseField.class);
 				
-				if (formField == null) {
+				if (formField == null || (baseField != null && ignoreBaseField)) {
 					continue;
 				}
 
@@ -143,6 +146,8 @@ public class EntityUtil {
 				
 				entityElements.add(entityElement);
 			}
+			
+			entityProperty.setEditable(dto.editable());
 			entityProperty.setElementJsonList();
 			entityProperty.setElements(entityElements);
 			entityProperty.setDetailFieldName(fieldToShowDetail);

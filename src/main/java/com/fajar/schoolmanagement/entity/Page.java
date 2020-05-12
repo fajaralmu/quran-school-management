@@ -18,7 +18,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Dto(formInputColumn = FormInputColumn.ONE_COLUMN)
+@Dto(formInputColumn = FormInputColumn.ONE_COLUMN, ignoreBaseField = false)
 @Entity
 @Table(name = "page")
 @Data
@@ -37,10 +37,10 @@ public class Page extends BaseEntity implements Serializable {
 	@FormField
 	@Column(unique = true)
 	private String name;
-	@FormField(lableName = "Authorized (1 or 0)", type = FieldType.FIELD_TYPE_NUMBER)
+	@FormField(lableName = "Authorized (true:1 or false:0)", type = FieldType.FIELD_TYPE_NUMBER)
 	@Column(nullable = false)
 	private int authorized;
-	@FormField(lableName = "Is nonMenu Page(1 or 0)", type = FieldType.FIELD_TYPE_NUMBER)
+	@FormField(lableName = "Is non-menu Page(true:1 or false:0)", type = FieldType.FIELD_TYPE_NUMBER)
 	@Column(name = "is_non_menu_page")
 	private int nonMenuPage;
 	@FormField(lableName = "Link for non menu page")

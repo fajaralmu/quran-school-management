@@ -9,7 +9,10 @@ import com.fajar.schoolmanagement.entity.CostFlow;
 import com.fajar.schoolmanagement.repository.EntityRepository;
 import com.fajar.schoolmanagement.service.CashBalanceService;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Service
+@Slf4j
 public class CostFlowUpdateService extends BaseEntityUpdateService{ 
 
 	@Autowired
@@ -24,7 +27,8 @@ public class CostFlowUpdateService extends BaseEntityUpdateService{
 //		if(newRecord) {
 //			return ShopApiResponse.failed("Unable to update");
 //		}
-		BaseEntity newEntity = entityRepository.save(costFlow);
+		CostFlow newEntity = entityRepository.save(costFlow);
+		log.info("Cost Type: {}", newEntity.getCostType());
 		cashBalanceService.updateCashBalance(newEntity);
 		
 		return WebResponse.builder().entity(newEntity).build();

@@ -15,7 +15,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Dto
+@Dto(ignoreBaseField = false)
 @Entity
 @Table(name = "school_profile")
 @Data

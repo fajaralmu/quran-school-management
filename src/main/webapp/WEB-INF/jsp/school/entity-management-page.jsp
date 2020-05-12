@@ -25,12 +25,13 @@
 	
 </script> 
 
+<%-- <c:if test="${entityProperty.editable == true }"> --%>
 <!-- DETAIL ELEMENT -->
 <jsp:include page="../entity-management-component/detail-element.jsp"></jsp:include>
 
 <!-- INPUT FORM -->
 <jsp:include page="../entity-management-component/form-element.jsp"></jsp:include>
-
+<%-- </c:if> --%>
 <!-- CONTENT -->
 <div class="content">
 	<h2>${entityProperty.entityName.toUpperCase()}-Management</h2>

@@ -19,7 +19,9 @@ public class MenuUpdateService extends BaseEntityUpdateService{
 	 
 	@Override
 	public WebResponse saveEntity(BaseEntity baseEntity, boolean newRecord) {
-		Menu menu = (Menu) copyNewElement(baseEntity, newRecord);
+		Menu menu = (Menu) copyNewElement(baseEntity, newRecord); 
+		
+		
 		String base64Image = menu.getIconUrl();
 		if (base64Image != null && !base64Image.equals("")) {
 			try {
@@ -38,6 +40,11 @@ public class MenuUpdateService extends BaseEntityUpdateService{
 				}
 			}
 		}
+		
+		if(menu.getUrl().startsWith("/") == false) {
+			menu.setUrl("/"+menu.getUrl());
+		}
+		
 		Menu newMenu = menuRepository.save(menu);
 		return WebResponse.builder().entity(newMenu).build();
 	}
