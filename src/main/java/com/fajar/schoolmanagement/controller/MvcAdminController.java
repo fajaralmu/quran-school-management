@@ -42,7 +42,7 @@ public class MvcAdminController extends BaseController {
 
 	@PostConstruct
 	private void init() {
-		this.basePage = webAppConfiguration.getBasePage();
+		this.basePage = webConfigService.getBasePage();
 		LogProxyFactory.setLoggers(this);
 	}
 
@@ -58,7 +58,7 @@ public class MvcAdminController extends BaseController {
 		
 		setActivePage(request );
  
-		model.addAttribute("imagePath", webAppConfiguration.getUploadedImagePath());
+		model.addAttribute("imagePath", webConfigService.getUploadedImagePath());
 		model.addAttribute("title", "Shop::Dashboard");
 		model.addAttribute("pageUrl", "school/home-page");
 		model.addAttribute("page", "dashboard");

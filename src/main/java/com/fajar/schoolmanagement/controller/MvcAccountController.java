@@ -28,7 +28,7 @@ public class MvcAccountController extends BaseController {
 
 	@PostConstruct
 	private void init() {
-		this.basePage = webAppConfiguration.getBasePage();
+		this.basePage = webConfigService.getBasePage();
 		LogProxyFactory.setLoggers(this);
 	}
 

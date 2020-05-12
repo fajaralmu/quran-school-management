@@ -53,7 +53,7 @@ public class MvcManagementController extends BaseController {
 
 	@PostConstruct
 	private void init() {
-		basePage = webAppConfiguration.getBasePage();
+		basePage = webConfigService.getBasePage();
 		LogProxyFactory.setLoggers(this);
 	}
 
@@ -90,7 +90,7 @@ public class MvcManagementController extends BaseController {
 
 		model = constructCommonModel(request, entityProperty, model, "shopProfile", "management");
 		// override singleObject
-		model.addAttribute("entityId", webAppConfiguration.getProfile().getId());
+		model.addAttribute("entityId", webConfigService.getProfile().getId());
 		model.addAttribute("singleRecord", true);
 		return basePage;
 	}

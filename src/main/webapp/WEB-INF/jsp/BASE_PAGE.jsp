@@ -63,13 +63,13 @@
 	<div id="loading-div"></div>
 	
 	<div class="container">
-		<div class="title-header" style="color:${shopProfile.fontColor}">
+		<div class="title-header" style="color:${profile.fontColor}">
 			<div class="centered-align">
-				<img  width="90" height="90" src="${host}/${contextPath}/${imagePath}/${shopProfile.iconUrl }"/>
+				<img  width="90" height="90" src="${host}/${contextPath}/${imagePath}/${profile.iconUrl }"/>
 			</div>
 			<div >
-				<h1>${shopProfile.name } </h1>
-				<p>${shopProfile.shortDescription }</p>
+				<h1>${profile.name } </h1>
+				<p>${profile.shortDescription }</p>
 			</div>
 			
 		</div>

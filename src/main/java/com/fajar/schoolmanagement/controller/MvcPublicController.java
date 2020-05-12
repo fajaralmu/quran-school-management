@@ -28,7 +28,7 @@ public class MvcPublicController extends BaseController{
 	
 	@PostConstruct
 	public void init() {
-		basePage = webAppConfiguration.getBasePage();
+		basePage = webConfigService.getBasePage();
 		LogProxyFactory.setLoggers(this);
 	}
 

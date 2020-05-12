@@ -34,7 +34,7 @@ public class BaseController {
 	protected String basePage;
 	
 	@Autowired
-	protected WebConfigService webAppConfiguration;
+	protected WebConfigService webConfigService;
 	@Autowired
 	protected UserSessionService userSessionService;
 	@Autowired
@@ -48,10 +48,10 @@ public class BaseController {
  
 
 
-	@ModelAttribute("shopProfile")
+	@ModelAttribute("profile")
 	public Profile getProfile(HttpServletRequest request) {
 //		System.out.println("Has Session: "+userSessionService.hasSession(request, false));
-		return webAppConfiguration.getProfile();
+		return webConfigService.getProfile();
 	}
 	
 	@ModelAttribute("timeGreeting")
@@ -85,7 +85,7 @@ public class BaseController {
 	
 	@ModelAttribute("imagePath")
 	public String getUploadedImagePath(HttpServletRequest request) {
-		return webAppConfiguration.getUploadedImagePath();
+		return webConfigService.getUploadedImagePath();
 	}
 	
 	@ModelAttribute("currentYear")
