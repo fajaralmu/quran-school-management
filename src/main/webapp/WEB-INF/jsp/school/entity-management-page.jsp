@@ -195,6 +195,11 @@
 	}
 	
 	function printExcel(){
+		var confirmed = confirm("Do you want to download excel file?");
+		if(!confirmed){
+			return;
+		}
+		
 		var requestObject = buildRequestObject(this.page); 
 		
 		var limit = prompt("input row count", this.limit);
