@@ -203,6 +203,11 @@
 		var requestObject = buildRequestObject(this.page); 
 		
 		var limit = prompt("input row count", this.limit);
+		
+		if(limit == null){
+			return;
+		}
+		
 		requestObject.filter.limit = limit;
 		
 		postReq("<spring:url value="/api/report/entity" />" ,
