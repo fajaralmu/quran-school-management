@@ -39,8 +39,6 @@ import com.fajar.schoolmanagement.service.entity.CommonUpdateService;
 import com.fajar.schoolmanagement.service.entity.CostFlowUpdateService;
 import com.fajar.schoolmanagement.service.entity.MenuUpdateService;
 import com.fajar.schoolmanagement.service.entity.ProfileUpdateService;
-import com.fajar.schoolmanagement.service.entity.StudentUpdateService;
-import com.fajar.schoolmanagement.service.entity.TeacherUpdateService;
 import com.fajar.schoolmanagement.service.entity.UserUpdateService;
 
 import lombok.AccessLevel;
@@ -97,10 +95,9 @@ public class EntityRepository {
 	private UserUpdateService userUpdateService;
 	@Autowired
 	private ProfileUpdateService schoolProfileUpdateService;
-	@Autowired
-	private StudentUpdateService studentUpdateService;
-	@Autowired
-	private TeacherUpdateService teacherUpdateService;
+//	@Autowired
+//	private StudentUpdateService studentUpdateService;
+ 
 	@Autowired
 	private CostFlowUpdateService costFlowUpdateService;
 	@Autowired
@@ -135,8 +132,8 @@ public class EntityRepository {
 		/**
 		 * special
 		 */
-		put(Student.class, studentUpdateService) ;
-		put(Teacher.class, teacherUpdateService) ;  
+		put(Student.class, commonUpdateService) ;
+		put(Teacher.class, commonUpdateService) ;  
 		put( User.class, userUpdateService) ;
 		put( Menu.class, menuUpdateService);
 		put(Profile.class, schoolProfileUpdateService);
@@ -264,6 +261,22 @@ public class EntityRepository {
 			}
 		}
 
+		return null;
+	}
+	
+	/**
+	 * find by id
+	 * @param clazz
+	 * @param ID
+	 * @return
+	 */
+	public Object findById(Class<? extends BaseEntity> clazz, Object ID) {
+		JpaRepository repository = findRepo(clazz);
+		
+		Optional result = repository.findById(ID);
+		if(result.isPresent()) {
+			return result.get();
+		}
 		return null;
 	}
 

@@ -21,7 +21,6 @@ public class MenuUpdateService extends BaseEntityUpdateService{
 	public WebResponse saveEntity(BaseEntity baseEntity, boolean newRecord) {
 		Menu menu = (Menu) copyNewElement(baseEntity, newRecord); 
 		
-		
 		String base64Image = menu.getIconUrl();
 		if (base64Image != null && !base64Image.equals("")) {
 			try {
