@@ -214,6 +214,11 @@ public class EntityUtil {
 		return null;
 	}
 
+	/**
+	 * get fields of a class, accessible true
+	 * @param clazz
+	 * @return
+	 */
 	public static List<Field> getDeclaredFields(Class clazz) {
 		Field[] baseField = clazz.getDeclaredFields();
 
@@ -221,6 +226,7 @@ public class EntityUtil {
 		List<Field> fieldList = new ArrayList<>();
 
 		for (Field field : baseField) {
+			field.setAccessible(true);
 			fieldList.add(field);
 		}
 		if (clazz.getSuperclass() != null) {
@@ -228,6 +234,7 @@ public class EntityUtil {
 			Field[] parentFields = clazz.getSuperclass().getDeclaredFields();
 
 			for (Field field : parentFields) {
+				field.setAccessible(true);
 				fieldList.add(field);
 			}
 

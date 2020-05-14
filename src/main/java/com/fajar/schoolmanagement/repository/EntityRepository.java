@@ -64,13 +64,13 @@ public class EntityRepository {
 	@Autowired
 	private ProfileRepository shopProfileRepository;
 	@Autowired
-	private RegisteredRequestRepository registeredRequestRepository; 
+	private RegisteredRequestRepository registeredRequestRepository;
 	@Autowired
-	private MenuRepository menuRepository; 
+	private MenuRepository menuRepository;
 	@Autowired
 	private UserRepository userRepository;
 	@Autowired
-	private UserRoleRepository userRoleRepository; 
+	private UserRoleRepository userRoleRepository;
 	@Autowired
 	private PageRepository pageRepository;
 	@Autowired
@@ -81,12 +81,11 @@ public class EntityRepository {
 	private CapitalRepository CapitalRepository;
 	@Autowired
 	private CapitalFlowRepository CapitalFlowRepository;
-	
+
 	/**
 	 * end jpaRepositories
 	 */
-	
-	
+
 	@Autowired
 	private CommonUpdateService commonUpdateService;
 	@Autowired
@@ -94,17 +93,12 @@ public class EntityRepository {
 	@Autowired
 	private UserUpdateService userUpdateService;
 	@Autowired
-	private ProfileUpdateService schoolProfileUpdateService;
-//	@Autowired
-//	private StudentUpdateService studentUpdateService;
- 
-	@Autowired
 	private CostFlowUpdateService costFlowUpdateService;
 	@Autowired
 	private CapitalFlowUpdateService capitalUpdateService;
 	@Autowired
 	private BaseEntityUpdateService baseEntityUpdateService;
-	
+
 	@PersistenceContext
 	private EntityManager entityManager;
 
@@ -112,50 +106,53 @@ public class EntityRepository {
 	@Getter(value = AccessLevel.NONE)
 	private final Map<String, EntityManagementConfig> entityConfiguration = new HashMap<String, EntityManagementConfig>();
 
-	private void put(Class<? extends BaseEntity> _class , BaseEntityUpdateService updateService) {
+	private void put(Class<? extends BaseEntity> _class, BaseEntityUpdateService updateService) {
 		String key = _class.getSimpleName().toLowerCase();
-		entityConfiguration.put(key, config( key, _class, updateService));
+		entityConfiguration.put(key, config(key, _class, updateService));
 	}
-	
+
+
+	private void toCommonUpdateService(Class<? extends BaseEntity>... classes) {
+		for (int i = 0; i < classes.length; i++) {
+			put(classes[i], commonUpdateService);
+		}
+	}
+
 	@PostConstruct
 	public void init() {
 		entityConfiguration.clear();
-		
+
 		/**
 		 * commons
-		 */ 
-		put(Capital.class, commonUpdateService);
-		put(Cost.class, commonUpdateService);
-		put(Page.class, commonUpdateService);
-		put(StudentParent.class, commonUpdateService); 
-		
+		 */
+		toCommonUpdateService(Capital.class, Cost.class, Page.class, StudentParent.class, Student.class, Teacher.class,
+				Profile.class);
+
 		/**
 		 * special
 		 */
-		put(Student.class, commonUpdateService) ;
-		put(Teacher.class, commonUpdateService) ;  
-		put( User.class, userUpdateService) ;
-		put( Menu.class, menuUpdateService);
-		put(Profile.class, schoolProfileUpdateService);
+		put(User.class, userUpdateService);
+		put(Menu.class, menuUpdateService);
 		put(CostFlow.class, costFlowUpdateService);
 		put(CapitalFlow.class, capitalUpdateService);
 		/**
 		 * unable to update
 		 */
-		put(CashBalance.class, baseEntityUpdateService); 
+		put(CashBalance.class, baseEntityUpdateService);
 	}
-	
+
 	public EntityManagementConfig getConfig(String key) {
 		return entityConfiguration.get(key);
 	}
 
 	private EntityManagementConfig config(String object, Class<? extends BaseEntity> class1,
-			BaseEntityUpdateService commonUpdateService2) { 
+			BaseEntityUpdateService commonUpdateService2) {
 		return new EntityManagementConfig(object, class1, commonUpdateService2);
 	}
 
 	/**
 	 * save entity
+	 * 
 	 * @param <T>
 	 * @param baseEntity
 	 * @return
@@ -170,7 +167,7 @@ public class EntityRepository {
 			throw new InvalidParameterException("JOIN COLUMN INVALID");
 		}
 
-		try { 
+		try {
 			JpaRepository repository = findRepo(baseEntity.getClass());
 			log.info("found repo: " + repository);
 			return (T) repository.save(baseEntity);
@@ -233,6 +230,7 @@ public class EntityRepository {
 
 	/**
 	 * find suitable repository (declared in this class) for given entity object
+	 * 
 	 * @param entityClass
 	 * @return
 	 */
@@ -263,18 +261,19 @@ public class EntityRepository {
 
 		return null;
 	}
-	
+
 	/**
 	 * find by id
+	 * 
 	 * @param clazz
 	 * @param ID
 	 * @return
 	 */
 	public Object findById(Class<? extends BaseEntity> clazz, Object ID) {
 		JpaRepository repository = findRepo(clazz);
-		
+
 		Optional result = repository.findById(ID);
-		if(result.isPresent()) {
+		if (result.isPresent()) {
 			return result.get();
 		}
 		return null;
@@ -282,6 +281,7 @@ public class EntityRepository {
 
 	/**
 	 * find all entity
+	 * 
 	 * @param clazz
 	 * @return
 	 */
@@ -322,6 +322,7 @@ public class EntityRepository {
 
 	/**
 	 * delete entity by id
+	 * 
 	 * @param id
 	 * @param class1
 	 * @return
@@ -341,8 +342,8 @@ public class EntityRepository {
 		}
 	}
 
-	public EntityManagementConfig getConfiguration(String key) {  
-		return  this.entityConfiguration.get(key);
+	public EntityManagementConfig getConfiguration(String key) {
+		return this.entityConfiguration.get(key);
 	}
 
 }

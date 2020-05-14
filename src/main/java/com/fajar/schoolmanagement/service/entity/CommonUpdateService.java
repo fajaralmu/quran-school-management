@@ -45,8 +45,8 @@ public class CommonUpdateService extends BaseEntityUpdateService{
 		
 		List<Field> fields = EntityUtil.getDeclaredFields(entity.getClass());
 		for (int i = 0; i < fields.size(); i++) {
-			Field field = fields.get(i);
-			field.setAccessible(true);
+			Field field = fields.get(i); 
+			
 			try {
 			 
 				FormField formfield = field.getAnnotation(FormField.class);
