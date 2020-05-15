@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 import com.fajar.schoolmanagement.entity.BaseEntity;
 import com.fajar.schoolmanagement.service.entity.BaseEntityUpdateService;
-import com.fajar.schoolmanagement.service.entity.EntityUpdate;
+import com.fajar.schoolmanagement.service.entity.EntityUpdateInterceptor;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -24,9 +24,9 @@ public class EntityManagementConfig implements Serializable {
 	private Class<? extends BaseEntity> entityClass;
 	private BaseEntityUpdateService entityUpdateService;
 	private String fieldName;
-	private EntityUpdate updateInterceptor;
+	private EntityUpdateInterceptor updateInterceptor;
 
-	public EntityManagementConfig(String fieldName, Class<? extends BaseEntity> entityClass, BaseEntityUpdateService service, EntityUpdate updateInterceptor) {
+	public EntityManagementConfig(String fieldName, Class<? extends BaseEntity> entityClass, BaseEntityUpdateService service, EntityUpdateInterceptor updateInterceptor) {
 		this.entityClass = entityClass; 
 		this.entityUpdateService = service;
 		if(null == fieldName) {

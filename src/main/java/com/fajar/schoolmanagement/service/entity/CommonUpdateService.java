@@ -23,24 +23,27 @@ public class CommonUpdateService extends BaseEntityUpdateService{
 	protected EntityRepository entityRepository;
 	
 	@Override
-	public WebResponse saveEntity(BaseEntity entity, boolean newRecord, EntityUpdate updateInterceptor) {
+	public WebResponse saveEntity(BaseEntity entity, boolean newRecord, EntityUpdateInterceptor updateInterceptor) {
 		log.info("saving entity: {}", entity.getClass());
 		entity = (BaseEntity) copyNewElement(entity, newRecord);
 		try {
 			validateEntityFields(entity, newRecord);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
+
+			log.error("Error validating entity");
 			e.printStackTrace();
+			
 		}
 		
-		if(null != updateInterceptor) {
-			log.info("Pre Update");
+		if(null != updateInterceptor && null != entity) {
+			log.info("Pre Update {}",entity.getClass().getSimpleName());
 			try {
 				updateInterceptor.preUpdate(entity);
+				log.info("success pre update");
 			}catch (Exception e) {
-				// TODO: handle exception
-				e.printStackTrace();
+
 				log.error("Error pre update entity");
+				e.printStackTrace();
 			}
 		}
 		
@@ -48,6 +51,11 @@ public class CommonUpdateService extends BaseEntityUpdateService{
 		return WebResponse.builder().entity(newEntity).build();
 	}
 	
+	/**
+	 * validate object properties' value
+	 * @param entity
+	 * @param newRecord
+	 */
 	private void validateEntityFields(BaseEntity entity, boolean newRecord)  {
 		log.info("validating entity: {} newRecord: {}", entity.getClass(), newRecord);
 		BaseEntity existingEntity = null;
@@ -89,7 +97,13 @@ public class CommonUpdateService extends BaseEntityUpdateService{
 			}
 		}
 	}
-	
+
+	/**
+	 * update image field, writing to disc
+	 * @param field
+	 * @param object
+	 * @return
+	 */
 	private String updateImage(Field field, BaseEntity object) { 
 		try {
 			Object base64Value = field.get(object);
@@ -100,10 +114,10 @@ public class CommonUpdateService extends BaseEntityUpdateService{
 			}
 			
 		} catch (IllegalArgumentException | IllegalAccessException e) {
-			// TODO Auto-generated catch block
+
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+
 			e.printStackTrace();
 		}
 		return null;

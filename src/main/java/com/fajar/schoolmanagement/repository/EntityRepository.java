@@ -37,7 +37,7 @@ import com.fajar.schoolmanagement.service.entity.BaseEntityUpdateService;
 import com.fajar.schoolmanagement.service.entity.CapitalFlowUpdateService;
 import com.fajar.schoolmanagement.service.entity.CommonUpdateService;
 import com.fajar.schoolmanagement.service.entity.CostFlowUpdateService;
-import com.fajar.schoolmanagement.service.entity.EntityUpdate;
+import com.fajar.schoolmanagement.service.entity.EntityUpdateInterceptor;
 import com.fajar.schoolmanagement.service.entity.UserUpdateService;
 
 import lombok.AccessLevel;
@@ -86,7 +86,7 @@ public class EntityRepository {
 	 */
 
 	@Autowired
-	private CommonUpdateService commonUpdateService; 
+	private CommonUpdateService commonUpdateService;
 	@Autowired
 	private UserUpdateService userUpdateService;
 	@Autowired
@@ -103,27 +103,38 @@ public class EntityRepository {
 	@Getter(value = AccessLevel.NONE)
 	private final Map<String, EntityManagementConfig> entityConfiguration = new HashMap<String, EntityManagementConfig>();
 
-	private void put(Class<? extends BaseEntity> _class, BaseEntityUpdateService updateService, EntityUpdate updateInterceptor) {
+	/**
+	 * put configuration to entityConfiguration map
+	 * @param _class
+	 * @param updateService
+	 * @param updateInterceptor
+	 */
+	private void putConfig(Class<? extends BaseEntity> _class, BaseEntityUpdateService updateService,
+			EntityUpdateInterceptor updateInterceptor) {
 		String key = _class.getSimpleName().toLowerCase();
 		entityConfiguration.put(key, config(key, _class, updateService, updateInterceptor));
 	}
-	
-	private void put(Class<? extends BaseEntity> class1, BaseEntityUpdateService commonUpdateService2) {
-		put(class1, commonUpdateService2, null);
-		
+
+	/**
+	 * put configuration to entityConfiguration without entityUpdateInterceptor
+	 * @param class1
+	 * @param commonUpdateService2
+	 */
+	private void putConfig(Class<? extends BaseEntity> class1, BaseEntityUpdateService commonUpdateService2) {
+		putConfig(class1, commonUpdateService2, null);
+
 	}
 
 	/**
 	 * set update service to commonUpdateService and NO update interceptor
+	 * 
 	 * @param classes
 	 */
 	private void toCommonUpdateService(Class<? extends BaseEntity>... classes) {
 		for (int i = 0; i < classes.length; i++) {
-			put(classes[i], commonUpdateService);
+			putConfig(classes[i], commonUpdateService);
 		}
 	}
-
-	
 
 	@PostConstruct
 	public void init() {
@@ -138,35 +149,35 @@ public class EntityRepository {
 		/**
 		 * special
 		 */
-		put(User.class, userUpdateService);
-		put(Menu.class, commonUpdateService, menuInterceptor());
-		put(CostFlow.class, costFlowUpdateService);
-		put(CapitalFlow.class, capitalUpdateService);
+		putConfig(User.class, userUpdateService);
+		putConfig(Menu.class, commonUpdateService, EntityUpdateInterceptor.menuInterceptor());
+		putConfig(CostFlow.class, costFlowUpdateService);
+		putConfig(CapitalFlow.class, capitalUpdateService);
 		/**
 		 * unable to update
 		 */
-		put(CashBalance.class, baseEntityUpdateService);
+		putConfig(CashBalance.class, baseEntityUpdateService);
 	}
 
-	private EntityUpdate menuInterceptor() { 
-		return new EntityUpdate() {
-			
-			@Override
-			public void preUpdate(BaseEntity baseEntity) { 
-				Menu menu = (Menu) baseEntity;
-				if(menu.getUrl().startsWith("/") == false) {
-					menu.setUrl("/"+menu.getUrl());
-				}
-			}
-		};
+	/**
+	 * get entity configuration from map by entity code
+	 * @param key
+	 * @return
+	 */
+	public EntityManagementConfig getConfig(String entityCode) {
+		return entityConfiguration.get(entityCode);
 	}
 
-	public EntityManagementConfig getConfig(String key) {
-		return entityConfiguration.get(key);
-	}
-
+	/**
+	 * construct EntityManagementConfig object
+	 * @param object
+	 * @param class1
+	 * @param commonUpdateService2
+	 * @param updateInterceptor
+	 * @return
+	 */
 	private EntityManagementConfig config(String object, Class<? extends BaseEntity> class1,
-			BaseEntityUpdateService commonUpdateService2, EntityUpdate updateInterceptor) {
+			BaseEntityUpdateService commonUpdateService2, EntityUpdateInterceptor updateInterceptor) {
 		return new EntityManagementConfig(object, class1, commonUpdateService2, updateInterceptor);
 	}
 
