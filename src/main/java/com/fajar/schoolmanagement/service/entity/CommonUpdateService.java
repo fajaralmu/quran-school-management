@@ -23,7 +23,7 @@ public class CommonUpdateService extends BaseEntityUpdateService{
 	protected EntityRepository entityRepository;
 	
 	@Override
-	public WebResponse saveEntity(BaseEntity entity, boolean newRecord) {
+	public WebResponse saveEntity(BaseEntity entity, boolean newRecord, EntityUpdate updateInterceptor) {
 		log.info("saving entity: {}", entity.getClass());
 		entity = (BaseEntity) copyNewElement(entity, newRecord);
 		try {
@@ -32,6 +32,18 @@ public class CommonUpdateService extends BaseEntityUpdateService{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+		if(null != updateInterceptor) {
+			log.info("Pre Update");
+			try {
+				updateInterceptor.preUpdate(entity);
+			}catch (Exception e) {
+				// TODO: handle exception
+				e.printStackTrace();
+				log.error("Error pre update entity");
+			}
+		}
+		
 		BaseEntity newEntity = entityRepository.save(entity);
 		return WebResponse.builder().entity(newEntity).build();
 	}

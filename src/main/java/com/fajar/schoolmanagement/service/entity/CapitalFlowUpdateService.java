@@ -21,7 +21,7 @@ public class CapitalFlowUpdateService extends BaseEntityUpdateService{
 	private CashBalanceService cashBalanceService;
 	
 	@Override
-	public WebResponse saveEntity(BaseEntity entity, boolean newRecord) {
+	public WebResponse saveEntity(BaseEntity entity, boolean newRecord, EntityUpdate updateInterceptor) {
 		CapitalFlow capital = (CapitalFlow) copyNewElement(entity, newRecord);
 		
 //		if(newRecord) {

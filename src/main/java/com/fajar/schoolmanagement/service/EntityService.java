@@ -60,8 +60,9 @@ public class EntityService {
 		try {
 			
 			final String key = request.getEntity().toLowerCase();
-			BaseEntityUpdateService updateService = getEntityManagementConfig(key).getEntityUpdateService();
-			String fieldName = getEntityManagementConfig(key).getFieldName();
+			EntityManagementConfig entityConfig = getEntityManagementConfig(key);
+			BaseEntityUpdateService updateService = entityConfig.getEntityUpdateService();
+			String fieldName = entityConfig.getFieldName();
 			Object entityValue = null;
 			
 			try {
@@ -77,7 +78,7 @@ public class EntityService {
 			} 
 			
 			if(entityValue != null)
-				return updateService.saveEntity((BaseEntity)entityValue, newRecord);
+				return updateService.saveEntity((BaseEntity)entityValue, newRecord, entityConfig.getUpdateInterceptor());
 			
 		}catch (Exception e) { 
 			e.printStackTrace();

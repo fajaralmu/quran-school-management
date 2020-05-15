@@ -37,8 +37,7 @@ import com.fajar.schoolmanagement.service.entity.BaseEntityUpdateService;
 import com.fajar.schoolmanagement.service.entity.CapitalFlowUpdateService;
 import com.fajar.schoolmanagement.service.entity.CommonUpdateService;
 import com.fajar.schoolmanagement.service.entity.CostFlowUpdateService;
-import com.fajar.schoolmanagement.service.entity.MenuUpdateService;
-import com.fajar.schoolmanagement.service.entity.ProfileUpdateService;
+import com.fajar.schoolmanagement.service.entity.EntityUpdate;
 import com.fajar.schoolmanagement.service.entity.UserUpdateService;
 
 import lombok.AccessLevel;
@@ -87,9 +86,7 @@ public class EntityRepository {
 	 */
 
 	@Autowired
-	private CommonUpdateService commonUpdateService;
-	@Autowired
-	private MenuUpdateService menuUpdateService;
+	private CommonUpdateService commonUpdateService; 
 	@Autowired
 	private UserUpdateService userUpdateService;
 	@Autowired
@@ -106,17 +103,27 @@ public class EntityRepository {
 	@Getter(value = AccessLevel.NONE)
 	private final Map<String, EntityManagementConfig> entityConfiguration = new HashMap<String, EntityManagementConfig>();
 
-	private void put(Class<? extends BaseEntity> _class, BaseEntityUpdateService updateService) {
+	private void put(Class<? extends BaseEntity> _class, BaseEntityUpdateService updateService, EntityUpdate updateInterceptor) {
 		String key = _class.getSimpleName().toLowerCase();
-		entityConfiguration.put(key, config(key, _class, updateService));
+		entityConfiguration.put(key, config(key, _class, updateService, updateInterceptor));
+	}
+	
+	private void put(Class<? extends BaseEntity> class1, BaseEntityUpdateService commonUpdateService2) {
+		put(class1, commonUpdateService2, null);
+		
 	}
 
-
+	/**
+	 * set update service to commonUpdateService and NO update interceptor
+	 * @param classes
+	 */
 	private void toCommonUpdateService(Class<? extends BaseEntity>... classes) {
 		for (int i = 0; i < classes.length; i++) {
 			put(classes[i], commonUpdateService);
 		}
 	}
+
+	
 
 	@PostConstruct
 	public void init() {
@@ -132,7 +139,7 @@ public class EntityRepository {
 		 * special
 		 */
 		put(User.class, userUpdateService);
-		put(Menu.class, menuUpdateService);
+		put(Menu.class, commonUpdateService, menuInterceptor());
 		put(CostFlow.class, costFlowUpdateService);
 		put(CapitalFlow.class, capitalUpdateService);
 		/**
@@ -141,13 +148,26 @@ public class EntityRepository {
 		put(CashBalance.class, baseEntityUpdateService);
 	}
 
+	private EntityUpdate menuInterceptor() { 
+		return new EntityUpdate() {
+			
+			@Override
+			public void preUpdate(BaseEntity baseEntity) { 
+				Menu menu = (Menu) baseEntity;
+				if(menu.getUrl().startsWith("/") == false) {
+					menu.setUrl("/"+menu.getUrl());
+				}
+			}
+		};
+	}
+
 	public EntityManagementConfig getConfig(String key) {
 		return entityConfiguration.get(key);
 	}
 
 	private EntityManagementConfig config(String object, Class<? extends BaseEntity> class1,
-			BaseEntityUpdateService commonUpdateService2) {
-		return new EntityManagementConfig(object, class1, commonUpdateService2);
+			BaseEntityUpdateService commonUpdateService2, EntityUpdate updateInterceptor) {
+		return new EntityManagementConfig(object, class1, commonUpdateService2, updateInterceptor);
 	}
 
 	/**
