@@ -1,5 +1,6 @@
 package com.fajar.schoolmanagement.service;
 
+import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.math.BigInteger;
 import java.util.HashMap;
@@ -25,6 +26,10 @@ import com.fajar.schoolmanagement.service.entity.BaseEntityUpdateService;
 import com.fajar.schoolmanagement.util.EntityUtil;
 import com.fajar.schoolmanagement.util.QueryUtil;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Service
@@ -118,20 +123,12 @@ public class EntityService {
 			/**
 			 * Generate query string
 			 */
-			String[] sqlListAndCount = QueryUtil.generateSqlByFilter(filter, entityClass);
-
-			String sql = sqlListAndCount[0];
-			String sqlCount = sqlListAndCount[1];
-
-			List<BaseEntity> entities = repositoryCustom.filterAndSort(sql, entityClass);
- 
-			Object countResult = repositoryCustom.getSingleResult(sqlCount);
- 
-			int count = countResult == null? 0: ((BigInteger) countResult).intValue(); 
+			EntityResult entityResult = filterEntities(filter, entityClass); 
+			
 			
 			return WebResponse.builder().
-					entities(EntityUtil.validateDefaultValue(entities)).
-					totalData(count).
+					entities(EntityUtil.validateDefaultValue(entityResult.entities)).
+					totalData(entityResult.count).
 					filter(filter).entityClass(entityClass).
 					build();
 			
@@ -141,6 +138,23 @@ public class EntityService {
 		}
 	}  
   
+	private EntityResult filterEntities(Filter filter, Class<? extends BaseEntity> entityClass) {
+
+		String[] sqlListAndCount = QueryUtil.generateSqlByFilter(filter, entityClass);
+
+		String sql = sqlListAndCount[0];
+		String sqlCount = sqlListAndCount[1];
+
+		List<BaseEntity> entities = repositoryCustom.filterAndSort(sql, entityClass);
+
+		Object countResult = repositoryCustom.getSingleResult(sqlCount);
+
+		int count = countResult == null? 0: ((BigInteger) countResult).intValue(); 
+		
+		return EntityResult.builder().entities(entities).count(count).build();
+	}
+
+
 	/**
 	 * delete entity
 	 * @param request
@@ -173,6 +187,19 @@ public class EntityService {
 
 	public List<UserRole> getAllUserRole() {
 		return entityRepository.findAll(UserRole.class);
+	}
+	
+	@Data
+	@Builder
+	@AllArgsConstructor
+	@NoArgsConstructor
+	static class EntityResult implements Serializable{
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 7627112916142073122L;
+		List<BaseEntity> entities;
+		int count;
 	}
 //	
 //	public List<Cost> getAllCostType() {

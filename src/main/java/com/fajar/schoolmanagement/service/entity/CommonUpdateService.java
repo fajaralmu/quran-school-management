@@ -26,15 +26,16 @@ public class CommonUpdateService extends BaseEntityUpdateService{
 	public WebResponse saveEntity(BaseEntity entity, boolean newRecord, EntityUpdateInterceptor updateInterceptor) {
 		log.info("saving entity: {}", entity.getClass());
 		entity = (BaseEntity) copyNewElement(entity, newRecord);
-		try {
-			validateEntityFields(entity, newRecord);
-		} catch (Exception e) {
-
-			log.error("Error validating entity");
-			e.printStackTrace();
-			
-		}
 		
+		validateEntityFields(entity, newRecord);  
+		interceptPreUpdate(entity, updateInterceptor); 
+		BaseEntity newEntity = entityRepository.save(entity);
+		
+		return WebResponse.builder().entity(newEntity).build();
+	}
+	
+	private void interceptPreUpdate(BaseEntity entity, EntityUpdateInterceptor updateInterceptor) {
+		 
 		if(null != updateInterceptor && null != entity) {
 			log.info("Pre Update {}",entity.getClass().getSimpleName());
 			try {
@@ -46,11 +47,8 @@ public class CommonUpdateService extends BaseEntityUpdateService{
 				e.printStackTrace();
 			}
 		}
-		
-		BaseEntity newEntity = entityRepository.save(entity);
-		return WebResponse.builder().entity(newEntity).build();
 	}
-	
+
 	/**
 	 * validate object properties' value
 	 * @param entity
@@ -58,43 +56,50 @@ public class CommonUpdateService extends BaseEntityUpdateService{
 	 */
 	private void validateEntityFields(BaseEntity entity, boolean newRecord)  {
 		log.info("validating entity: {} newRecord: {}", entity.getClass(), newRecord);
-		BaseEntity existingEntity = null;
-		if(!newRecord) {
-			existingEntity = (BaseEntity)entityRepository.findById(entity.getClass(), entity.getId());
-		}
-		
-		List<Field> fields = EntityUtil.getDeclaredFields(entity.getClass());
-		for (int i = 0; i < fields.size(); i++) {
-			Field field = fields.get(i); 
+		try {
 			
-			try {
-			 
-				FormField formfield = field.getAnnotation(FormField.class);
-				if(null == formfield) {
-					continue;
-				} 
-				
-				Object fieldValue = field.get(entity);
-				
-				switch (formfield.type()) {
-				case FIELD_TYPE_IMAGE:
-					
-					if(!newRecord && fieldValue == null && existingEntity != null) {
-						Object existingImage = field.get(existingEntity);
-						field.set(entity, existingImage);
-					}else {
-						String imageName = updateImage(field, entity);
-						field.set(entity, imageName);
-					}
-					break;
-	
-				default:
-					break;
-				}
-			}catch (Exception e) {
-				log.error("Error validating field: {}", field.getName());
-				e.printStackTrace();
+			BaseEntity existingEntity = null;
+			if(!newRecord) {
+				existingEntity = (BaseEntity)entityRepository.findById(entity.getClass(), entity.getId());
 			}
+			
+			List<Field> fields = EntityUtil.getDeclaredFields(entity.getClass());
+			for (int i = 0; i < fields.size(); i++) {
+				Field field = fields.get(i); 
+				
+				try {
+				 
+					FormField formfield = field.getAnnotation(FormField.class);
+					if(null == formfield) {
+						continue;
+					} 
+					
+					Object fieldValue = field.get(entity);
+					
+					switch (formfield.type()) {
+						case FIELD_TYPE_IMAGE:
+							
+							if(!newRecord && fieldValue == null && existingEntity != null) {
+								Object existingImage = field.get(existingEntity);
+								field.set(entity, existingImage);
+							}else {
+								String imageName = updateImage(field, entity);
+								field.set(entity, imageName);
+							}
+							break;
+			
+						default:
+							break;
+					}
+				}catch (Exception e) {
+					log.error("Error validating field: {}", field.getName());
+					e.printStackTrace();
+				}
+			}
+		}catch (Exception e) {
+			// 
+			log.error("Error validating entity {}", entity.getClass().getSimpleName());
+			e.printStackTrace();
 		}
 	}
 

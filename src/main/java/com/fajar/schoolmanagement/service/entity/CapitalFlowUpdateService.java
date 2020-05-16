@@ -23,10 +23,6 @@ public class CapitalFlowUpdateService extends BaseEntityUpdateService{
 	@Override
 	public WebResponse saveEntity(BaseEntity entity, boolean newRecord, EntityUpdateInterceptor updateInterceptor) {
 		CapitalFlow capital = (CapitalFlow) copyNewElement(entity, newRecord);
-		
-//		if(newRecord) {
-//			return ShopApiResponse.failed("Unable to update!");
-//		}
 		 
 		CapitalFlow newEntity = entityRepository.save(capital); 
 		log.info("Fund Type: {}", newEntity.getFundType());

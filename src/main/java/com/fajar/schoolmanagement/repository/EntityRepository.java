@@ -225,10 +225,8 @@ public class EntityRepository {
 					continue;
 				}
 
-				BaseEntity entity = (BaseEntity) value;
-
-				JpaRepository repository = findRepo(entity.getClass());
-
+				BaseEntity entity = (BaseEntity) value; 
+				JpaRepository repository = findRepo(entity.getClass()); 
 				Optional result = repository.findById(entity.getId());
 
 				if (result.isPresent() == false) {

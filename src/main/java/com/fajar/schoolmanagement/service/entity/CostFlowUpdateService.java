@@ -23,10 +23,7 @@ public class CostFlowUpdateService extends BaseEntityUpdateService{
 	@Override
 	public WebResponse saveEntity(BaseEntity entity, boolean newRecord, EntityUpdateInterceptor updateInterceptor) {
 		CostFlow costFlow = (CostFlow) copyNewElement(entity, newRecord); 
-		
-//		if(newRecord) {
-//			return ShopApiResponse.failed("Unable to update");
-//		}
+		 
 		CostFlow newEntity = entityRepository.save(costFlow);
 		log.info("Cost Type: {}", newEntity.getCostType());
 		cashBalanceService.updateCashBalance(newEntity);
