@@ -140,10 +140,10 @@ public class EntityService {
   
 	private EntityResult filterEntities(Filter filter, Class<? extends BaseEntity> entityClass) {
 
-		String[] sqlListAndCount = QueryUtil.generateSqlByFilter(filter, entityClass);
+		QueryUtil.QueryHolder generatedQueryString = QueryUtil.generateSqlByFilter(filter, entityClass);
 
-		String sql = sqlListAndCount[0];
-		String sqlCount = sqlListAndCount[1];
+		String sql = generatedQueryString.getSqlSelect();
+		String sqlCount = generatedQueryString.getSqlSelectCount();
 
 		List<BaseEntity> entities = repositoryCustom.filterAndSort(sql, entityClass);
 

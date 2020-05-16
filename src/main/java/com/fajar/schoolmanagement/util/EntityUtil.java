@@ -118,11 +118,7 @@ public class EntityUtil {
 					Class referenceEntityClass = field.getType();
 					Field referenceEntityIdField = getIdField(referenceEntityClass);
 					
-					if(referenceEntityIdField == null) continue; 
-					
-					entityElement.setOptionValueName(referenceEntityIdField.getName());
-					entityElement.setOptionItemName(formField.optionItemName());
-					 
+					if(referenceEntityIdField == null) continue;  
 					
 					if(fieldType.equals(FIELD_TYPE_FIXED_LIST) && listObject != null) {  
 	
@@ -137,6 +133,9 @@ public class EntityUtil {
 						 
 						entityElement.setEntityReferenceClass(referenceEntityClass.getSimpleName());
 					}
+
+					entityElement.setOptionValueName(referenceEntityIdField.getName());
+					entityElement.setOptionItemName(formField.optionItemName());
 					
 				}
 				

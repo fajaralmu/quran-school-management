@@ -1,5 +1,6 @@
 package com.fajar.schoolmanagement.util;
 
+import static com.fajar.schoolmanagement.util.EntityUtil.getDeclaredField;
 import static com.fajar.schoolmanagement.util.StringUtil.*;
 
 import java.lang.reflect.Field;
@@ -16,6 +17,10 @@ import com.fajar.schoolmanagement.annotation.FormField;
 import com.fajar.schoolmanagement.dto.Filter;
 import com.fajar.schoolmanagement.entity.BaseEntity;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -49,6 +54,7 @@ public class QueryUtil {
 	private static final String SQL_KEYWORD_AND = " AND ";
 	private static final String SQL_KEYWORD_WHERE = " WHERE ";
 	private static final String SQL_KEYWORD_FROM = " from ";
+	private static final String TABLE_NAME = "table_name_key";
 	
 	public static Field getFieldByName(String name, List<Field> fields) {
 		return EntityUtil.getObjectFromListByFieldName("name", name, fields);
@@ -168,23 +174,26 @@ public class QueryUtil {
 		return stringBuilder.toString();
 	}
 
-	private static String createFilterSQL(Class entityClass, Map<String, Object> filter, boolean contains,
-			boolean exacts ) {
+	private static String createFilterSQL(Class entityClass, Map<String, Object> filter, final boolean contains,
+		 final	boolean exacts ) {
 
 		String tableName 		= getTableName(entityClass);
 		List<String> filters 	= new ArrayList<String>();
 		List<Field> fields 		= EntityUtil.getDeclaredFields(entityClass);
 
 		log.info("=======FILTER: {}", filter);
+		
+		filter.put(TABLE_NAME, tableName);
 
 		for (final String rawKey : filter.keySet()) {
 			log.info("................." + rawKey + ":" + filter.get(rawKey));
 
-			String key = rawKey;
+			
 			
 			if (filter.get(rawKey) == null)
 				continue;
 
+			String key = rawKey;
 			boolean itemExacts = exacts;
 			boolean itemContains = contains;
 
@@ -201,64 +210,23 @@ public class QueryUtil {
 
 			if (isMultiKey) {
 				key = multiKey[0];
-			}
-
-			String columnName = key;
+			} 
 			// check if date
-			boolean dayFilter 	= rawKey.endsWith(DAY_SUFFIX);
-			boolean monthFilter = rawKey.endsWith(MONTH_SUFFIX);
-			boolean yearFilter 	= rawKey.endsWith(YEAR_SUFFIX);
+			String dateFilterSql = getDateFilter(rawKey, key, fields, filter);
 
-			if (dayFilter || monthFilter || yearFilter) {
-
-				String fieldName	= key;
-				String mode 		= FILTER_DATE_DAY;
-				String sqlItem 		= SQL_RAW_DATE_FILTER;
-				
-				if (dayFilter) {
-					fieldName 	= key.replace(DAY_SUFFIX, "");
-					mode 		= FILTER_DATE_DAY;
-
-				} else if (monthFilter) {
-					fieldName 	= key.replace(MONTH_SUFFIX, "");
-					mode 		= FILTER_DATE_MON1TH;
-
-				} else if (yearFilter) {
-					fieldName	= key.replace(YEAR_SUFFIX, "");
-					mode 		= FILTER_DATE_YEAR;
-
-				}
-
-				Field field = getFieldByName(fieldName, fields);
-
-				if (field == null) {
-					log.warn("FIELD NOT FOUND: " + fieldName + " !");
-					continue;
-
-				}
-
-				columnName = getColumnName(field);
-				sqlItem = sqlItem
-						.replace(PLACEHOLDER_SQL_TABLE_NAME, tableName)
-						.replace(PLACEHOLDER_SQL_MODE, mode)
-						.replace(PLACEHOLDER_SQL_COLUMN_NAME, columnName)
-						.replace(PLACEHOLDER_SQL_VALUE, filter.get(key).toString()); 
-				
-				filters.add(sqlItem);
+			if(null != dateFilterSql) {
+				filters.add(dateFilterSql);
 				continue;
 			}
-
+			
 			Field field = getFieldByName(key, fields);
 
 			if (field == null) {
 				log.warn("Field Not Found :" + key + " !");
-				continue;
-
+				continue; 
 			}
-			if (field.getAnnotation(Column.class) != null) {
-				columnName = getColumnName(field);
-
-			}
+			
+			String columnName = getColumnName(field); 
 
 			StringBuilder sqlItem = new StringBuilder(); 
 
@@ -275,7 +243,7 @@ public class QueryUtil {
 						referenceFieldName = multiKey[1];
 					}
 
-					Field 	fieldField 		= EntityUtil.getDeclaredField(fieldClass, referenceFieldName);
+					Field 	fieldField 		= getDeclaredField(fieldClass, referenceFieldName);
 					String 	fieldColumnName = getColumnName(fieldField);
 
 					if (fieldColumnName == null || fieldColumnName.equals("")) {
@@ -353,6 +321,59 @@ public class QueryUtil {
 		return result.concat(filters.size() > 0 ? SQL_KEYWORD_AND : " ").concat(additionalFilter);
 	}
 
+	/**
+	 * generate date filter sql
+	 * @param rawKey
+	 * @param key
+	 * @param fields
+	 * @param filter
+	 * @return
+	 */
+	private static String getDateFilter(String rawKey, String key, List<Field > fields, Map filter) {
+		boolean dayFilter 	= rawKey.endsWith(DAY_SUFFIX);
+		boolean monthFilter = rawKey.endsWith(MONTH_SUFFIX);
+		boolean yearFilter 	= rawKey.endsWith(YEAR_SUFFIX);
+
+		if (dayFilter || monthFilter || yearFilter) {
+
+			String fieldName	= key;
+			String mode 		= FILTER_DATE_DAY;
+			String sqlItem 		= SQL_RAW_DATE_FILTER;
+			
+			if (dayFilter) {
+				fieldName 	= key.replace(DAY_SUFFIX, "");
+				mode 		= FILTER_DATE_DAY;
+
+			} else if (monthFilter) {
+				fieldName 	= key.replace(MONTH_SUFFIX, "");
+				mode 		= FILTER_DATE_MON1TH;
+
+			} else if (yearFilter) {
+				fieldName	= key.replace(YEAR_SUFFIX, "");
+				mode 		= FILTER_DATE_YEAR;
+
+			}
+
+			Field field = getFieldByName(fieldName, fields);
+
+			if (field == null) {
+				log.warn("FIELD NOT FOUND: " + fieldName + " !");
+				return null;
+
+			}
+
+			String columnName = getColumnName(field);
+			sqlItem = sqlItem
+					.replace(PLACEHOLDER_SQL_TABLE_NAME, filter.get(TABLE_NAME).toString())
+					.replace(PLACEHOLDER_SQL_MODE, mode)
+					.replace(PLACEHOLDER_SQL_COLUMN_NAME, columnName)
+					.replace(PLACEHOLDER_SQL_VALUE, filter.get(key).toString()); 
+			
+			return sqlItem;
+		}
+		return null;
+	}
+
 	public static String addFilterById(Class baseEntityClass, Class rootClass, Object id) {
 
 //		CustomEntity customEntity = EntityUtil.getClassAnnotation(baseEntityClass, CustomEntity.class);
@@ -387,7 +408,7 @@ public class QueryUtil {
 		/**
 		 * order by field
 		 */
-		Field orderByField = EntityUtil.getDeclaredField(entityClass, orderBy);
+		Field orderByField = getDeclaredField(entityClass, orderBy);
 
 		if (orderByField == null) {
 			return null;
@@ -439,7 +460,13 @@ public class QueryUtil {
 	}
 	
 	 
-	public static String[] generateSqlByFilter(Filter filter, Class<? extends BaseEntity> entityClass ) {
+	/**
+	 * generate sql Select and sql Select Count (*)
+	 * @param filter
+	 * @param entityClass
+	 * @return
+	 */
+	public static QueryHolder generateSqlByFilter(Filter filter, Class<? extends BaseEntity> entityClass ) {
 
 		log.info("CRITERIA-FILTER: {}", filter);
 		log.info("entity class: {}", entityClass);
@@ -499,12 +526,20 @@ public class QueryUtil {
 		log.info("query select: {}", sql);
 		log.info("query count: {}", sqlCount);
 		
-		return new String[] { sql, sqlCount };
+		return new QueryHolder(sql, sqlCount);
 	}
 
 	static String doubleQuoteMysql(String str) {
 		return StringUtil.doubleQuoteMysql(str);
 	}
 
+	@Data	
+	@Builder
+	@AllArgsConstructor
+	@NoArgsConstructor
+	public static class QueryHolder{
+		private String sqlSelect;
+		private String sqlSelectCount;
+	}
 
 }
