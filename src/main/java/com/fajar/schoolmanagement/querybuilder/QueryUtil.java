@@ -1,7 +1,7 @@
-package com.fajar.schoolmanagement.util;
+package com.fajar.schoolmanagement.querybuilder;
 
 import static com.fajar.schoolmanagement.util.EntityUtil.getDeclaredField;
-import static com.fajar.schoolmanagement.util.StringUtil.*;
+import static com.fajar.schoolmanagement.util.StringUtil.buildString;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -16,6 +16,8 @@ import com.fajar.schoolmanagement.annotation.CustomEntity;
 import com.fajar.schoolmanagement.annotation.FormField;
 import com.fajar.schoolmanagement.dto.Filter;
 import com.fajar.schoolmanagement.entity.BaseEntity;
+import com.fajar.schoolmanagement.util.EntityUtil;
+import com.fajar.schoolmanagement.util.StringUtil;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -174,7 +176,7 @@ public class QueryUtil {
 		return stringBuilder.toString();
 	}
 
-	private static String createFilterSQL(Class entityClass, Map<String, Object> filter,  
+	private static String createWhereClause(Class entityClass, Map<String, Object> filter,  
 		 final	boolean exacts ) {
 
 		String tableName 						= getTableName(entityClass);
@@ -284,18 +286,13 @@ public class QueryUtil {
 	}
 	
 	private static String generateQueryFilterString(List<QueryFilterItem> queryFilterItems) {
-		StringBuilder queryString = new StringBuilder();
+		List<String> listOfSqlFilter = new ArrayList<String>();
 		for (int i = 0; i < queryFilterItems.size(); i++) {
 			String sqlString = queryFilterItems.get(i).generateSqlString();
 			
-			queryString.append(sqlString);
-			
-			if(i < queryFilterItems.size() - 2) {
-				queryString.append(SQL_KEYWORD_AND);
-			}
+			listOfSqlFilter.add(sqlString); 
 		}
-		
-		return queryString.toString();
+		return String.join(SQL_KEYWORD_AND, listOfSqlFilter);
 	}
 
 	/**
@@ -315,8 +312,7 @@ public class QueryUtil {
 		if (dayFilter || monthFilter || yearFilter) {
 
 			String fieldName	= key;
-			String mode 		= FILTER_DATE_DAY;
-			String sqlItem 		= SQL_RAW_DATE_FILTER;
+			String mode 		= FILTER_DATE_DAY; 
 			
 			if (dayFilter) {
 				fieldName 	= key.replace(DAY_SUFFIX, "");
@@ -354,37 +350,8 @@ public class QueryUtil {
 			return queryItem;
 		}
 		return null;
-	}
-
-	public static String addFilterById(Class baseEntityClass, Class rootClass, Object id) {
-
-//		CustomEntity customEntity = EntityUtil.getClassAnnotation(baseEntityClass, CustomEntity.class);
-//		if (customEntity == null || customEntity.rootFilter().length == 0) {
-//
-//			return "";
-//		} 
-//
-//		try {
-//
-//			String tableName = getTableName(rootClass);
-//			Field idField = EntityUtil.getIdField(rootClass);
-//
-//			String idColumnName = getColumnName(idField);
-//
-//			String filter = doubleQuoteMysql(tableName)
-//								.concat(".")
-//								.concat(doubleQuoteMysql(idColumnName))
-//								.concat("=")
-//								.concat("'" + id + "'");
-//
-//			return filter;
-//
-//		} catch (Exception e) { 
-			return "";
-//		}
-
-	}
-
+	} 
+  
 	private static String orderSQL(Class entityClass, String orderType, String orderBy) {
 
 		/**
@@ -480,7 +447,7 @@ public class QueryUtil {
 		}
 		
 		if(withFilteredField) {
-			filterSQL = createFilterSQL(
+			filterSQL = createWhereClause(
 					entityClass, 
 					filter.getFieldsFilter(), 
 //					contains, 
@@ -515,56 +482,8 @@ public class QueryUtil {
 		return StringUtil.doubleQuoteMysql(str.toString());
 	}
 
-	@Data	
-	@Builder
-	@AllArgsConstructor
-	@NoArgsConstructor
-	public static class QueryHolder{
-		private String sqlSelect;
-		private String sqlSelectCount;
-	}
 	
-	@Data
-	@Builder
-	@AllArgsConstructor
-	@NoArgsConstructor
-	public static class QueryFilterItem{ 
-		private Object value;
-		private boolean exacts;
-		private String tableName;
-		private String columnName;
-		private String dateMode;
-		
-		private String getDoubledQuotedColumn() {
-			String fullColumnName = "";
-			if(tableName != null && !tableName.isEmpty() ) { 
-				
-				fullColumnName = StringUtil.buildTableColumnDoubleQuoted(tableName, columnName);
-			}else {
-			
-				fullColumnName = doubleQuoteMysql(columnName);
-			}
-			if(dateMode != null && !dateMode.isEmpty() ) {
-				fullColumnName = dateMode +"("+fullColumnName+")";
-			}
-			
-			return fullColumnName;
-		}
-		
-		public String generateSqlString() {
-			String key = getDoubledQuotedColumn();
-			StringBuilder sqlItem =  new StringBuilder(key);
-			if (exacts) {
-				sqlItem = sqlItem.append(" = '").append(value).append("' ");
-			}else  {
-				sqlItem = sqlItem.append(" LIKE '%").append(value).append("%' ");
-
-			}   
-			
-			log.info("Generated sql item: {}", sqlItem);
-			
-			return sqlItem.toString();
-		}
-	}
+	
+	
 
 }

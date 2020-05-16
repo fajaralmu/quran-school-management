@@ -20,11 +20,12 @@ import com.fajar.schoolmanagement.dto.WebResponse;
 import com.fajar.schoolmanagement.entity.BaseEntity;
 import com.fajar.schoolmanagement.entity.UserRole;
 import com.fajar.schoolmanagement.entity.setting.EntityManagementConfig;
+import com.fajar.schoolmanagement.querybuilder.QueryHolder;
+import com.fajar.schoolmanagement.querybuilder.QueryUtil;
 import com.fajar.schoolmanagement.repository.EntityRepository;
 import com.fajar.schoolmanagement.repository.RepositoryCustomImpl;
 import com.fajar.schoolmanagement.service.entity.BaseEntityUpdateService;
 import com.fajar.schoolmanagement.util.EntityUtil;
-import com.fajar.schoolmanagement.util.QueryUtil;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -140,7 +141,7 @@ public class EntityService {
   
 	private EntityResult filterEntities(Filter filter, Class<? extends BaseEntity> entityClass) {
 
-		QueryUtil.QueryHolder generatedQueryString = QueryUtil.generateSqlByFilter(filter, entityClass);
+		QueryHolder generatedQueryString = QueryUtil.generateSqlByFilter(filter, entityClass);
 
 		String sql = generatedQueryString.getSqlSelect();
 		String sqlCount = generatedQueryString.getSqlSelectCount();
