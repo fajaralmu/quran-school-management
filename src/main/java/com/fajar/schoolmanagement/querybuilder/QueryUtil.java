@@ -15,6 +15,7 @@ import javax.persistence.Table;
 import com.fajar.schoolmanagement.annotation.CustomEntity;
 import com.fajar.schoolmanagement.annotation.FormField;
 import com.fajar.schoolmanagement.dto.Filter;
+import com.fajar.schoolmanagement.dto.KeyValue;
 import com.fajar.schoolmanagement.entity.BaseEntity;
 import com.fajar.schoolmanagement.util.EntityUtil;
 import com.fajar.schoolmanagement.util.StringUtil;
@@ -177,7 +178,7 @@ public class QueryUtil {
 	}
 
 	private static String createWhereClause(Class entityClass, Map<String, Object> filter,  
-		 final	boolean exacts ) {
+		 final	boolean allItemExactSearch ) {
 
 		String tableName 						= getTableName(entityClass);
 		List<QueryFilterItem> sqlFilters 		= new ArrayList<QueryFilterItem>();
@@ -193,98 +194,137 @@ public class QueryUtil {
 			if (filter.get(rawKey) == null)
 				continue;
 
-			String key = rawKey;
-			boolean itemExacts = exacts; 
+			String currentKey = rawKey;
+			boolean itemExacts = allItemExactSearch; 
 			String filterTableName = tableName; 
-
-			if (rawKey.endsWith("[EXACTS]")) {
-				itemExacts 		= true; 
-				key 			= rawKey.split("\\[EXACTS\\]")[0];
-			}
-
-			log.info("Now KEY:" + key);
-
-			String[] multiKey 	= key.split(",");
-			boolean isMultiKey 	= multiKey.length > 1;
+			String finalNameAfterExactChecking = currentItemExact(rawKey);
 			
+			if(null != finalNameAfterExactChecking) {
+				currentKey = finalNameAfterExactChecking;
+				itemExacts = true;
+			}
+			
+			log.info("Raw key: {} Now KEY: {}", rawKey, currentKey); 
 			
 			QueryFilterItem queryItem = new QueryFilterItem();
 			queryItem.setExacts(itemExacts);
 
-			if (isMultiKey) {
-				key = multiKey[0];
-			} 
 			// check if date
-			QueryFilterItem dateFilterSql = getDateFilter(rawKey, key, entityDeclaredFields, filter);
+			QueryFilterItem dateFilterSql = getDateFilter(rawKey, currentKey, entityDeclaredFields, filter);
 
 			if(null != dateFilterSql) {
 				sqlFilters.add(dateFilterSql);
 				continue;
 			}
 			
-			Field field = getFieldByName(key, entityDeclaredFields);
+			Field field = getFieldByName(currentKey, entityDeclaredFields);
 
 			if (field == null) {
-				log.warn("Field Not Found :" + key + " !");
+				log.warn("Field Not Found :" + currentKey + " !");
 				continue; 
 			}
 			
-			String filterColumnName = getColumnName(field);  
-
-			if (field.getAnnotation(JoinColumn.class) != null || isMultiKey) { 
-
-				try {
-					Class fieldClass 		= field.getType();
-					String joinTableName 	= getTableName(fieldClass); 
-					String referenceFieldName = "";
-
-					if (isMultiKey) {
-						referenceFieldName = multiKey[1];
-					}else {
-						referenceFieldName = getOptionItemName(field);
-					}
-
-					Field 	referenceEntityField 	= getDeclaredField(fieldClass, referenceFieldName);
-					String 	fieldColumnName 		= getColumnName(referenceEntityField);
-
-					if (fieldColumnName == null || fieldColumnName.equals("")) {
-						fieldColumnName = key;
-					}
-					  
-					filterTableName = (joinTableName);
-					filterColumnName = (fieldColumnName);
-					
-				} catch ( Exception e) {
-					
-					log.warn(e.getClass() + " " + e.getMessage() + " " + field.getType());
-					e.printStackTrace(); 
+			String filterColumnName = getColumnName(field); 
+			KeyValue joinColumnResult = checkIfJoinColumn(currentKey, field);
+			
+			if(null != joinColumnResult) {
+				if(joinColumnResult.isValid()) {
+					filterTableName = joinColumnResult.getKey().toString();
+					filterColumnName = joinColumnResult.getValue().toString();
+				} else {
 					continue;
 				}
-
-			} else { }   
-
+			}
+			
 			queryItem.setTableName(filterTableName);
 			queryItem.setColumnName(filterColumnName);
 			queryItem.setValue(filter.get(rawKey));
 			sqlFilters.add(queryItem ); 
 		} 
+ 
+		return completeWhereClause(sqlFilters);
+		 
+	}
+	
+	private static KeyValue checkIfJoinColumn(String currentKey, Field field) {
+		String multiKeyColumnName = getMultiKeyColumnName(currentKey);
+		KeyValue keyValue = new KeyValue();
+		boolean isMultiKey 	= null != multiKeyColumnName; 
+		boolean validColumn = false;
+		
+		if (field.getAnnotation(JoinColumn.class) != null || isMultiKey) { 
 
+			try {
+				Class fieldClass 		= field.getType();
+				String joinTableName 	= getTableName(fieldClass); 
+				String referenceFieldName = "";
+
+				if (isMultiKey) {
+					referenceFieldName = multiKeyColumnName;
+				}else {
+					referenceFieldName = getOptionItemName(field);
+				}
+
+				Field 	referenceEntityField 	= getDeclaredField(fieldClass, referenceFieldName);
+				String 	fieldColumnName 		= getColumnName(referenceEntityField);
+
+				if (fieldColumnName == null || fieldColumnName.equals("")) {
+					validColumn = false;
+				}else {
+				  
+					keyValue.setKey(joinTableName);
+					keyValue.setValue(fieldColumnName);
+					validColumn = true;
+				}
+				
+			} catch ( Exception e) {
+				
+				log.warn(e.getClass() + " " + e.getMessage() + " " + field.getType());
+				e.printStackTrace(); 
+				validColumn = false;
+			}
+
+		} else { 
+			return null;
+		} 
+		
+		keyValue.setValid(validColumn);
+		return keyValue;
+	}
+
+	private static String getMultiKeyColumnName(String currentKey) {
+		String[] multiKey 	= currentKey.split(",");
+		boolean isMultiKey 	= multiKey.length == 2;
+		if (isMultiKey) {
+			return  multiKey[1]; 
+		} 
+		else {
+			return null;
+		}
+	}
+
+	private static String completeWhereClause(List<QueryFilterItem> sqlFilters) {
 		String whereClause = "";
 
 		if (sqlFilters.size() > 0) {
 			whereClause = generateQueryFilterString( sqlFilters);
-		}
+		} else {
+			return "";
+		} 
 
 		String result = SQL_KEYWORD_WHERE.concat(whereClause); 
-
-		if (sqlFilters.size() == 0) {
-			return "";
-
-		}
 		return result;
-		 
 	}
-	
+
+	private static String currentItemExact(String rawKey) { 
+		if (rawKey.endsWith("[EXACTS]")) { 
+			String finalKey = rawKey.split("\\[EXACTS\\]")[0];
+			log.info("{} exact search",finalKey);
+			return finalKey;
+		}
+		return null;
+	}
+
 	private static String getOptionItemName(Field field) {
 		FormField formField 	= field.getAnnotation(FormField.class);
 		String referenceFieldName = formField.optionItemName();
