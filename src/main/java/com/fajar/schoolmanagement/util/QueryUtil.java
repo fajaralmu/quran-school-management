@@ -174,12 +174,12 @@ public class QueryUtil {
 		return stringBuilder.toString();
 	}
 
-	private static String createFilterSQL(Class entityClass, Map<String, Object> filter, final boolean contains,
+	private static String createFilterSQL(Class entityClass, Map<String, Object> filter,  
 		 final	boolean exacts ) {
 
-		String tableName 		= getTableName(entityClass);
-		List<String> filters 	= new ArrayList<String>();
-		List<Field> fields 		= EntityUtil.getDeclaredFields(entityClass);
+		String tableName 						= getTableName(entityClass);
+		List<QueryFilterItem> sqlFilters 		= new ArrayList<QueryFilterItem>();
+		List<Field> entityDeclaredFields 		= EntityUtil.getDeclaredFields(entityClass);
 
 		log.info("=======FILTER: {}", filter);
 		
@@ -187,19 +187,15 @@ public class QueryUtil {
 
 		for (final String rawKey : filter.keySet()) {
 			log.info("................." + rawKey + ":" + filter.get(rawKey));
-
-			
 			
 			if (filter.get(rawKey) == null)
 				continue;
 
 			String key = rawKey;
-			boolean itemExacts = exacts;
-			boolean itemContains = contains;
+			boolean itemExacts = exacts; 
 
 			if (rawKey.endsWith("[EXACTS]")) {
-				itemExacts 		= true;
-				itemContains 	= false;
+				itemExacts 		= true; 
 				key 			= rawKey.split("\\[EXACTS\\]")[0];
 			}
 
@@ -207,28 +203,27 @@ public class QueryUtil {
 
 			String[] multiKey 	= key.split(",");
 			boolean isMultiKey 	= multiKey.length > 1;
+			QueryFilterItem queryItem = new QueryFilterItem();
 
 			if (isMultiKey) {
 				key = multiKey[0];
 			} 
 			// check if date
-			String dateFilterSql = getDateFilter(rawKey, key, fields, filter);
+			QueryFilterItem dateFilterSql = getDateFilter(rawKey, key, entityDeclaredFields, filter);
 
 			if(null != dateFilterSql) {
-				filters.add(dateFilterSql);
+				sqlFilters.add(dateFilterSql);
 				continue;
 			}
 			
-			Field field = getFieldByName(key, fields);
+			Field field = getFieldByName(key, entityDeclaredFields);
 
 			if (field == null) {
 				log.warn("Field Not Found :" + key + " !");
 				continue; 
 			}
 			
-			String columnName = getColumnName(field); 
-
-			StringBuilder sqlItem = new StringBuilder(); 
+			String columnName = getColumnName(field);  
 
 			if (field.getAnnotation(JoinColumn.class) != null || isMultiKey) {
 
@@ -250,12 +245,13 @@ public class QueryUtil {
 						fieldColumnName = key;
 					}
 					 
-					sqlItem = sqlItem
-							.append(doubleQuoteMysql(joinTableName))
-							.append(".")
-							.append(doubleQuoteMysql(fieldColumnName));
-					 
-
+//					sqlItem = sqlItem
+//							.append(doubleQuoteMysql(joinTableName))
+//							.append(".")
+//							.append(doubleQuoteMysql(fieldColumnName));
+					queryItem.setTableName(joinTableName);
+					queryItem.setColumnName(fieldColumnName);
+					
 				} catch ( Exception e) {
 					
 					log.warn(e.getClass() + " " + e.getMessage() + " " + fieldClass);
@@ -265,60 +261,44 @@ public class QueryUtil {
 				}
 
 			} else {
-				sqlItem = new StringBuilder(doubleQuoteMysql(tableName).concat(".").concat(columnName));
-			}
-			// rollback key to original key
-			/*
-			 * if (isMultiKey) { key = String.join(",", multiKey); if
-			 * (rawKey.endsWith("[EXACTS]")) { key+="[EXACTS]"; } }
-			 */
+//				sqlItem = new StringBuilder(doubleQuoteMysql(tableName).concat(".").concat(columnName));
+				queryItem.setTableName(tableName);
+				queryItem.setColumnName(columnName);
+			}  
+//			log.info("SQL ITEM: " + sqlItem + " contains :" + itemContains + ", exacts:" + itemExacts);
 
-			if (itemContains) {
-				sqlItem = sqlItem.append(" LIKE '%").append(filter.get(rawKey)).append("%' ");
-
-			} else if (itemExacts) {
-				sqlItem = sqlItem.append(" = '").append(filter.get(rawKey)).append("' ");
-			}
-
-			log.info("SQL ITEM: " + sqlItem + " contains :" + itemContains + ", exacts:" + itemExacts);
-
-			filters.add(sqlItem.toString());
-		}
-
-		String additionalFilter = "";
-
-//		if (rootFilterEntity != null) {
-//			additionalFilter = addFilterById(entityClass, rootFilterEntity.getClass(), rootFilterEntity.getId());
-//		}
-
-		if (filters == null || filters.size() == 0) {
-
-//			if (rootFilterEntity != null && additionalFilter.isEmpty() == false) {
-//				return SQL_KEYWORD_WHERE.concat(additionalFilter);
-//			}
-
-			return "";
-
-		}
+			sqlFilters.add(queryItem ); 
+		} 
 
 		String whereClause = "";
 
-		if (filters.size() > 0) {
-			whereClause = String.join(SQL_KEYWORD_AND, filters);
+		if (sqlFilters.size() > 0) {
+			whereClause = generateQueryFilterString( sqlFilters);
 		}
 
-		String result = SQL_KEYWORD_WHERE.concat(whereClause);
+		String result = SQL_KEYWORD_WHERE.concat(whereClause); 
 
-		if (additionalFilter.isEmpty()) {
+		if (sqlFilters.size() == 0) {
+			return "";
 
-			if (filters.size() == 0) {
-				return "";
-
+		}
+		return result;
+		 
+	}
+	
+	private static String generateQueryFilterString(List<QueryFilterItem> queryFilterItems) {
+		StringBuilder queryString = new StringBuilder();
+		for (int i = 0; i < queryFilterItems.size(); i++) {
+			String sqlString = queryFilterItems.get(i).generateSqlString();
+			
+			queryString.append(sqlString);
+			
+			if(i < queryFilterItems.size() - 2) {
+				queryString.append(SQL_KEYWORD_AND);
 			}
-			return result;
 		}
-
-		return result.concat(filters.size() > 0 ? SQL_KEYWORD_AND : " ").concat(additionalFilter);
+		
+		return queryString.toString();
 	}
 
 	/**
@@ -329,10 +309,11 @@ public class QueryUtil {
 	 * @param filter
 	 * @return
 	 */
-	private static String getDateFilter(String rawKey, String key, List<Field > fields, Map filter) {
+	private static QueryFilterItem getDateFilter(String rawKey, String key, List<Field > fields, Map filter) {
 		boolean dayFilter 	= rawKey.endsWith(DAY_SUFFIX);
 		boolean monthFilter = rawKey.endsWith(MONTH_SUFFIX);
 		boolean yearFilter 	= rawKey.endsWith(YEAR_SUFFIX);
+		
 
 		if (dayFilter || monthFilter || yearFilter) {
 
@@ -363,13 +344,17 @@ public class QueryUtil {
 			}
 
 			String columnName = getColumnName(field);
-			sqlItem = sqlItem
-					.replace(PLACEHOLDER_SQL_TABLE_NAME, filter.get(TABLE_NAME).toString())
-					.replace(PLACEHOLDER_SQL_MODE, mode)
-					.replace(PLACEHOLDER_SQL_COLUMN_NAME, columnName)
-					.replace(PLACEHOLDER_SQL_VALUE, filter.get(key).toString()); 
+			String tableName = filter.get(TABLE_NAME).toString(); 
 			
-			return sqlItem;
+			QueryFilterItem queryItem = new QueryFilterItem();
+			queryItem.setTableName(tableName);
+			queryItem.setColumnName(columnName);
+			queryItem.setDateMode(mode);
+			queryItem.setValue( filter.get(key).toString());
+			queryItem.setExacts(true);
+			 
+			
+			return queryItem;
 		}
 		return null;
 	}
@@ -501,7 +486,7 @@ public class QueryUtil {
 			filterSQL = createFilterSQL(
 					entityClass, 
 					filter.getFieldsFilter(), 
-					contains, 
+//					contains, 
 					exacts 
 					);
 		}  
@@ -529,8 +514,8 @@ public class QueryUtil {
 		return new QueryHolder(sql, sqlCount);
 	}
 
-	static String doubleQuoteMysql(String str) {
-		return StringUtil.doubleQuoteMysql(str);
+	static String doubleQuoteMysql(Object str) {
+		return StringUtil.doubleQuoteMysql(str.toString());
 	}
 
 	@Data	
@@ -540,6 +525,49 @@ public class QueryUtil {
 	public static class QueryHolder{
 		private String sqlSelect;
 		private String sqlSelectCount;
+	}
+	
+	@Data
+	@Builder
+	@AllArgsConstructor
+	@NoArgsConstructor
+	public static class QueryFilterItem{ 
+		private Object value;
+		private boolean exacts;
+		private String tableName;
+		private String columnName;
+		private String dateMode;
+		
+		private String getDoubledQuotedColumn() {
+			String fullColumnName = "";
+			if(tableName != null && !tableName.isEmpty() ) { 
+				
+				fullColumnName = StringUtil.buildTableColumnDoubleQuoted(tableName, columnName);
+			}else {
+			
+				fullColumnName = doubleQuoteMysql(columnName);
+			}
+			if(dateMode != null && !dateMode.isEmpty() ) {
+				fullColumnName = dateMode +"("+fullColumnName+")";
+			}
+			
+			return fullColumnName;
+		}
+		
+		public String generateSqlString() {
+			String key = getDoubledQuotedColumn();
+			StringBuilder sqlItem =  new StringBuilder(key);
+			if (exacts) {
+				sqlItem = sqlItem.append(" = '").append(value).append("' ");
+			}else  {
+				sqlItem = sqlItem.append(" LIKE '%").append(value).append("%' ");
+
+			}   
+			
+			log.info("Generated sql item: {}", sqlItem);
+			
+			return sqlItem.toString();
+		}
 	}
 
 }

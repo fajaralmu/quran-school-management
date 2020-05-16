@@ -44,6 +44,10 @@ public class StringUtil {
 
 		return stringBuilder.toString();
 	}
+	
+	public static String buildTableColumnDoubleQuoted(String tableName, String columnName) {
+		return buildString(doubleQuoteMysql(tableName), ".", doubleQuoteMysql(columnName));
+	}
 
 	public static String doubleQuoteMysql(String str) {
 		return " `".concat(str).concat("` ");
