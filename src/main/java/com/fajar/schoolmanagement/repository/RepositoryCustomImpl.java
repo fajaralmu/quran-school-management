@@ -11,6 +11,7 @@ import javax.persistence.Query;
 import org.springframework.stereotype.Service;
 
 import com.fajar.schoolmanagement.annotation.CustomEntity;
+import com.fajar.schoolmanagement.querybuilder.QueryHolder;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -111,6 +112,18 @@ public class RepositoryCustomImpl<T> implements RepositoryCustom<T> {
 
 		}
 		return object;
+	}
+
+	@Override
+	public List<T> filterAndSort(QueryHolder queryHolder, Class<?> objectClass) {
+		 
+		return filterAndSort(queryHolder.getSqlSelect(), objectClass);
+	}
+
+	@Override
+	public Object getSingleResult(QueryHolder queryHolder) {
+		 
+		return getSingleResult(queryHolder.getSqlSingleResult());
 	}
 
 }

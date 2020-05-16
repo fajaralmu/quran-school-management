@@ -30,34 +30,34 @@ import lombok.extern.slf4j.Slf4j;
 public class QueryUtil {
 	
 	
-	private static final String DAY_SUFFIX = "-day";
-	private static final String MONTH_SUFFIX = "-month";
-	private static final String YEAR_SUFFIX = "-year";
-	private static final String FILTER_DATE_DAY = "DAY";
-	private static final String FILTER_DATE_MON1TH = "MONTH";
-	private static final String FILTER_DATE_YEAR = "YEAR";
+	public static final String DAY_SUFFIX = "-day";
+	public static final String MONTH_SUFFIX = "-month";
+	public static final String YEAR_SUFFIX = "-year";
+	public static final String FILTER_DATE_DAY = "DAY";
+	public static final String FILTER_DATE_MON1TH = "MONTH";
+	public static final String FILTER_DATE_YEAR = "YEAR";
 	
 	//placeholders
-	private static final String SQL_RAW_DATE_FILTER = " ${MODE}(`${TABLE_NAME}`.`${COLUMN_NAME}`) = ${VALUE} ";
-	private static final String PLACEHOLDER_SQL_FOREIGN_ID = "${FOREIGN_ID}";
-	private static final String PLACEHOLDER_SQL_JOIN_TABLE = "${JOIN_TABLE}";
-	private static final String PLACEHOLDER_SQL_ENTITY_TABLE = "${ENTITY_TABLE}";
-	private static final String PLACEHOLDER_SQL_JOIN_ID = "${JOIN_ID}";
-	private static final String PLACEHOLDER_SQL_RAW_JOIN_STATEMENT = " LEFT JOIN `${JOIN_TABLE}` ON  `${JOIN_TABLE}`.`${JOIN_ID}` = `${ENTITY_TABLE}`.`${FOREIGN_ID}` ";
-	private static final String PLACEHOLDER_SQL_TABLE_NAME = "${TABLE_NAME}";
-	private static final String PLACEHOLDER_SQL_MODE = "${MODE}";
-	private static final String PLACEHOLDER_SQL_COLUMN_NAME = "${COLUMN_NAME}";
-	private static final String PLACEHOLDER_SQL_VALUE = "${VALUE}";
+	public static final String SQL_RAW_DATE_FILTER = " ${MODE}(`${TABLE_NAME}`.`${COLUMN_NAME}`) = ${VALUE} ";
+	public static final String PLACEHOLDER_SQL_FOREIGN_ID = "${FOREIGN_ID}";
+	public static final String PLACEHOLDER_SQL_JOIN_TABLE = "${JOIN_TABLE}";
+	public static final String PLACEHOLDER_SQL_ENTITY_TABLE = "${ENTITY_TABLE}";
+	public static final String PLACEHOLDER_SQL_JOIN_ID = "${JOIN_ID}";
+	public static final String PLACEHOLDER_SQL_RAW_JOIN_STATEMENT = " LEFT JOIN `${JOIN_TABLE}` ON  `${JOIN_TABLE}`.`${JOIN_ID}` = `${ENTITY_TABLE}`.`${FOREIGN_ID}` ";
+	public static final String PLACEHOLDER_SQL_TABLE_NAME = "${TABLE_NAME}";
+	public static final String PLACEHOLDER_SQL_MODE = "${MODE}";
+	public static final String PLACEHOLDER_SQL_COLUMN_NAME = "${COLUMN_NAME}";
+	public static final String PLACEHOLDER_SQL_VALUE = "${VALUE}";
 	
-	private static final String SQL_KEYWORDSET_SELECT_COUNT = " SELECT COUNT(*) from  ";
-	private static final String SQL_KEYWORD_SELECT = " SELECT "; 
-	private static final String SQL_KEYWORD_LIMIT = " LIMIT ";
-	private static final String SQL_KEYWORD_OFFSET = " OFFSET ";
-	private static final String SQL_KEYWORD_ORDERBY = " ORDER BY ";
-	private static final String SQL_KEYWORD_AND = " AND ";
-	private static final String SQL_KEYWORD_WHERE = " WHERE ";
-	private static final String SQL_KEYWORD_FROM = " from ";
-	private static final String TABLE_NAME = "table_name_key";
+	public static final String SQL_KEYWORDSET_SELECT_COUNT = " SELECT COUNT(*) from  ";
+	public static final String SQL_KEYWORD_SELECT = " SELECT "; 
+	public static final String SQL_KEYWORD_LIMIT = " LIMIT ";
+	public static final String SQL_KEYWORD_OFFSET = " OFFSET ";
+	public static final String SQL_KEYWORD_ORDERBY = " ORDER BY ";
+	public static final String SQL_KEYWORD_AND = " AND ";
+	public static final String SQL_KEYWORD_WHERE = " WHERE ";
+	public static final String SQL_KEYWORD_FROM = " from ";
+	public static final String TABLE_NAME = "table_name_key";
 	
 	public static Field getFieldByName(String name, List<Field> fields) {
 		return EntityUtil.getObjectFromListByFieldName("name", name, fields);
@@ -82,7 +82,7 @@ public class QueryUtil {
 	 * @param field
 	 * @return
 	 */
-	public static String createLeftJoinSql(Class entityClass, Field field) { 
+	public static String createLeftJoinQueryByField(Class entityClass, Field field) { 
 		log.info("Create item sql left join: " + entityClass + ", field: " + field);
 
 		JoinColumn joinColumn = EntityUtil.getFieldAnnotation(field, JoinColumn.class);
@@ -114,7 +114,7 @@ public class QueryUtil {
 	 * @param entityClass
 	 * @return
 	 */
-	private static String createLeftJoinSQL(Class<? extends BaseEntity> entityClass) {
+	public static String createLeftJoinQueryFullObject(Class<? extends BaseEntity> entityClass) {
 
 		StringBuilder sql = new StringBuilder("");
 
@@ -131,7 +131,7 @@ public class QueryUtil {
 			JoinColumn joinColumn = field.getAnnotation(JoinColumn.class);
 			if (joinColumn != null) {
 
-				String sqlItem = createLeftJoinSql(entityClass, field);
+				String sqlItem = createLeftJoinQueryByField(entityClass, field);
 
 				sql = sql.append(sqlItem);
 
@@ -163,7 +163,7 @@ public class QueryUtil {
 			try {
 				currentField = currentType.getDeclaredField(string);
 
-				String sqlJoinItem = createLeftJoinSql(currentType, currentField);
+				String sqlJoinItem = createLeftJoinQueryByField(currentType, currentField);
 				stringBuilder = stringBuilder.append(sqlJoinItem);
 
 				currentType = currentField.getType();
@@ -177,7 +177,7 @@ public class QueryUtil {
 		return stringBuilder.toString();
 	}
 
-	private static String createWhereClause(Class entityClass, Map<String, Object> filter,  
+	public static String createWhereClause(Class entityClass, Map<String, Object> filter,  
 		 final	boolean allItemExactSearch ) {
 
 		String tableName 						= getTableName(entityClass);
@@ -331,7 +331,7 @@ public class QueryUtil {
 		return referenceFieldName;
 	}
 
-	private static String generateQueryFilterString(List<QueryFilterItem> queryFilterItems) {
+	public static String generateQueryFilterString(List<QueryFilterItem> queryFilterItems) {
 		List<String> listOfSqlFilter = new ArrayList<String>();
 		for (int i = 0; i < queryFilterItems.size(); i++) {
 			String sqlString = queryFilterItems.get(i).generateSqlString();
@@ -398,7 +398,7 @@ public class QueryUtil {
 		return null;
 	} 
   
-	private static String orderSQL(Class entityClass, String orderType, String orderBy) {
+	public static String orderSQL(Class entityClass, String orderType, String orderBy) {
 
 		/**
 		 * order by field
@@ -440,7 +440,7 @@ public class QueryUtil {
 		return buildString(SQL_KEYWORD_ORDERBY, orderField, orderType);
 	}
 
-	private static String getTableName(Class entityClass) {
+	public static String getTableName(Class entityClass) {
 		log.info("getTableName From entity class: " + entityClass.getCanonicalName());
 		
 		Table table = (Table) entityClass.getAnnotation(Table.class);
@@ -456,72 +456,20 @@ public class QueryUtil {
 	
 	 
 	/**
-	 * generate sql Select and sql Select Count (*)
+	 * generate sql Select * From and sql Select Count (*)
 	 * @param filter
 	 * @param entityClass
 	 * @return
 	 */
-	public static QueryHolder generateSqlByFilter(Filter filter, Class<? extends BaseEntity> entityClass ) {
+	public static CRUDQueryHolder generateSqlByFilter(Filter filter, Class<? extends BaseEntity> entityClass ) {
 
 		log.info("CRITERIA-FILTER: {}", filter);
 		log.info("entity class: {}", entityClass);
-
-		int		offset 				= filter.getPage() * filter.getLimit();
-		boolean withLimit 			= filter.getLimit() > 0;
-		boolean withOrder 			= filter.getOrderBy() != null && filter.getOrderType() != null
-				&& !filter.getOrderBy().equals("") && !filter.getOrderType().equals("");
-		boolean contains 			= filter.isContains();
-		boolean exacts 				= filter.isExacts();
-		boolean withFilteredField 	= filter.getFieldsFilter() != null;
-
-		String orderType 		= filter.getOrderType();
-		String orderBy 			= filter.getOrderBy();
-		String orderSQL 		= withOrder ? orderSQL(entityClass, orderType, orderBy) : "";
-
-		String limitOffsetSQL 	= "";
-		String filterSQL		= "";
-
-		String tableName 		= getTableName(entityClass);
-		String joinSql			= createLeftJoinSQL(entityClass);
+ 
+		CRUDQueryHolder queryHolder = new CRUDQueryHolder(entityClass, filter);
+		queryHolder.buildSqlSelectAndSingleResult();
 		
-		if(withLimit) {
-			limitOffsetSQL = buildString(
-					SQL_KEYWORD_LIMIT,
-					String.valueOf(filter.getLimit()), 
-					SQL_KEYWORD_OFFSET, 
-					String.valueOf(offset));
-		}
-		
-		if(withFilteredField) {
-			filterSQL = createWhereClause(
-					entityClass, 
-					filter.getFieldsFilter(), 
-//					contains, 
-					exacts 
-					);
-		}  
-
-		String sql = buildString(
-				SQL_KEYWORD_SELECT, 
-				doubleQuoteMysql(tableName), 
-				".*", 
-				SQL_KEYWORD_FROM,
-				doubleQuoteMysql(tableName),
-				joinSql, 
-				filterSQL, 
-				orderSQL, 
-				limitOffsetSQL);
-
-		String sqlCount = buildString(
-				SQL_KEYWORDSET_SELECT_COUNT, 
-				doubleQuoteMysql(tableName), 
-				joinSql, 
-				filterSQL);
-
-		log.info("query select: {}", sql);
-		log.info("query count: {}", sqlCount);
-		
-		return new QueryHolder(sql, sqlCount);
+		return queryHolder ;
 	}
 
 	static String doubleQuoteMysql(Object str) {

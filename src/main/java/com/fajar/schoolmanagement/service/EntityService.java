@@ -20,6 +20,7 @@ import com.fajar.schoolmanagement.dto.WebResponse;
 import com.fajar.schoolmanagement.entity.BaseEntity;
 import com.fajar.schoolmanagement.entity.UserRole;
 import com.fajar.schoolmanagement.entity.setting.EntityManagementConfig;
+import com.fajar.schoolmanagement.querybuilder.CRUDQueryHolder;
 import com.fajar.schoolmanagement.querybuilder.QueryHolder;
 import com.fajar.schoolmanagement.querybuilder.QueryUtil;
 import com.fajar.schoolmanagement.repository.EntityRepository;
@@ -141,14 +142,11 @@ public class EntityService {
   
 	private EntityResult filterEntities(Filter filter, Class<? extends BaseEntity> entityClass) {
 
-		QueryHolder generatedQueryString = QueryUtil.generateSqlByFilter(filter, entityClass);
+		CRUDQueryHolder generatedQueryString = QueryUtil.generateSqlByFilter(filter, entityClass); 
 
-		String sql = generatedQueryString.getSqlSelect();
-		String sqlCount = generatedQueryString.getSqlSelectCount();
+		List<BaseEntity> entities = repositoryCustom.filterAndSort(generatedQueryString, entityClass);
 
-		List<BaseEntity> entities = repositoryCustom.filterAndSort(sql, entityClass);
-
-		Object countResult = repositoryCustom.getSingleResult(sqlCount);
+		Object countResult = repositoryCustom.getSingleResult(generatedQueryString);
 
 		int count = countResult == null? 0: ((BigInteger) countResult).intValue(); 
 		
