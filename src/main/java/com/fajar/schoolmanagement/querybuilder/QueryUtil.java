@@ -195,6 +195,7 @@ public class QueryUtil {
 
 			String key = rawKey;
 			boolean itemExacts = exacts; 
+			String filterTableName = tableName; 
 
 			if (rawKey.endsWith("[EXACTS]")) {
 				itemExacts 		= true; 
@@ -205,6 +206,8 @@ public class QueryUtil {
 
 			String[] multiKey 	= key.split(",");
 			boolean isMultiKey 	= multiKey.length > 1;
+			
+			
 			QueryFilterItem queryItem = new QueryFilterItem();
 			queryItem.setExacts(itemExacts);
 
@@ -226,45 +229,42 @@ public class QueryUtil {
 				continue; 
 			}
 			
-			String columnName = getColumnName(field);  
+			String filterColumnName = getColumnName(field);  
 
-			if (field.getAnnotation(JoinColumn.class) != null || isMultiKey) {
-
-				Class fieldClass 		= field.getType();
-				String joinTableName 	= getTableName(fieldClass);
-				FormField formField 	= field.getAnnotation(FormField.class);
+			if (field.getAnnotation(JoinColumn.class) != null || isMultiKey) { 
 
 				try {
-					String referenceFieldName = formField.optionItemName();
+					Class fieldClass 		= field.getType();
+					String joinTableName 	= getTableName(fieldClass); 
+					String referenceFieldName = "";
 
 					if (isMultiKey) {
 						referenceFieldName = multiKey[1];
+					}else {
+						referenceFieldName = getOptionItemName(field);
 					}
 
-					Field 	fieldField 		= getDeclaredField(fieldClass, referenceFieldName);
-					String 	fieldColumnName = getColumnName(fieldField);
+					Field 	referenceEntityField 	= getDeclaredField(fieldClass, referenceFieldName);
+					String 	fieldColumnName 		= getColumnName(referenceEntityField);
 
 					if (fieldColumnName == null || fieldColumnName.equals("")) {
 						fieldColumnName = key;
 					}
 					  
-					queryItem.setTableName(joinTableName);
-					queryItem.setColumnName(fieldColumnName);
+					filterTableName = (joinTableName);
+					filterColumnName = (fieldColumnName);
 					
 				} catch ( Exception e) {
 					
-					log.warn(e.getClass() + " " + e.getMessage() + " " + fieldClass);
-					e.printStackTrace();
-					
+					log.warn(e.getClass() + " " + e.getMessage() + " " + field.getType());
+					e.printStackTrace(); 
 					continue;
 				}
 
-			} else {
+			} else { }   
 
-				queryItem.setTableName(tableName);
-				queryItem.setColumnName(columnName);
-			}   
-
+			queryItem.setTableName(filterTableName);
+			queryItem.setColumnName(filterColumnName);
 			queryItem.setValue(filter.get(rawKey));
 			sqlFilters.add(queryItem ); 
 		} 
@@ -285,6 +285,12 @@ public class QueryUtil {
 		 
 	}
 	
+	private static String getOptionItemName(Field field) {
+		FormField formField 	= field.getAnnotation(FormField.class);
+		String referenceFieldName = formField.optionItemName();
+		return referenceFieldName;
+	}
+
 	private static String generateQueryFilterString(List<QueryFilterItem> queryFilterItems) {
 		List<String> listOfSqlFilter = new ArrayList<String>();
 		for (int i = 0; i < queryFilterItems.size(); i++) {
