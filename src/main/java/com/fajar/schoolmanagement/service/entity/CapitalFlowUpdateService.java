@@ -6,8 +6,8 @@ import org.springframework.stereotype.Service;
 import com.fajar.schoolmanagement.dto.WebResponse;
 import com.fajar.schoolmanagement.entity.BaseEntity;
 import com.fajar.schoolmanagement.entity.CapitalFlow;
+import com.fajar.schoolmanagement.financialjournal.CashBalanceService;
 import com.fajar.schoolmanagement.repository.EntityRepository;
-import com.fajar.schoolmanagement.service.CashBalanceService;
 
 import lombok.extern.slf4j.Slf4j;
 

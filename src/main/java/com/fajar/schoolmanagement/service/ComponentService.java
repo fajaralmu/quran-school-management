@@ -161,26 +161,7 @@ public class ComponentService {
 		}
 
 		return hasAccess;
-	}
-
-	private List<Menu> getAvailableMenusForUser(User user, List<Menu> menus) {
-		List<Menu> newMenus = new ArrayList<>();
-		
-//		for (Menu menu : menus) {
-//			String[] menuAccess = menu.getPage().split("-");
-//			if (menuAccess.length <= 1) {
-//				newMenus.add(menu);
-//				continue;
-//			} else if (hasAccess(user, menuAccess[1])) {
-//				newMenus.add(menu);
-//				continue;
-//			}
-//
-//		}
-		return menus;
-	}
-
-	  
+	} 
 
 	public void checkAccess(User user, String url) throws Exception {
 		Menu menu = menuRepository.findTop1ByUrl(url);

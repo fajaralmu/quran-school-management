@@ -1,4 +1,4 @@
-package com.fajar.schoolmanagement.service;
+package com.fajar.schoolmanagement.financialjournal;
 
 import java.util.Date;
 
@@ -67,29 +67,22 @@ public class CashBalanceService {
 	 * @param baseEntity
 	 * @return
 	 */
-	public static CashBalance mapCashBalance(BaseEntity baseEntity) {
-		long creditAmount = 0l;
-		long debitAmount = 0l;
-		String info = "";
-		Date date = new Date();
+	public static CashBalance mapCashBalance(BaseEntity baseEntity) { 
 		
+		 BalanceJournalInfo journalInfo = getJournalInfo(baseEntity);
+		 
+		 return journalInfo.getBalanceObject();
+	}
+	
+	private static BalanceJournalInfo getJournalInfo(BaseEntity baseEntity) {
 		if(baseEntity instanceof CostFlow) {
-			
-			CostFlow costFlow = (CostFlow) baseEntity;
-			debitAmount = costFlow.getNominal();
-			
-			info = "COST_"+costFlow.getCostType().getName();
-			date = costFlow.getDate();
+			return new CostJournalInfo((CostFlow) baseEntity);
 			
 		}else if(baseEntity instanceof CapitalFlow) {
-			
-			CapitalFlow capitalFlow = (CapitalFlow) baseEntity;
-			creditAmount = capitalFlow.getNominal();
-			
-			info = "CAPITAL_"+capitalFlow.getFundType().getName();
-			date = capitalFlow.getDate();
+			return new FundJournalInfo((CapitalFlow) baseEntity);
+		}else {
+			return null;
 		}
-		return CashBalance.builder().date(date).creditAmount(creditAmount).debitAmount(debitAmount).referenceInfo(info).build();
 	}
 	
 	/**
@@ -111,11 +104,9 @@ public class CashBalanceService {
 		final long debitAmount = mappedCashBalanceInfo.getDebitAmount();
 		final String info = mappedCashBalanceInfo.getReferenceInfo(); 
 		final Date date = mappedCashBalanceInfo.getDate();
-		
-//		cashBalance.setFormerBalance(formerBalance);
+		 
 		cashBalance.setDebitAmount(debitAmount);
-		cashBalance.setCreditAmount(creditAmount);
-//		cashBalance.setActualBalance(formerBalance + creditAmount - debitAmount);
+		cashBalance.setCreditAmount(creditAmount); 
 		cashBalance.setReferenceInfo(info);
 		cashBalance.setReferenceId(String.valueOf(baseEntity.getId()));
 		cashBalance.setDate(date); 

@@ -1,44 +1,28 @@
 package com.fajar.schoolmanagement.service;
 
 import static com.fajar.schoolmanagement.service.UserSessionService.ATTR_REQUEST_URI;
-import static com.fajar.schoolmanagement.service.UserSessionService.HEADER_LOGIN_KEY;
-
-import java.util.Optional;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.fajar.schoolmanagement.config.LogProxyFactory;
-import com.fajar.schoolmanagement.dto.RegistryModel;
 import com.fajar.schoolmanagement.dto.WebRequest;
 import com.fajar.schoolmanagement.dto.WebResponse;
-import com.fajar.schoolmanagement.entity.BaseEntity;
 import com.fajar.schoolmanagement.entity.User;
-import com.fajar.schoolmanagement.entity.UserRole;
 import com.fajar.schoolmanagement.repository.UserRepository;
-import com.fajar.schoolmanagement.repository.UserRoleRepository;
 
 import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
-public class UserAccountService {
-	
-	
+public class UserAccountService { 
 	
 	@Autowired
-	private UserRepository userRepository;
-	@Autowired
-	private UserRoleRepository userRoleRepository;
-	@Autowired
-	private UserSessionService userSessionService;
-//	@Autowired
-//	private RegistryService registryService;
+	private UserSessionService userSessionService; 
 	
 	@PostConstruct
 	public void init() {
@@ -76,17 +60,7 @@ public class UserAccountService {
 //			return response;
 //		}
 //	}
-	
-	/**
-	 * get user by username and password
-	 * @param request
-	 * @return
-	 */
-	public User getUser(WebRequest request) {
-		User dbUser = userRepository.findByUsernameAndPassword(request.getUser().getUsername(), request.getUser().getPassword());
-		return dbUser;
-	}
-
+	 
 	/**
 	 * login to system
 	 * @param request
@@ -96,7 +70,7 @@ public class UserAccountService {
 	 * @throws IllegalAccessException
 	 */
 	public WebResponse login(WebRequest request, HttpServletRequest httpRequest, HttpServletResponse httpResponse) throws IllegalAccessException {
-		User dbUser = getUser(request);
+		User dbUser = userSessionService.getUserByUsernameAndPassword(request);
 		 
 		if(dbUser == null) {
 			return new WebResponse("01","invalid credential");
@@ -141,19 +115,30 @@ public class UserAccountService {
 		/**
 		 * TESTING
 		 */
-		boolean validated = userSessionService.validatePageRequest(httpRequest );
-		if(validated) {
+		boolean pageRequestValidated = userSessionService.validatePageRequest(httpRequest );
+		if(pageRequestValidated) {
 			return true;
-		}
+		}else {
+			return validateToken(requestToken, httpRequest);
+		} 
+	}
+
+	/**
+	 * compare token
+	 * @param requestToken
+	 * @param httpRequest
+	 * @return
+	 */
+	private boolean validateToken(String requestToken, HttpServletRequest httpRequest) {
 		
 		if(requestToken == null) {
-			log.info("NULL TOKEN");
+			log.error("NULL TOKEN, invalid request");
 			return false;
 			
 		}else {
 			
 			String existingToken = userSessionService.getToken(httpRequest);
-			log.info("|| REQ_TOKEN: "+requestToken+" vs EXISTING:"+existingToken+"||");
+			log.info("|| REQUEST_TOKEN: "+requestToken+" vs EXISTING:"+existingToken+"||");
 			
 			boolean tokenEquals = requestToken.equals(existingToken); 
 			return tokenEquals;

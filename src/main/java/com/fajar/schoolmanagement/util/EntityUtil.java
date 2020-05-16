@@ -43,52 +43,60 @@ public class EntityUtil {
 
 			List<Field> fieldList 				= getDeclaredFields(clazz);
 			List<EntityElement> entityElements 	= new ArrayList<>();
-			List<String> fieldNames 			= new ArrayList<>();
-			List<String> dateElements 			= new ArrayList<>();
+			List<String> fieldNames 			= new ArrayList<>(); 
 			String fieldToShowDetail 			= "";
 			
 			for (Field field : fieldList) {
 
 				FormField formField = field.getAnnotation(FormField.class);
 				BaseField baseField = field.getAnnotation(BaseField.class);
+				boolean skipBaseField = (baseField != null && ignoreBaseField);
 				
-				if (formField == null || (baseField != null && ignoreBaseField)) {
+				if (formField == null || skipBaseField) {
 					continue;
-				}
-
-				boolean isIdField = field.getAnnotation(Id.class) != null;
+				} 
 				
-				if (isIdField) {
+				boolean idField = field.getAnnotation(Id.class) != null;
+				
+				if (idField) {
 					entityProperty.setIdField(field.getName());
 				}
 				
-				String lableName = field.getName();
-				FieldType fieldType = formField.type();
+				String lableName = formField.lableName().equals("") ? field.getName() : formField.lableName();  
 				
-				if (!formField.lableName().equals("")) {
-					lableName = formField.lableName();
-				}  
+				FieldType fieldType = formField.type();
 				
 				final String entityElementId = field.getName();
 				
-				if (fieldType.equals("") || fieldType.equals(FieldType.FIELD_TYPE_TEXT)) {
-					if (isNumber(field)) {
-						fieldType = FieldType.FIELD_TYPE_NUMBER;
-					}
+				/**
+				 * check entity field Type
+				 */
+				if (isNumericField(field)   ) { 
+					fieldType = FieldType.FIELD_TYPE_NUMBER; 
 					
-				} else if (fieldType.equals(FieldType.FIELD_TYPE_IMAGE)) {
+				} else if (field.getType().equals(Date.class) && field.getAnnotation(JsonFormat.class) == null) {  
+					fieldType = FieldType.FIELD_TYPE_DATE;
+					
+				} else if(idField) {
+					fieldType = FieldType.FIELD_TYPE_HIDDEN;
+				}
+				
+				/**
+				 * check @FormField.fieldType
+				 */
+				if (fieldType.equals(FieldType.FIELD_TYPE_IMAGE)) {
 					entityProperty.getImageElements().add(entityElementId);
 					
-				}else if (fieldType.equals(FieldType.FIELD_TYPE_CURRENCY)) {
+				}else
+				if (fieldType.equals(FieldType.FIELD_TYPE_CURRENCY)) {
 					entityProperty.getCurrencyElements().add(entityElementId);
+					
 					fieldType = FieldType.FIELD_TYPE_NUMBER;
-				} 
-
-				/**
-				 * add field names
-				 */
-				fieldNames.add(field.getName());
-				
+				} else if (fieldType.equals(FieldType.FIELD_TYPE_DATE)) {
+					entityProperty.getDateElements().add(entityElementId);
+					
+				}  
+				 
 				final EntityElement entityElement = new EntityElement(); 
 				
 				if (formField.detailFields().length > 0) {
@@ -99,19 +107,20 @@ public class EntityUtil {
 					fieldToShowDetail = field.getName();
 				}
 				
-				boolean referenceNameExist =  field.getAnnotation(JoinColumn.class) != null;
-
 				/**
-				 * IF has entity reference (JOIN COLUMN)
+				 * Check if @JoinColumn exist
 				 */
-				if (referenceNameExist) {
+				
+				boolean hasJoinColumn =  field.getAnnotation(JoinColumn.class) != null;
+				
+				if (hasJoinColumn) {
 					
 					Class referenceEntityClass = field.getType();
-					Field idField = getIdField(referenceEntityClass);
+					Field referenceEntityIdField = getIdField(referenceEntityClass);
 					
-					if(idField == null) continue; 
+					if(referenceEntityIdField == null) continue; 
 					
-					entityElement.setOptionValueName(idField.getName());
+					entityElement.setOptionValueName(referenceEntityIdField.getName());
 					entityElement.setOptionItemName(formField.optionItemName());
 					 
 					
@@ -130,16 +139,14 @@ public class EntityUtil {
 					}
 					
 				}
-				if (field.getType().equals(Date.class) && field.getAnnotation(JsonFormat.class) == null) {
-					dateElements.add(entityElementId);
-					fieldType = FieldType.FIELD_TYPE_DATE;
-				}
+				
+				fieldNames.add(entityElementId);
 				
 				entityElement.setId(entityElementId );
-				entityElement.setIdentity(isIdField);
+				entityElement.setIdentity(idField);
 				entityElement.setLableName(StringUtil.extractCamelCase(lableName));
 				entityElement.setRequired(formField.required());
-				entityElement.setType(isIdField ? FieldType.FIELD_TYPE_HIDDEN.value : fieldType.value);
+				entityElement.setType(fieldType.value);
 				entityElement.setMultiple(formField.multiple());
 				entityElement.setClassName(field.getType().getCanonicalName());
 				entityElement.setShowDetail(formField.showDetail());
@@ -150,9 +157,8 @@ public class EntityUtil {
 			entityProperty.setEditable(dto.editable());
 			entityProperty.setElementJsonList();
 			entityProperty.setElements(entityElements);
-			entityProperty.setDetailFieldName(fieldToShowDetail);
-			entityProperty.setDateElements(dateElements);
-			entityProperty.setDateElementsJson(MyJsonUtil.listToJson(dateElements));
+			entityProperty.setDetailFieldName(fieldToShowDetail); 
+			entityProperty.setDateElementsJson(MyJsonUtil.listToJson(entityProperty.getDateElements()));
 			entityProperty.setFieldNames(MyJsonUtil.listToJson(fieldNames));
 			entityProperty.setFieldNameList(fieldNames);
 			entityProperty.setFormInputColumn(dto.formInputColumn().value);
@@ -261,7 +267,7 @@ public class EntityUtil {
 		return null;
 	}
 
-	public static boolean isNumber(Field field) {
+	public static boolean isNumericField(Field field) {
 		return field.getType().equals(Integer.class) || field.getType().equals(Double.class)
 				|| field.getType().equals(Long.class) || field.getType().equals(BigDecimal.class)
 				|| field.getType().equals(BigInteger.class);

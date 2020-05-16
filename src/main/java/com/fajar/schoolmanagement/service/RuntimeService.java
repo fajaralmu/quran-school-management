@@ -29,10 +29,8 @@ public class RuntimeService {
 	public static final String PAGE_REQUEST_ID = "requestId";
 
 	public static final String JSESSSIONID = "JSESSIONID";
-
-//	@Autowired
-//	private Registry registry;
-	private final Map<String, Remote> registry = new LinkedHashMap<>();
+ 
+	private final Map<String, Remote> runtimeMap = new LinkedHashMap<>();
 
 	@PostConstruct
 	public void init() {
@@ -49,7 +47,7 @@ public class RuntimeService {
 	 */
 	public <T> T getModel(String key) {
 		try {
-			T object = (T) registry.get(key);
+			T object = (T) runtimeMap.get(key);
 			log.info("==registry model: " + object);
 			return object;
 //		} catch (RemoteException | NotBoundException e) {
@@ -72,7 +70,7 @@ public class RuntimeService {
 	public boolean set(String key, Remote registryModel) {
 		try {
 //			if (getModel(key) == null) {
-				registry.put(key, registryModel);
+				runtimeMap.put(key, registryModel);
 //			} else {
 //				registry.rebind(key, registryModel);
 //			}
@@ -95,7 +93,7 @@ public class RuntimeService {
 	 */
 	public boolean unbind(String key) {
 		try {
-			registry.remove(key);
+			runtimeMap.remove(key);
 			return true;
 //		} catch (RemoteException | NotBoundException e) {
 //			e.printStackTrace();

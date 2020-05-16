@@ -34,6 +34,11 @@ public class CommonUpdateService extends BaseEntityUpdateService{
 		return WebResponse.builder().entity(newEntity).build();
 	}
 	
+	/**
+	 * execute things before persisting
+	 * @param entity
+	 * @param updateInterceptor
+	 */
 	private void interceptPreUpdate(BaseEntity entity, EntityUpdateInterceptor updateInterceptor) {
 		 
 		if(null != updateInterceptor && null != entity) {

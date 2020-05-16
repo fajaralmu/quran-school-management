@@ -1,7 +1,5 @@
 package com.fajar.schoolmanagement.service;
 
-import static com.fajar.schoolmanagement.service.UserSessionService.HEADER_LOGIN_KEY;
-
 import java.lang.reflect.Field;
 import java.util.Date;
 import java.util.List;
@@ -64,6 +62,11 @@ public class UserSessionService {
 		LogProxyFactory.setLoggers(this);
 	}
 
+	/**
+	 * get user from httpSession
+	 * @param request
+	 * @return
+	 */
 	public User getUserFromSession(HttpServletRequest request) {
 		try {
 			return (User) request.getSession(false).getAttribute(ATTR_USER);
@@ -72,6 +75,11 @@ public class UserSessionService {
 		}
 	}
 
+	/**
+	 * get user from runtime
+	 * @param request
+	 * @return
+	 */
 	public User getUserFromRegistry(HttpServletRequest request) {
 		String loginKey = request.getHeader(HEADER_LOGIN_KEY);
 		RegistryModel registryModel = registryService.getModel(loginKey);
@@ -164,6 +172,7 @@ public class UserSessionService {
 
 			httpResponse.addHeader(HEADER_LOGIN_KEY, key);
 			httpResponse.addHeader(ACCESS_CONTROL_EXPOSE_HEADER, "*");
+			
 			httpRequest.getSession(true).setAttribute(ATTR_USER, dbUser);
 			
 			log.info(" > > > SUCCESS LOGIN :");
@@ -175,26 +184,13 @@ public class UserSessionService {
 		}
 	}
 
-	public boolean logout(HttpServletRequest request) {
-		User user = getUserFromSession(request);  
+	public boolean logout(HttpServletRequest request) { 
 		 
-		try {
-			if (user == null && request.getHeader(HEADER_LOGIN_KEY)!=null) {
-				user = getUserFromRegistry(request); 
-			}
+		try {   
 			
-			if (user == null) {
-				return false;
-			}
-			
-			boolean registryIsUnbound = registryService.unbind(user.getLoginKey().toString());
-
-			if (!registryIsUnbound) {
-				throw new Exception();
-			}
-
-			request.getSession(false).removeAttribute(ATTR_USER);
-			request.getSession(false).invalidate();
+			User user = getLoggedUser(request);  
+			registryService.unbind(user.getLoginKey().toString()); 
+			invalidateSessionUser(request);
 
 			log.info(" > > > > > SUCCESS LOGOUT");
 			return true;
@@ -203,9 +199,32 @@ public class UserSessionService {
 			e.printStackTrace();
 			log.info(" < < < < < FAILED LOGOUT");
 			return false;
-		}
-		
+		} 
+	}
 
+	/**
+	 * get logged user
+	 * @param request
+	 * @return
+	 */
+	private User getLoggedUser(HttpServletRequest request) {
+		User user = getUserFromSession(request);  
+		 
+		try {
+			if (user == null && request.getHeader(HEADER_LOGIN_KEY)!=null) {
+				user = getUserFromRegistry(request); 
+			} 
+			return user;
+		}catch (Exception e) {
+
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	private void invalidateSessionUser(HttpServletRequest request) { 
+		request.getSession(false).removeAttribute(ATTR_USER);
+		request.getSession(false).invalidate();
 	}
 
 	/**
@@ -409,10 +428,42 @@ public class UserSessionService {
 		log.info("setActivePage: {}", pageCode);
 		try {
 			request.getSession(false).setAttribute(PAGE_CODE, pageCode);
+			log.info("pageCode: {}", pageCode);
 		}catch (Exception e) {
 			e.printStackTrace();
 		}
 		
+	}
+	
+	/**
+	 * get user by userName and password
+	 * @param request
+	 * @return
+	 */
+	public User getUserByUsernameAndPassword(WebRequest request) {
+		User requestUser = request.getUser();
+		User dbUser = userRepository.findByUsername (requestUser.getUsername());
+		
+		if(dbUser != null) {
+			log.info("username: {} exist", dbUser.getUsername() );
+		}else {
+			log.error("username: {} does not exist", requestUser.getUsername());
+		}
+		
+		boolean passwordMatched = comparePassword(dbUser, requestUser.getPassword());
+		
+		return passwordMatched ? dbUser : null;
+	}
+	
+	private boolean comparePassword(User dbUser, String password) {
+		if(null == password) {
+			return false;
+		}
+		
+		boolean match = password.equals(dbUser.getPassword());
+		log.info("Password match: {}", match);
+		
+		return match;
 	}
 
 }

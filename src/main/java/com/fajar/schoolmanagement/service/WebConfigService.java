@@ -62,24 +62,7 @@ public class WebConfigService {
 	}
 	
 	public static void main(String[] args) throws IOException {
-		String path ="C:\\Users\\Republic Of Gamers\\Documents\\ORCALE_DUMPS\\";
-		File folder = new File(path );
-		File[] listOfFiles = folder.listFiles();
-
-		for (int i = 0; i < listOfFiles.length; i++) {
-			File file = listOfFiles[i];
-		  if (file.isFile()) {
-			 // System.out.println(path+file.getName());
-			  String content = readFile(path+file.getName());
-			   
-			  if(!file.getName().startsWith("MASTER_PFM_DETAIL")){
-				  continue;
-			  }
-			  filter(content);
-		  } else if (file.isDirectory()) {
-		    System.out.println("Directory " + listOfFiles[i].getName());
-		  }
-		}
+		
 	}
 	
 	public static String filter(String content) {
