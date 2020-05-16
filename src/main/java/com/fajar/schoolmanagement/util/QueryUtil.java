@@ -204,6 +204,7 @@ public class QueryUtil {
 			String[] multiKey 	= key.split(",");
 			boolean isMultiKey 	= multiKey.length > 1;
 			QueryFilterItem queryItem = new QueryFilterItem();
+			queryItem.setExacts(itemExacts);
 
 			if (isMultiKey) {
 				key = multiKey[0];
@@ -244,11 +245,7 @@ public class QueryUtil {
 					if (fieldColumnName == null || fieldColumnName.equals("")) {
 						fieldColumnName = key;
 					}
-					 
-//					sqlItem = sqlItem
-//							.append(doubleQuoteMysql(joinTableName))
-//							.append(".")
-//							.append(doubleQuoteMysql(fieldColumnName));
+					  
 					queryItem.setTableName(joinTableName);
 					queryItem.setColumnName(fieldColumnName);
 					
@@ -261,11 +258,10 @@ public class QueryUtil {
 				}
 
 			} else {
-//				sqlItem = new StringBuilder(doubleQuoteMysql(tableName).concat(".").concat(columnName));
+
 				queryItem.setTableName(tableName);
 				queryItem.setColumnName(columnName);
-			}  
-//			log.info("SQL ITEM: " + sqlItem + " contains :" + itemContains + ", exacts:" + itemExacts);
+			}   
 
 			sqlFilters.add(queryItem ); 
 		} 
