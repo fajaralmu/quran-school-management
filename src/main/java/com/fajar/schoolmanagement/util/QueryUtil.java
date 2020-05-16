@@ -263,6 +263,7 @@ public class QueryUtil {
 				queryItem.setColumnName(columnName);
 			}   
 
+			queryItem.setValue(filter.get(rawKey));
 			sqlFilters.add(queryItem ); 
 		} 
 
