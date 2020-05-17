@@ -25,5 +25,6 @@ public class ReportData implements Serializable {
 	private List<BaseEntity> funds;
 	private List<BaseEntity> spendings;
 	private CashBalance initialBalance;
+	private Filter filter;
 
 }

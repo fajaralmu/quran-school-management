@@ -58,4 +58,18 @@ public class DonationMonthly extends BaseEntity{
 	@FormField(type = FieldType.FIELD_TYPE_TEXTAREA)
 	@Column
 	private String description;
+	
+	/** $$$ **/
+	@Override
+	public Date getTransactionDate() { 
+		return date;
+	}
+	@Override
+	public String getTransactionName() {
+		return "Infaq Bulanan";
+	}
+	@Override
+	public long getTransactionNominal() { 
+		return nominal;
+	}
 }

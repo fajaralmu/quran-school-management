@@ -58,14 +58,15 @@ public class TransactionService {
 		reportData.setInitialBalance(lastBalance);
 		reportData.setFunds(fundFlows);
 		reportData.setSpendings(spendings);
+		reportData.setFilter(filter);
 		
 		return reportData;
 	}
 	
-	public ReportData getThrusdayDonationCashflow(Filter filter) {
+	public ReportData getYearlyThrusdayDonationCashflow(Filter filter) {
 		int year = filter.getYear();
-		CashBalance lastBalance = cashBalanceService.getBalanceBefore(1, year, true);
 		
+		CashBalance lastBalance = cashBalanceService.getBalanceBefore(1, year, true); 
 		List<DonationThursday> funds = donationThursdayRepository.findByYear(year);
 		List<CostFlow> spendings = costFlowRepository.findBySourceOfFundAndYear(SourceOfFund.DONATION_THRUSDAY.toString(), year);
 		
@@ -73,10 +74,23 @@ public class TransactionService {
 		reportData.setInitialBalance(lastBalance);
 		reportData.setFunds(CollectionUtil.convertList(funds));
 		reportData.setSpendings(CollectionUtil.convertList(spendings));
+		reportData.setFilter(filter);
 		
 		return reportData ;
 	}
 
+	public ReportData getYearlyMonthlyDonationCashflow(Filter filter) {
+		int year = filter.getYear();
+		
+		List<DonationMonthly> funds = donationMonthlyRepository.findByYear(year);
+		
+		ReportData reportData = new ReportData();
+		reportData.setFunds(CollectionUtil.convertList(funds));
+		reportData.setFilter(filter);
+		
+		return reportData ;
+	}
+	
 	private List<BaseEntity> getFundSpent(int month, int year) {
 		List<BaseEntity> spendings = new ArrayList<BaseEntity>(); 
 		

@@ -38,15 +38,16 @@ public class CashBalanceService {
 	 * get balance at the end of month
 	 * @param month starts at 1
 	 * @param year
+	 * @param isDonationThrusday
 	 * @return
 	 */
-	public CashBalance getBalanceBefore (int month, int year, boolean donationThrusday) { 
+	public CashBalance getBalanceBefore (int month, int year, boolean isDonationThrusday) { 
 		
 		Date date = DateUtil.getDate(year, month-1, 1);
 		String dateString = DateUtil.formatDate(date, "yyyy-MM-dd");
 		
 		Object object;
-		if(donationThrusday) {
+		if(isDonationThrusday) {
 			object = cashBalanceRepository.getDonationThrusdayBalanceBefore(dateString);
 		}else {
 			object	= cashBalanceRepository.getBalanceBefore(dateString );

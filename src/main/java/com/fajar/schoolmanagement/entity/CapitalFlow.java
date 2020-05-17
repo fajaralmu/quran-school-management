@@ -26,7 +26,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class CapitalFlow extends BaseEntity implements Remote, Serializable {
+public class CapitalFlow extends BaseEntity implements Remote, Serializable{
 
 	/**
 	 * 
@@ -46,5 +46,18 @@ public class CapitalFlow extends BaseEntity implements Remote, Serializable {
 	@ManyToOne
 	@FormField(type = FieldType.FIELD_TYPE_FIXED_LIST, optionItemName = "name")
 	private Capital fundType;
+
+	@Override
+	public Date getTransactionDate() { 
+		return date;
+	}
+	@Override
+	public String getTransactionName() {
+		return description;
+	}
+	@Override
+	public long getTransactionNominal() { 
+		return nominal;
+	}
 
 }

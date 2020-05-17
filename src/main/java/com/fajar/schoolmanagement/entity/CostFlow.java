@@ -54,5 +54,19 @@ public class CostFlow extends BaseEntity implements Remote, Serializable {
 	@Enumerated(EnumType.STRING)
 	@FormField(type = FieldType.FIELD_TYPE_PLAIN_LIST, availableValues = {})
 	private SourceOfFund fundSource;
+	
+	/** $$$ **/
+	@Override
+	public Date getTransactionDate() { 
+		return date;
+	}
+	@Override
+	public String getTransactionName() {
+		return description;
+	}
+	@Override
+	public long getTransactionNominal() { 
+		return nominal;
+	}
 
 }

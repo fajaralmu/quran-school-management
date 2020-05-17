@@ -42,4 +42,17 @@ public class DonationThursday extends BaseEntity{
 	@Column
 	private String description;
 
+	/** $$$ **/
+	@Override
+	public Date getTransactionDate() { 
+		return date;
+	}
+	@Override
+	public String getTransactionName() {
+		return "Infaq Kamis";
+	}
+	@Override
+	public long getTransactionNominal() { 
+		return nominal;
+	}
 }

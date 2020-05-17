@@ -18,7 +18,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Dto
 @MappedSuperclass 
-public class BaseEntity implements Serializable{
+public class BaseEntity implements Serializable, FinancialEntity{
 	 
 	
 	/**
@@ -108,5 +108,23 @@ public class BaseEntity implements Serializable{
 		}
 		this.modifiedDate = new Date();
 	}
+
+	
+	// --------------- FINANCIAL FIELD --------------- //
+	@Override
+	public Date getTransactionDate() { 
+		return null;
+	}
+
+	@Override
+	public String getTransactionName() { 
+		return null;
+	}
+
+	@Override
+	public long getTransactionNominal() { 
+		return 0;
+	}
+	
 	
 }

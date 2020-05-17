@@ -14,5 +14,7 @@ public interface DonationMonthlyRepository extends JpaRepository<DonationMonthly
 
 	@Query(nativeQuery = true, value = "select * from donation_montly where MONTH(`date`) = ?1 and YEAR(`date`) = ?2")
 	List<DonationMonthly> findByMonthAndYear(int month, int year);
+	@Query(nativeQuery = true, value = "select * from donation_montly where and YEAR(`date`) = ?1")
+	List<DonationMonthly> findByYear(int year);
 
 }
