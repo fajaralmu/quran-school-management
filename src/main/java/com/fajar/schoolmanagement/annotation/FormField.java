@@ -10,8 +10,7 @@ import com.fajar.schoolmanagement.dto.FieldType;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
 public @interface FormField {
-
-
+ 
 	
 	public FieldType type() default FieldType.FIELD_TYPE_TEXT;
 	
@@ -28,10 +27,8 @@ public @interface FormField {
 
 	public String defaultValue() default "";
 
-	public String[] detailFields() default {};
-
-	public String[] defaultValues() default {};
-	//the value is result of array of fields multiplication
-	public String[] multiply() default {}; 
+	public String[] availableValues() default {};
+	public String[] detailFields() default {}; 
+	public String[] multiply() default {};
 
 }

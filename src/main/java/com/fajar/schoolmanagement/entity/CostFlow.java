@@ -6,6 +6,8 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -13,6 +15,7 @@ import javax.persistence.Table;
 import com.fajar.schoolmanagement.annotation.Dto;
 import com.fajar.schoolmanagement.annotation.FormField;
 import com.fajar.schoolmanagement.dto.FieldType;
+import com.fajar.schoolmanagement.financialjournal.SourceOfFund;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -45,6 +48,11 @@ public class CostFlow extends BaseEntity implements Remote, Serializable {
 	@JoinColumn(name = "cost_id")
 	@ManyToOne
 	@FormField(type = FieldType.FIELD_TYPE_FIXED_LIST, optionItemName = "name")
-	private Cost costType;
+	private Cost costType; 
+	
+	@Column(name="source_of_fund")
+	@Enumerated(EnumType.STRING)
+	@FormField(type = FieldType.FIELD_TYPE_PLAIN_LIST, availableValues = {})
+	private SourceOfFund fundSource;
 
 }

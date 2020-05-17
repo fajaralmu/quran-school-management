@@ -767,7 +767,7 @@
 						&& field.value != "" && field.value != null) {
 					isNew = false;
 				}
-				if (field.nodeName == "SELECT") { //handle select element
+				if (field.nodeName == "SELECT" && field.getAttribute("plainlist") == null) { //handle select element
 					let idField = field.getAttribute("itemValueField");
 					entity[fieldId] = {};
 					entity[fieldId][idField] = field.value;

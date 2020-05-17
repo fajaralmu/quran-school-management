@@ -80,6 +80,10 @@ public class EntityRepository {
 	private CapitalRepository CapitalRepository;
 	@Autowired
 	private CapitalFlowRepository CapitalFlowRepository;
+	@Autowired
+	private DonationMonthlyRepository DonationMonthlyRepository;
+	@Autowired
+	private DonationThursdayRepository DonationThursdayRepository;
 
 	/**
 	 * end jpaRepositories

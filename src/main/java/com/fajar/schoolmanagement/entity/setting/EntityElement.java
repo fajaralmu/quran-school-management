@@ -38,5 +38,6 @@ public class EntityElement implements Serializable{
 	private boolean showDetail;
 	private String detailFields;
 	private String[] defaultValues;
+	private List<Object> plainListValues;
 
 }

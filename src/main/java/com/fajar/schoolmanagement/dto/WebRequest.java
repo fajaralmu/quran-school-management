@@ -10,6 +10,8 @@ import com.fajar.schoolmanagement.entity.Capital;
 import com.fajar.schoolmanagement.entity.CapitalFlow;
 import com.fajar.schoolmanagement.entity.Cost;
 import com.fajar.schoolmanagement.entity.CostFlow;
+import com.fajar.schoolmanagement.entity.DonationMonthly;
+import com.fajar.schoolmanagement.entity.DonationThursday;
 import com.fajar.schoolmanagement.entity.Menu;
 import com.fajar.schoolmanagement.entity.Page;
 import com.fajar.schoolmanagement.entity.RegisteredRequest;
@@ -40,7 +42,8 @@ public class WebRequest implements Serializable {
 
 	
 	/**
-	 * ENTITY CRUD use lowerCase!!!
+	 * ==========================================
+	 *         ENTITY CRUD use lowerCase!!!
 	 */
 
 	private String entity;
@@ -59,6 +62,8 @@ public class WebRequest implements Serializable {
 	private Capital capital;
 	private CostFlow costflow;
 	private CapitalFlow capitalflow;
+	private DonationMonthly donationmonthly;
+	private DonationThursday donationthursday;
 	 
 	/**
 	 * ==========end entity============

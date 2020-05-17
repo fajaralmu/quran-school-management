@@ -7,6 +7,7 @@ import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -48,9 +49,10 @@ public class EntityUtil {
 			
 			for (Field field : fieldList) {
 
-				FormField formField = field.getAnnotation(FormField.class);
-				BaseField baseField = field.getAnnotation(BaseField.class);
-				boolean skipBaseField = (baseField != null && ignoreBaseField);
+				final EntityElement entityElement = new EntityElement(); 
+				final FormField formField = field.getAnnotation(FormField.class);
+				final BaseField baseField = field.getAnnotation(BaseField.class);
+				final boolean skipBaseField = (baseField != null && ignoreBaseField);
 				
 				if (formField == null || skipBaseField) {
 					continue;
@@ -95,9 +97,19 @@ public class EntityUtil {
 				} else if (fieldType.equals(FieldType.FIELD_TYPE_DATE)) {
 					entityProperty.getDateElements().add(entityElementId);
 					
-				}  
+				} else if (fieldType.equals(FieldType.FIELD_TYPE_PLAIN_LIST)) {
+					String[] availableValues = formField.availableValues();
+					if(availableValues.length > 0) {
+						entityElement.setPlainListValues(Arrays.asList(availableValues));
+					}else if(field.getType().isEnum()) {
+						Object[] enumConstants = field.getType().getEnumConstants();
+						entityElement.setPlainListValues(Arrays.asList(enumConstants));
+					}else {
+						log.error("Ivalid element: {}", field.getName());
+						continue;
+					}
+				}
 				 
-				final EntityElement entityElement = new EntityElement(); 
 				
 				if (formField.detailFields().length > 0) {
 					entityElement.setDetailFields(String.join("~", formField.detailFields()));

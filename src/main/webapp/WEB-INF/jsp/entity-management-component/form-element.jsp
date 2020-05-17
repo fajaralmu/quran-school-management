@@ -77,6 +77,17 @@
 												managedEntity["itemField_${element.id}"] = "${element.optionItemName}";
 											</script>
 										</c:when>
+										<c:when test="${  element.type == 'plainlist'}">
+											<select class="input-field form-control" id="${element.id }"
+												required="${element.required }"
+												identity="${element.identity }"
+												plainlist="true" >
+												<c:forEach var="val" items="${element.plainListValues }">
+													<option value="${val }">${val }</option>
+												</c:forEach>
+
+											</select>
+										</c:when>
 										<c:when test="${  element.type == 'textarea'}">
 											<textarea class="input-field form-control"
 												id="${element.id }" type="${element.type }"

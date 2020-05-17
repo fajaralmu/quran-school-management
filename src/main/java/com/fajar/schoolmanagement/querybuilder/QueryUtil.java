@@ -246,6 +246,12 @@ public class QueryUtil {
 		 
 	}
 	
+	/**
+	 * return keyValue of tableName and columnName of the referenced entity
+	 * @param currentKey
+	 * @param field
+	 * @return
+	 */
 	private static KeyValue checkIfJoinColumn(String currentKey, Field field) {
 		String multiKeyColumnName = getMultiKeyColumnName(currentKey);
 		KeyValue keyValue = new KeyValue();
