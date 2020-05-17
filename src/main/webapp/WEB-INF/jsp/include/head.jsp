@@ -38,7 +38,7 @@
 			</c:if> --%>
 		 
 			<c:forEach var="pageItem" items="${pages}"> 
-					<li class="nav-item"><a class="nav-link" id="${pageItem.code }"
+					<li class="nav-item"><a class="nav-link pagelink" id="${pageItem.code }" menupage = "${pageItem.isMenuPage() }"
 						href="<spring:url value="${pageItem.link }"/>">${pageItem.name }</a></li>
 				 
 			</c:forEach>
@@ -49,6 +49,8 @@
 <script type="text/javascript">
 	document.body.style.backgroundColor = "${shopProfile.color}";
 
+	var pagesLink = document.getElementsByClassName("pagelink");
+	var pageMenus = {};
 	var ctxPath = "${contextPath}";
 	function logout() {
 		postReq(
@@ -79,5 +81,51 @@
 		);
 	}
 	
+	function initPagesLinkEvent(){
+		for(let i = 0; i< pagesLink.length;i++){
+			pageLink = pagesLink[i];
+			pageLink.onmouseover = function(e){
+				fetchMenus(e);
+			};
+		}
+	}
+	
+	function fetchMenus(e){
+		const pageCode = e.target.id;
+		
+		if(pageMenus[pageCode] == null){
+			const url = "<spring:url value="/api/public/menus/" />" + pageCode;
+		  	postReq(
+					url, {},
+					function(xhr) {
+						infoDone();
+						var response = (xhr.data);
+						var menus = response.entities; 
+						pageMenus[pageCode] = menus;
+						showMenuList(pageCode);
+					}
+			);  
+		}else{
+			showMenuList(pageCode);
+		}
+		
+		
+	}
+	
+	function showMenuList(pageCode){
+		const menus = pageMenus[pageCode];
+		console.log("MENUS:",menus);
+		const menuContainer = createGridWrapper(1, "100px");
+		
+		for (var i = 0; i < menus.length; i++) {
+			const menu = menus[i];
+			const link = createAnchor(menu.code, menu.name, menu.url);
+			menuContainer.appendChild(link);
+		}
+		
+		_byId(pageCode).parentElement.appendChild(menuContainer);
+	}
+	
+	initPagesLinkEvent();
 	getCurrentPageCode();
 </script>

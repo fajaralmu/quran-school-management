@@ -55,4 +55,8 @@ public class Page extends BaseEntity implements Serializable {
 
 	@Transient
 	private List<Menu> menus;
+	 
+	public String isMenuPage() {
+		return nonMenuPage == 0 ? "true":"false"; 
+	}
 }

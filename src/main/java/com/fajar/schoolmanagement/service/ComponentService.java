@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.fajar.schoolmanagement.dto.WebResponse;
 import com.fajar.schoolmanagement.entity.Menu;
 import com.fajar.schoolmanagement.entity.Page;
 import com.fajar.schoolmanagement.entity.User;
@@ -15,6 +16,7 @@ import com.fajar.schoolmanagement.repository.CapitalRepository;
 import com.fajar.schoolmanagement.repository.CostRepository;
 import com.fajar.schoolmanagement.repository.MenuRepository;
 import com.fajar.schoolmanagement.repository.PageRepository;
+import com.fajar.schoolmanagement.util.CollectionUtil;
 import com.fajar.schoolmanagement.util.EntityUtil;
 
 import javassist.NotFoundException;
@@ -111,12 +113,12 @@ public class ComponentService {
 			return null;
 		}
 		
-		List<Menu> menus = getMenuByPageCode(code);
+		List<Menu> menus = getMenuListByPageCode(code);
 		page.setMenus(menus );
 		return page;
 	}
 
-	public List<Menu > getMenuByPageCode(String pageCode){
+	public List<Menu > getMenuListByPageCode(String pageCode){
 		
 		List<Menu> menus = menuRepository.findByMenuPage_code(pageCode);
 		
@@ -187,6 +189,15 @@ public class ComponentService {
 
 	public List getAllFundTypes() { 
 		return capitalRepository.findByDeletedFalse();
+	}
+
+	
+	
+	public WebResponse getMenuByPageCode(String pageCode) {
+
+		List<Menu> menus = getMenuListByPageCode(pageCode);
+		
+		return WebResponse.builder().entities(CollectionUtil.convertList(menus)).build();
 	}
 
 	

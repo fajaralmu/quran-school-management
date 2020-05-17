@@ -34,7 +34,7 @@
 <%-- </c:if> --%>
 <!-- CONTENT -->
 <div class="content">
-	<h2>${entityProperty.entityName.toUpperCase()}-MANAGEMENT</h2>
+	<h2>${entityProperty.entityName }</h2>
 	<p></p>
 	<c:if test="${entityProperty.editable == true }">
 		<button type="btn-show-form" class="btn btn-primary"
@@ -816,13 +816,16 @@
 					entity[fieldId] = field.value;
 				}
 			}
-			if (!isNew) {
-				endPoint = "update";
-			}
+			
 			requestObject[entityName] = entity;
 			requestObject['entityObject'] = entity;
 			requestObject.entity = entityName;
+			
 			console.log("request object", requestObject);
+			
+			if (!isNew) {
+				endPoint = "update";
+			}
 			doSubmit("<spring:url value="/api/entity/" />" + endPoint, requestObject, function(){
 				if(singleRecord){
 					 

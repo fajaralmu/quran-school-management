@@ -163,6 +163,12 @@ function createImgTag(id, className, w, h, src){
 	return img;
 }
 
+/**
+ * 
+ * @param cols
+ * @param width ends with px
+ * @returns
+ */
 function createGridWrapper(cols, width){
 	let div = document.createElement("div");
 	div.style.display = "grid";

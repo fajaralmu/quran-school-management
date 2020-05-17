@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.fajar.schoolmanagement.config.LogProxyFactory;
 import com.fajar.schoolmanagement.dto.WebRequest;
 import com.fajar.schoolmanagement.dto.WebResponse;
+import com.fajar.schoolmanagement.service.ComponentService;
 import com.fajar.schoolmanagement.service.UserSessionService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -30,6 +32,8 @@ public class RestPublicController extends BaseController{
 	 
 	@Autowired
 	private UserSessionService userSessionService;
+	@Autowired
+	private ComponentService componentService;
 
 	@PostConstruct
 	public void init() {
@@ -51,6 +55,11 @@ public class RestPublicController extends BaseController{
 	public WebResponse getCurrentPageCode(HttpServletRequest request, HttpServletResponse response) {
 		validatePageRequest(request);
 		return WebResponse.builder().code(super.activePage(request)).build();
+	}
+	@PostMapping(value = "/menus/{pageCode}")
+	public WebResponse getMenusByPage(@PathVariable(value = "pageCode") String pageCode, HttpServletRequest request, HttpServletResponse response) {
+		validatePageRequest(request);
+		return componentService.getMenuByPageCode(pageCode);
 	}
 	
 	public void validatePageRequest(HttpServletRequest req) { 

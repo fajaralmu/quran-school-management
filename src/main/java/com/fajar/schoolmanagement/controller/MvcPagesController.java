@@ -47,9 +47,7 @@ public class MvcPagesController extends BaseController{
 		model.addAttribute("page", page); 
 		return basePage;
 
-	}
-	
-	
+	} 
 	
 
 }
