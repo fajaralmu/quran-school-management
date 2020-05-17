@@ -6,7 +6,18 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <div class="header" style="height:auto"> 
-
+<style>
+	.menu-spoiler{
+		text-align: left;
+		font-size: 0.7em;
+		background-color: gray;
+		z-index: 1;
+		position: absolute;
+	}
+	.menu-spoiler > a {
+		color: white;
+	}
+</style>
 	<div>
 	<!-- <ul class="nav nav-tabs"> -->
 		<ul class="nav  flex-column">
@@ -38,7 +49,7 @@
 			</c:if> --%>
 		 
 			<c:forEach var="pageItem" items="${pages}"> 
-					<li class="nav-item"><a class="nav-link pagelink" id="${pageItem.code }" menupage = "${pageItem.isMenuPage() }"
+					<li class="nav-item" style="position: relative;"><a class="nav-link pagelink" id="${pageItem.code }" menupage = "${pageItem.isMenuPage() }"
 						href="<spring:url value="${pageItem.link }"/>">${pageItem.name }</a></li>
 				 
 			</c:forEach>
@@ -84,8 +95,15 @@
 	function initPagesLinkEvent(){
 		for(let i = 0; i< pagesLink.length;i++){
 			pageLink = pagesLink[i];
+			
+			if(pageLink.getAttribute("menupage") != "true")
+				continue;
+			
 			pageLink.onmouseover = function(e){
 				fetchMenus(e);
+			};
+			pageLink.onmouseout = function(e){
+				hideMenus(e);
 			};
 		}
 	}
@@ -107,9 +125,7 @@
 			);  
 		}else{
 			showMenuList(pageCode);
-		}
-		
-		
+		} 
 	}
 	
 	function showMenuList(pageCode){
@@ -117,13 +133,25 @@
 		console.log("MENUS:",menus);
 		const menuContainer = createGridWrapper(1, "100px");
 		
+		menuContainer.setAttribute("id", "menu-spoiler-"+pageCode);
+		menuContainer.setAttribute("class", "menu-spoiler");
+		
 		for (var i = 0; i < menus.length; i++) {
 			const menu = menus[i];
 			const link = createAnchor(menu.code, menu.name, menu.url);
 			menuContainer.appendChild(link);
 		}
 		
-		_byId(pageCode).parentElement.appendChild(menuContainer);
+		_byId(pageCode).parentElement.appendChild(menuContainer); 
+	}
+	
+	function hideMenus(e){
+		const pageLink = _byId(e.target.id);
+		const parentElement = pageLink.parentElement;
+		if(parentElement.childElementCount > 1){
+			parentElement.removeChild(parentElement.lastChild);
+		}
+		
 	}
 	
 	initPagesLinkEvent();
