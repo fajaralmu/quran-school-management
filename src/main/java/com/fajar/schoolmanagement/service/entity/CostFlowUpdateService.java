@@ -20,14 +20,21 @@ public class CostFlowUpdateService extends BaseEntityUpdateService{
 	@Autowired
 	private CashBalanceService cashBalanceService;
 	
+	private CostFlow theCostFlow;
+	
 	@Override
 	public WebResponse saveEntity(BaseEntity entity, boolean newRecord, EntityUpdateInterceptor updateInterceptor) {
 		CostFlow costFlow = (CostFlow) copyNewElement(entity, newRecord); 
 		 
-		CostFlow newEntity = entityRepository.save(costFlow);
-		log.info("Cost Type: {}", newEntity.getCostType());
-		cashBalanceService.updateCashBalance(newEntity);
+		theCostFlow = entityRepository.save(costFlow);
+		validateCostInfo();
+		log.info("Cost Type: {}", theCostFlow.getCostType());
+		cashBalanceService.updateCashBalance(theCostFlow);
 		
-		return WebResponse.builder().entity(newEntity).build();
+		return WebResponse.builder().entity(theCostFlow).build();
+	}
+
+	private void validateCostInfo() { 
+		theCostFlow = (CostFlow) entityRepository.findById(theCostFlow.getClass(), theCostFlow.getId());
 	}
 }

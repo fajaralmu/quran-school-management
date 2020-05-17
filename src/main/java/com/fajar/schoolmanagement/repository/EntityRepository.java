@@ -36,10 +36,10 @@ import com.fajar.schoolmanagement.entity.Teacher;
 import com.fajar.schoolmanagement.entity.User;
 import com.fajar.schoolmanagement.entity.setting.EntityManagementConfig;
 import com.fajar.schoolmanagement.service.entity.BaseEntityUpdateService;
-import com.fajar.schoolmanagement.service.entity.FundUpdateService;
 import com.fajar.schoolmanagement.service.entity.CommonUpdateService;
 import com.fajar.schoolmanagement.service.entity.CostFlowUpdateService;
 import com.fajar.schoolmanagement.service.entity.EntityUpdateInterceptor;
+import com.fajar.schoolmanagement.service.entity.GeneralFundUpdateService;
 import com.fajar.schoolmanagement.service.entity.UserUpdateService;
 
 import lombok.AccessLevel;
@@ -98,9 +98,9 @@ public class EntityRepository {
 	@Autowired
 	private CostFlowUpdateService costFlowUpdateService;
 	@Autowired
-	private FundUpdateService fundUpdateService;
+	private GeneralFundUpdateService fundUpdateService;
 	@Autowired
-	private BaseEntityUpdateService baseEntityUpdateService;
+	private BaseEntityUpdateService baseEntityUpdateService; 
 
 	@PersistenceContext
 	private EntityManager entityManager;

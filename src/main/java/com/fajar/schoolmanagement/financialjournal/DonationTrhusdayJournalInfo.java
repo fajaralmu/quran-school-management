@@ -1,6 +1,5 @@
 package com.fajar.schoolmanagement.financialjournal;
 
-import com.fajar.schoolmanagement.entity.CapitalFlow;
 import com.fajar.schoolmanagement.entity.DonationThursday;
 
 public class DonationTrhusdayJournalInfo extends BalanceJournalInfo {
@@ -21,7 +20,7 @@ public class DonationTrhusdayJournalInfo extends BalanceJournalInfo {
 	public void buildBalanceObject() {  
 		debitAmount = donationThrusday.getNominal();
 		
-		referenceInfo = SourceOfFund.DONATION_THRUSDAY.value;
+		referenceInfo = SourceOfFund.DONATION_THRUSDAY.toString();
 		date = donationThrusday.getDate();
 	}
 

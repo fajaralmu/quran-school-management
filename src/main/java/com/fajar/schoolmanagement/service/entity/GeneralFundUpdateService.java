@@ -5,7 +5,6 @@ import org.springframework.stereotype.Service;
 
 import com.fajar.schoolmanagement.dto.WebResponse;
 import com.fajar.schoolmanagement.entity.BaseEntity;
-import com.fajar.schoolmanagement.entity.CapitalFlow;
 import com.fajar.schoolmanagement.financialjournal.CashBalanceService;
 import com.fajar.schoolmanagement.repository.EntityRepository;
 
@@ -13,23 +12,36 @@ import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
-public class FundUpdateService extends BaseEntityUpdateService {
+public class GeneralFundUpdateService extends BaseEntityUpdateService {
 
 	@Autowired
 	protected EntityRepository entityRepository;
 	@Autowired
-	private CashBalanceService cashBalanceService;
+	private CashBalanceService cashBalanceService; 
+	
+	private BaseEntity theFund;
 
 	@Override
 	public WebResponse saveEntity(BaseEntity entity, boolean newRecord, EntityUpdateInterceptor updateInterceptor) {
 		BaseEntity fund = copyNewElement(entity, newRecord);
 
-		BaseEntity newEntity = entityRepository.save(fund);
+		theFund = entityRepository.save(fund);
+		validateFundInfo();
 		
-		log.info("fund object : {}", fund.getClass().getSimpleName());
-		
-		cashBalanceService.updateCashBalance(newEntity);
+		cashBalanceService.updateCashBalance(theFund);
 
-		return WebResponse.builder().entity(newEntity).build();
+		return WebResponse.builder().entity(theFund).build();
+	}
+
+	private void validateFundInfo() {
+		try {
+			theFund =   (BaseEntity) entityRepository.findById(theFund.getClass(), theFund.getId());
+		
+		}catch (Exception e) {
+			
+			log.error("Error validating donation monthly");
+			e.printStackTrace();
+		}
+		
 	}
 }
