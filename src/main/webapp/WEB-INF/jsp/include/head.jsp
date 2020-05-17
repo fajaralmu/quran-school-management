@@ -150,7 +150,8 @@
 		
 		for (var i = 0; i < menus.length; i++) {
 			const menu = menus[i];
-			const link = createAnchor(menu.code, menu.name, menu.url);
+			const url = "<spring:url value="/"/>"+menu.url;
+			const link = createAnchor(menu.code, menu.name, url);
 			menuContainer.appendChild(link);
 		}  
 		parentElement.appendChild(menuContainer); 
