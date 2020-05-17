@@ -19,7 +19,7 @@ public class FundJournalInfo extends BalanceJournalInfo {
 	@Override
 	public void buildBalanceObject() {  
 		debitAmount = capitalFlow.getNominal();
-		
+		cashType = CashType.GENERAL_COST;
 		referenceInfo = "FUND_"+capitalFlow.getFundType().getName();
 		date = capitalFlow.getDate();
 	}

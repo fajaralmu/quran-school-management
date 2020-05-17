@@ -19,7 +19,8 @@ public class CostJournalInfo extends BalanceJournalInfo {
 	@Override
 	public void buildBalanceObject() {  
 		creditAmount = costFlow.getNominal(); 
-		referenceInfo = "COST_"+costFlow.getCostType().getName();
+		cashType = CashType.GENERAL_COST;
+		referenceInfo = cashType+"_"+costFlow.getCostType().getName();
 		date = costFlow.getDate();
 	 
 	}

@@ -19,7 +19,7 @@ public class DonationTrhusdayJournalInfo extends BalanceJournalInfo {
 	@Override
 	public void buildBalanceObject() {  
 		debitAmount = donationThrusday.getNominal();
-		
+		cashType = CashType.DONATION_THURSDAY;
 		referenceInfo = SourceOfFund.DONATION_THRUSDAY.toString();
 		date = donationThrusday.getDate();
 	}

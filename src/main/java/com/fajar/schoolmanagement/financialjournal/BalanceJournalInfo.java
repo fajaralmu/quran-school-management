@@ -17,10 +17,12 @@ public abstract class BalanceJournalInfo implements Serializable {
 	protected long debitAmount;
 	protected long creditAmount;
 	protected String referenceInfo;
+	protected CashType cashType;
 	protected CashBalance balanceObject;
 
 	public CashBalance getBalanceObject() {
 		return CashBalance.builder().date(date).creditAmount(creditAmount).debitAmount(debitAmount)
+				.type(cashType)
 				.referenceInfo(referenceInfo).build();
 	}
 

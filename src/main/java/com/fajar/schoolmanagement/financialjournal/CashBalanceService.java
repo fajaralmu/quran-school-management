@@ -25,17 +25,9 @@ public class CashBalanceService {
 		
 		log.info("getBalanceByTransactionItem: {} {}", baseEntity.getId(), baseEntity.getClass());
 		
-		String reffInfo = "FUND";
-		if(baseEntity instanceof CostFlow) {
-			 
-			reffInfo = "COST";
-			
-		}else if(baseEntity instanceof CapitalFlow) { 
-			
-			reffInfo = "FUND";
-		}
-		CashBalance balance = cashBalanceRepository.getByReferenceInfoAndReferenceId(reffInfo, 
-				String.valueOf(baseEntity.getId()));
+		CashBalance journalInfo = mapCashBalance(baseEntity);
+		CashBalance balance = cashBalanceRepository.findTop1ByTypeAndReferenceId(journalInfo.getType(), 
+				 String.valueOf(baseEntity.getId()) );
 		
 		log.info("existing balance:{}", balance);
 		
@@ -115,7 +107,8 @@ public class CashBalanceService {
 		cashBalance.setReferenceInfo(info);
 		cashBalance.setReferenceId(String.valueOf(baseEntity.getId()));
 		cashBalance.setDate(date); 
-		cashBalance.setModifiedDate(new Date()); 
+		cashBalance.setModifiedDate(new Date());
+		cashBalance.setType(mappedCashBalanceInfo.getType());
 		
 		cashBalanceRepository.save(cashBalance);
 	}

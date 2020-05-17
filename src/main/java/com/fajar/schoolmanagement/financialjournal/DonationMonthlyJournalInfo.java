@@ -19,7 +19,7 @@ public class DonationMonthlyJournalInfo extends BalanceJournalInfo {
 	@Override
 	public void buildBalanceObject() {
 		debitAmount = donationMonthly.getNominal();
-
+		cashType = CashType.DONATION_MONTHLY;
 		referenceInfo = SourceOfFund.DONATION_MONTHLY + "_" + donationMonthly.getStudent().getName();
 		date = donationMonthly.getDate();
 	}

@@ -3,13 +3,16 @@ package com.fajar.schoolmanagement.entity;
 import java.io.Serializable;
 import java.util.Date;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.Table;
 
 import com.fajar.schoolmanagement.annotation.Dto;
 import com.fajar.schoolmanagement.annotation.FormField;
-import com.fajar.schoolmanagement.dto.CashType;
 import com.fajar.schoolmanagement.dto.FieldType;
+import com.fajar.schoolmanagement.financialjournal.CashType;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -39,13 +42,15 @@ public class CashBalance extends BaseEntity implements Serializable{/**
 	@FormField(type = FieldType.FIELD_TYPE_NUMBER)
 	private long actualBalance;
 	@FormField
+	@Enumerated(EnumType.STRING)
+	@Column
 	private CashType type;
 	@FormField
 	private Date date;
 	@FormField
 	private String referenceId;
 	@FormField
-	private String referenceInfo;
+	private String referenceInfo; 
 	
 	
 }
