@@ -1,4 +1,4 @@
-package com.fajar.schoolmanagement.financialjournal;
+package com.fajar.schoolmanagement.service.transaction;
 
 import java.util.Date;
 
@@ -40,12 +40,18 @@ public class CashBalanceService {
 	 * @param year
 	 * @return
 	 */
-	public CashBalance getBalanceBefore (int month, int year) { 
+	public CashBalance getBalanceBefore (int month, int year, boolean donationThrusday) { 
 		
 		Date date = DateUtil.getDate(year, month-1, 1);
 		String dateString = DateUtil.formatDate(date, "yyyy-MM-dd");
 		
-		Object object = cashBalanceRepository.getBalanceBefore(dateString ); 
+		Object object;
+		if(donationThrusday) {
+			object = cashBalanceRepository.getDonationThrusdayBalanceBefore(dateString);
+		}else {
+			object	= cashBalanceRepository.getBalanceBefore(dateString );
+		}
+		
 		Object[] result = (Object[]) object;
 		
 		CashBalance cashBalance = new CashBalance();
@@ -111,6 +117,17 @@ public class CashBalanceService {
 		cashBalance.setType(mappedCashBalanceInfo.getType());
 		
 		cashBalanceRepository.save(cashBalance);
+	}
+	
+	public int[] getTransactionYears() {
+		int minYear = cashBalanceRepository.getMinYear();
+		int maxYear = cashBalanceRepository.getMaxYear(); 
+		
+		int[] result = new int[maxYear-minYear+1];
+		for(int i = minYear; i <= maxYear; i++) {
+			result[i - minYear] = i;
+		}
+		return result;
 	}
  
 

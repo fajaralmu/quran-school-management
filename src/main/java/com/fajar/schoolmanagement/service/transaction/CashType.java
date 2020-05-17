@@ -1,4 +1,4 @@
-package com.fajar.schoolmanagement.financialjournal;
+package com.fajar.schoolmanagement.service.transaction;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;

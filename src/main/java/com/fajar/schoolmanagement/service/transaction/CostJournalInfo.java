@@ -1,4 +1,4 @@
-package com.fajar.schoolmanagement.financialjournal;
+package com.fajar.schoolmanagement.service.transaction;
 
 import com.fajar.schoolmanagement.entity.CostFlow;
 
@@ -19,10 +19,18 @@ public class CostJournalInfo extends BalanceJournalInfo {
 	@Override
 	public void buildBalanceObject() {  
 		creditAmount = costFlow.getNominal(); 
-		cashType = CashType.GENERAL_COST;
+		cashType = determineCashType();
 		referenceInfo = cashType+"_"+costFlow.getCostType().getName();
 		date = costFlow.getDate();
 	 
+	}
+	
+	private CashType determineCashType() {
+		if(costFlow.getFundSource().equals(SourceOfFund.DONATION_THRUSDAY)) {
+			return CashType.DONATION_THURSDAY;
+		}
+		
+		return CashType.GENERAL_COST;
 	}
 
 	 

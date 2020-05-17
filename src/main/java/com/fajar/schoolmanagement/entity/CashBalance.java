@@ -12,7 +12,7 @@ import javax.persistence.Table;
 import com.fajar.schoolmanagement.annotation.Dto;
 import com.fajar.schoolmanagement.annotation.FormField;
 import com.fajar.schoolmanagement.dto.FieldType;
-import com.fajar.schoolmanagement.financialjournal.CashType;
+import com.fajar.schoolmanagement.service.transaction.CashType;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
