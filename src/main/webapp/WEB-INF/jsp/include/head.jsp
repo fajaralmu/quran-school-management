@@ -5,7 +5,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
-<div class="header" style="height:auto"> 
+<div id="header" class="header" style="height:auto"> 
 <style>
 	.menu-spoiler{
 		text-align: left;
@@ -87,7 +87,7 @@
 					infoDone();
 					var response = (xhr.data);
 					var pageCode = response.code;
-					_byId(pageCode).setAttribute("class", "nav-link active");
+					_byId(pageCode).setAttribute("class", "nav-link pagelink active");
 				}
 		);
 	}
@@ -102,9 +102,13 @@
 			pageLink.onmouseover = function(e){
 				fetchMenus(e);
 			};
-			pageLink.onmouseout = function(e){
+			/* pageLink.onmouseout = function(e){
 				hideMenus(e);
-			};
+			}; */
+		}
+		
+		_byId("header-wrapper").onmouseout = function(e){
+			hideAllMenuSpoiler();
 		}
 	}
 	
@@ -129,9 +133,17 @@
 	}
 	
 	function showMenuList(pageCode){
+		
+		hideAllMenuSpoiler();
+		
 		const menus = pageMenus[pageCode];
 		console.log("MENUS:",menus);
 		const menuContainer = createGridWrapper(1, "100px");
+		const parentElement = _byId(pageCode).parentElement;
+		
+		if(parentElement.childElementCount > 1){
+			hideMenuByPageCode(pageCode);	
+		}
 		
 		menuContainer.setAttribute("id", "menu-spoiler-"+pageCode);
 		menuContainer.setAttribute("class", "menu-spoiler");
@@ -140,18 +152,30 @@
 			const menu = menus[i];
 			const link = createAnchor(menu.code, menu.name, menu.url);
 			menuContainer.appendChild(link);
-		}
-		
-		_byId(pageCode).parentElement.appendChild(menuContainer); 
+		} 
+		 
+		parentElement.appendChild(menuContainer);
+		 
 	}
 	
 	function hideMenus(e){
-		const pageLink = _byId(e.target.id);
+		hideMenuByPageCode(e.target.id);
+	}
+	
+	function hideMenuByPageCode(code){
+		const pageLink = _byId(code);
+		console.log("HIDE ", code)
 		const parentElement = pageLink.parentElement;
 		if(parentElement.childElementCount > 1){
 			parentElement.removeChild(parentElement.lastChild);
 		}
-		
+	}
+	
+	function hideAllMenuSpoiler(){
+		for(let i = 0; i< pagesLink.length;i++){
+			
+			hideMenuByPageCode(pagesLink[i].id);
+		}
 	}
 	
 	initPagesLinkEvent();

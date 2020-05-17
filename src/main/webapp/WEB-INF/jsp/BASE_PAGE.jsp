@@ -74,7 +74,7 @@
 			
 		</div>
 		<div id = "layout">
-			<div class="centered-align">
+			<div class="centered-align" id="header-wrapper">
 				<jsp:include page="include/head.jsp"></jsp:include>
 			</div>
 			<div>
