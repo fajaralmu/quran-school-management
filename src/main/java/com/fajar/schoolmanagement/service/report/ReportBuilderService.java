@@ -48,7 +48,7 @@ public class ReportBuilderService {
 
 		Filter filter = reportData.getFilter();
 		String time = DateUtil.formatDate(new Date(), "ddMMyyyy'T'hhmmss-a");
-		String sheetName = "Daily-" + filter.getMonth() + "-" + filter.getYear();
+		String sheetName = "Laporan_Bulanan-" + filter.getMonth() + "-" + filter.getYear();
 
 		String reportName = reportPath + "/" + sheetName + "_" + time + ".xlsx";
 		XSSFWorkbook xwb = new XSSFWorkbook();
@@ -83,17 +83,34 @@ public class ReportBuilderService {
 		int spendingRow = fundRow;
 		
 		//funds
+		fundRow++;
 		Object[] initialBalanceRow = {"1/"+month, "Saldo Awal", "", curr(initialBalance.getActualBalance())};
 		createRow(xsheet, fundRow, columnOffset, initialBalanceRow );
-		fundRow++;  
 		long summaryFund  = writeMonthlyCashflow(fundRow, mappedFunds, xsheet, columnOffset);  
+		int fundRowCount = 1 + getCashflowItemCount(mappedFunds); //one for intiial Balance
 		
 		//spending
-		long summarySpending = writeMonthlyCashflow(spendingRow, mappedSpendings, xsheet, 4);
+		long summarySpending = writeMonthlyCashflow(spendingRow, mappedSpendings, xsheet, 5);
+		int spendingRowCount = getCashflowItemCount(mappedSpendings);
+
+		int rowForTotal = fundRowCount > spendingRowCount ? fundRowCount : spendingRowCount;
 		
-		log.info("Spending Row: {}", spendingRow);
-		log.info("Fund Row: {}", fundRow);
+		//rowTotal
+		long grandTotalFund = summaryFund + initialBalance.getActualBalance();
+		long grandTotalBalance = grandTotalFund - summarySpending;
+		createRow(xsheet, rowForTotal, 1, "", "", curr(summaryFund), curr(grandTotalFund), "","", curr(summarySpending), curr(grandTotalBalance));
+		
+		log.info("Spending Row: {}", spendingRowCount);
+		log.info("Fund Row: {}", fundRowCount);
 		log.info("Total Fund: {}, initialBalance: {}", summaryFund, initialBalance.getActualBalance());
+	}
+	
+	private static int getCashflowItemCount( Map<Integer, List<BaseEntity>> mappedCashflow) {
+		int count = 0;
+		for(Integer day:mappedCashflow.keySet()) {
+			count += mappedCashflow.get(day).size();
+		}
+		return count;
 	}
 	
 	private static long writeMonthlyCashflow(int currentRow, Map<Integer, List<BaseEntity>> mappedCashflow, XSSFSheet xsheet, int columnOffset) {
