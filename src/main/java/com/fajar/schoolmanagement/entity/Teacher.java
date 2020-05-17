@@ -41,7 +41,7 @@ public class Teacher extends BaseEntity {
 	private Date dateOfBirth;
 
 	@Column
-	@FormField
+	@FormField(type = FieldType.FIELD_TYPE_PLAIN_LIST, availableValues = { "Laki-laki", "Perempuan" })
 	private String gender;
 
 	@Column(name = "phone_number")

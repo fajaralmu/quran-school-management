@@ -138,13 +138,15 @@
 		
 		const menus = pageMenus[pageCode];
 		console.log("MENUS:",menus);
-		const menuContainer = createGridWrapper(1, "100px");
+		const menuContainer = createGridWrapper(1, "100%");
 		const parentElement = _byId(pageCode).parentElement;
 		
 		if(parentElement.childElementCount > 1){
 			hideMenuByPageCode(pageCode);	
 		}
 		
+		menuContainer.style.width = "100%";
+		menuContainer.style.textAlign = "center";
 		menuContainer.setAttribute("id", "menu-spoiler-"+pageCode);
 		menuContainer.setAttribute("class", "menu-spoiler");
 		
