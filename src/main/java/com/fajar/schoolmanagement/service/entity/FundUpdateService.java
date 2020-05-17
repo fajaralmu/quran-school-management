@@ -24,7 +24,7 @@ public class FundUpdateService extends BaseEntityUpdateService {
 	public WebResponse saveEntity(BaseEntity entity, boolean newRecord, EntityUpdateInterceptor updateInterceptor) {
 		BaseEntity fund = copyNewElement(entity, newRecord);
 
-		CapitalFlow newEntity = entityRepository.save(fund);
+		BaseEntity newEntity = entityRepository.save(fund);
 		
 		log.info("fund object : {}", fund.getClass().getSimpleName());
 		
