@@ -25,6 +25,8 @@ import com.fajar.schoolmanagement.entity.CapitalFlow;
 import com.fajar.schoolmanagement.entity.CashBalance;
 import com.fajar.schoolmanagement.entity.Cost;
 import com.fajar.schoolmanagement.entity.CostFlow;
+import com.fajar.schoolmanagement.entity.DonationMonthly;
+import com.fajar.schoolmanagement.entity.DonationThursday;
 import com.fajar.schoolmanagement.entity.Menu;
 import com.fajar.schoolmanagement.entity.Page;
 import com.fajar.schoolmanagement.entity.Profile;
@@ -34,7 +36,7 @@ import com.fajar.schoolmanagement.entity.Teacher;
 import com.fajar.schoolmanagement.entity.User;
 import com.fajar.schoolmanagement.entity.setting.EntityManagementConfig;
 import com.fajar.schoolmanagement.service.entity.BaseEntityUpdateService;
-import com.fajar.schoolmanagement.service.entity.CapitalFlowUpdateService;
+import com.fajar.schoolmanagement.service.entity.FundUpdateService;
 import com.fajar.schoolmanagement.service.entity.CommonUpdateService;
 import com.fajar.schoolmanagement.service.entity.CostFlowUpdateService;
 import com.fajar.schoolmanagement.service.entity.EntityUpdateInterceptor;
@@ -96,7 +98,7 @@ public class EntityRepository {
 	@Autowired
 	private CostFlowUpdateService costFlowUpdateService;
 	@Autowired
-	private CapitalFlowUpdateService capitalUpdateService;
+	private FundUpdateService fundUpdateService;
 	@Autowired
 	private BaseEntityUpdateService baseEntityUpdateService;
 
@@ -156,7 +158,11 @@ public class EntityRepository {
 		putConfig(User.class, userUpdateService);
 		putConfig(Menu.class, commonUpdateService, EntityUpdateInterceptor.menuInterceptor());
 		putConfig(CostFlow.class, costFlowUpdateService);
-		putConfig(CapitalFlow.class, capitalUpdateService);
+		putConfig(CapitalFlow.class, fundUpdateService);
+		putConfig(DonationThursday.class, fundUpdateService);
+		putConfig(DonationMonthly.class, fundUpdateService);
+
+		
 		/**
 		 * unable to update
 		 */

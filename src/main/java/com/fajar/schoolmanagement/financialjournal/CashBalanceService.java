@@ -9,6 +9,8 @@ import com.fajar.schoolmanagement.entity.BaseEntity;
 import com.fajar.schoolmanagement.entity.CapitalFlow;
 import com.fajar.schoolmanagement.entity.CashBalance;
 import com.fajar.schoolmanagement.entity.CostFlow;
+import com.fajar.schoolmanagement.entity.DonationMonthly;
+import com.fajar.schoolmanagement.entity.DonationThursday;
 import com.fajar.schoolmanagement.repository.CashBalanceRepository;
 import com.fajar.schoolmanagement.util.DateUtil;
 
@@ -76,10 +78,13 @@ public class CashBalanceService {
 	
 	private static BalanceJournalInfo getJournalInfo(BaseEntity baseEntity) {
 		if(baseEntity instanceof CostFlow) {
-			return new CostJournalInfo((CostFlow) baseEntity);
-			
+			return new CostJournalInfo((CostFlow) baseEntity); 
 		}else if(baseEntity instanceof CapitalFlow) {
 			return new FundJournalInfo((CapitalFlow) baseEntity);
+		}else if(baseEntity instanceof DonationMonthly) {
+			return new DonationMonthlyJournalInfo((DonationMonthly) baseEntity);
+		}else if(baseEntity instanceof DonationThursday){
+			return new DonationTrhusdayJournalInfo((DonationThursday) baseEntity);
 		}else {
 			return null;
 		}

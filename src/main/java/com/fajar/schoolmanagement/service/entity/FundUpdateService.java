@@ -13,21 +13,23 @@ import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
-public class CapitalFlowUpdateService extends BaseEntityUpdateService{ 
+public class FundUpdateService extends BaseEntityUpdateService {
 
 	@Autowired
 	protected EntityRepository entityRepository;
 	@Autowired
 	private CashBalanceService cashBalanceService;
-	
+
 	@Override
 	public WebResponse saveEntity(BaseEntity entity, boolean newRecord, EntityUpdateInterceptor updateInterceptor) {
-		CapitalFlow capital = (CapitalFlow) copyNewElement(entity, newRecord);
-		 
-		CapitalFlow newEntity = entityRepository.save(capital); 
-		log.info("Fund Type: {}", newEntity.getFundType());
-		cashBalanceService.updateCashBalance(newEntity);
+		BaseEntity fund = copyNewElement(entity, newRecord);
+
+		CapitalFlow newEntity = entityRepository.save(fund);
 		
+		log.info("fund object : {}", fund.getClass().getSimpleName());
+		
+		cashBalanceService.updateCashBalance(newEntity);
+
 		return WebResponse.builder().entity(newEntity).build();
 	}
 }

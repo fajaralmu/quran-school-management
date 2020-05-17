@@ -38,7 +38,7 @@ public class DonationMonthly extends BaseEntity{
 	
 	@JoinColumn(name = "student_id")
 	@ManyToOne
-	@FormField(type = FieldType.FIELD_TYPE_FIXED_LIST, optionItemName = "name")
+	@FormField(type = FieldType.FIELD_TYPE_DYNAMIC_LIST, optionItemName = "name")
 	private Student student;
 	
 	@FormField
