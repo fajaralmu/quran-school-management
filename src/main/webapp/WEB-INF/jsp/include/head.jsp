@@ -17,6 +17,10 @@
 	.menu-spoiler > a {
 		color: white;
 	}
+	
+	#header-wrapper{
+		height: 100%;
+	}
 </style>
 	<div>
 	<!-- <ul class="nav nav-tabs"> -->
@@ -101,13 +105,10 @@
 			
 			pageLink.onmouseover = function(e){
 				fetchMenus(e);
-			};
-			/* pageLink.onmouseout = function(e){
-				hideMenus(e);
-			}; */
+			}; 
 		}
 		
-		_byId("header-wrapper").onmouseout = function(e){
+		_byId("header-wrapper").onmouseleave = function(e){
 			hideAllMenuSpoiler();
 		}
 	}
@@ -132,8 +133,7 @@
 		} 
 	}
 	
-	function showMenuList(pageCode){
-		
+	function showMenuList(pageCode){ 
 		hideAllMenuSpoiler();
 		
 		const menus = pageMenus[pageCode];
@@ -152,10 +152,8 @@
 			const menu = menus[i];
 			const link = createAnchor(menu.code, menu.name, menu.url);
 			menuContainer.appendChild(link);
-		} 
-		 
-		parentElement.appendChild(menuContainer);
-		 
+		}  
+		parentElement.appendChild(menuContainer); 
 	}
 	
 	function hideMenus(e){
@@ -164,7 +162,7 @@
 	
 	function hideMenuByPageCode(code){
 		const pageLink = _byId(code);
-		console.log("HIDE ", code)
+		//console.log("HIDE ", code)
 		const parentElement = pageLink.parentElement;
 		if(parentElement.childElementCount > 1){
 			parentElement.removeChild(parentElement.lastChild);
