@@ -75,27 +75,42 @@ public class ReportBuilderService {
 		/**
 		 * build fund table
 		 */
-		Object[] headerValues = { "Tanggal", "Keterangan", "Debet", "Total" };
+		Object[] headerValues = { "Tanggal", "Keterangan", "Debet", "Total", "Tanggal", "Keterangan", "Kredit", "Total" };
 		createRow(xsheet, currentRow , columnOffset, headerValues);
 		
 		//initial balance row
-		currentRow++;
-		Object[] initialBalanceRow = {"1/"+month, "Saldo Awal", "", curr(initialBalance.getActualBalance())};
-		createRow(xsheet, currentRow, columnOffset, initialBalanceRow );
-		long summaryFund = 0L;
+		int fundRow = currentRow++;
+		int spendingRow = fundRow;
 		
-		for(Integer day : mappedFunds.keySet()) {
-			List<BaseEntity> funds = mappedFunds.get(day);
+		//funds
+		Object[] initialBalanceRow = {"1/"+month, "Saldo Awal", "", curr(initialBalance.getActualBalance())};
+		createRow(xsheet, fundRow, columnOffset, initialBalanceRow );
+		fundRow++;  
+		long summaryFund  = writeMonthlyCashflow(fundRow, mappedFunds, xsheet, columnOffset);  
+		
+		//spending
+		long summarySpending = writeMonthlyCashflow(spendingRow, mappedSpendings, xsheet, 4);
+		
+		log.info("Spending Row: {}", spendingRow);
+		log.info("Fund Row: {}", fundRow);
+		log.info("Total Fund: {}, initialBalance: {}", summaryFund, initialBalance.getActualBalance());
+	}
+	
+	private static long writeMonthlyCashflow(int currentRow, Map<Integer, List<BaseEntity>> mappedCashflow, XSSFSheet xsheet, int columnOffset) {
+		long summaryCashflow = 0L;
+		for(Integer day : mappedCashflow.keySet()) {
+			List<BaseEntity> funds = mappedCashflow.get(day);
 			for (BaseEntity fund : funds) {
 				
+				int month = DateUtil.getCalendarItem(fund.getTransactionDate(), Calendar.MONTH) + 1;
 				currentRow++;
 				Object[] fundRowValues = {day+"/"+month, fund.getTransactionName(), curr(fund.getTransactionNominal()), ""};
 				createRow(xsheet, currentRow, columnOffset, fundRowValues );
-				summaryFund += fund.getTransactionNominal();
+				summaryCashflow += fund.getTransactionNominal();
 			}
 		}
 		
-		log.info("Total Fund: {}, initialBalance: {}", summaryFund, initialBalance.getActualBalance());
+		return summaryCashflow;
 	}
 	
 	private int getMonthDays(Filter filter) {
