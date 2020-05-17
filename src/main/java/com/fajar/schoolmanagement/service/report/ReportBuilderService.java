@@ -69,7 +69,7 @@ public class ReportBuilderService {
 		Map<Integer, List<BaseEntity>> mappedSpendings = sortFinancialEntityByDayOfMonth(reportData.getSpendings(), monthDays);
 		CashBalance initialBalance = reportData.getInitialBalance();
 		
-		int currentRow = 0;
+		int currentRow = 1;
 		int columnOffset = 1;
 		
 		/**
@@ -86,11 +86,11 @@ public class ReportBuilderService {
 		fundRow++;
 		Object[] initialBalanceRow = {"1/"+month, "Saldo Awal", "", curr(initialBalance.getActualBalance())};
 		createRow(xsheet, fundRow, columnOffset, initialBalanceRow );
-		long summaryFund  = writeMonthlyCashflow(fundRow, mappedFunds, xsheet, columnOffset);  
+		long summaryFund  = writeMonthlyCashflowTable(fundRow, mappedFunds, xsheet, columnOffset);  
 		int fundRowCount = 1 + getCashflowItemCount(mappedFunds); //one for intiial Balance
 		
 		//spending
-		long summarySpending = writeMonthlyCashflow(spendingRow, mappedSpendings, xsheet, 5);
+		long summarySpending = writeMonthlyCashflowTable(spendingRow, mappedSpendings, xsheet, 5);
 		int spendingRowCount = getCashflowItemCount(mappedSpendings);
 
 		int rowForTotal = fundRowCount > spendingRowCount ? fundRowCount : spendingRowCount;
@@ -105,6 +105,11 @@ public class ReportBuilderService {
 		log.info("Total Fund: {}, initialBalance: {}", summaryFund, initialBalance.getActualBalance());
 	}
 	
+	/**
+	 * get list size in the map<integer, list>
+	 * @param mappedCashflow
+	 * @return
+	 */
 	private static int getCashflowItemCount( Map<Integer, List<BaseEntity>> mappedCashflow) {
 		int count = 0;
 		for(Integer day:mappedCashflow.keySet()) {
@@ -113,7 +118,7 @@ public class ReportBuilderService {
 		return count;
 	}
 	
-	private static long writeMonthlyCashflow(int currentRow, Map<Integer, List<BaseEntity>> mappedCashflow, XSSFSheet xsheet, int columnOffset) {
+	private static long writeMonthlyCashflowTable(int currentRow, Map<Integer, List<BaseEntity>> mappedCashflow, XSSFSheet xsheet, int columnOffset) {
 		long summaryCashflow = 0L;
 		for(Integer day : mappedCashflow.keySet()) {
 			List<BaseEntity> funds = mappedCashflow.get(day);
