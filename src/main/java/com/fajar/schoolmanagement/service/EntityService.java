@@ -199,6 +199,10 @@ public class EntityService {
 		List<BaseEntity> entities;
 		int count;
 	}
+	
+	public List<BaseEntity> findAll(Class<? extends BaseEntity> _class){
+		return entityRepository.findAll(_class);
+	}
 //	
 //	public List<Cost> getAllCostType() {
 //		return entityRepository.findAll(Cost.class);

@@ -22,6 +22,8 @@ import com.fajar.schoolmanagement.dto.Filter;
 import com.fajar.schoolmanagement.dto.ReportData;
 import com.fajar.schoolmanagement.entity.BaseEntity;
 import com.fajar.schoolmanagement.entity.CashBalance;
+import com.fajar.schoolmanagement.entity.DonationMonthly;
+import com.fajar.schoolmanagement.entity.Student;
 import com.fajar.schoolmanagement.entity.setting.EntityProperty;
 import com.fajar.schoolmanagement.service.WebConfigService;
 import com.fajar.schoolmanagement.util.CurrencyCell;
@@ -181,6 +183,133 @@ public class ReportBuilderService {
 	
 	public static CurrencyCell curr(long value) {
 		return new CurrencyCell(value);
+	}
+
+	public File generateYearlyStudentMonthlyDonationReport(ReportData reportData, List<Student> students) {
+		 
+		Filter filter = reportData.getFilter();
+		String time = DateUtil.formatDate(new Date(), "ddMMyyyy'T'hhmmss-a");
+		String sheetName = "Infaq_Bulanan_Santri-" + filter.getMonth() + "-" + filter.getYear();
+
+		String reportName = reportPath + "/" + sheetName + "_" + time + ".xlsx";
+		XSSFWorkbook xwb = new XSSFWorkbook();
+		XSSFSheet xsheet = xwb.createSheet(sheetName);
+		writeMonthlyDonationReport(xsheet, reportData, students);
+
+		File file = getFile(xwb, reportName);
+		return file;
+		 
+	}
+	
+	private void writeMonthlyDonationReport(XSSFSheet sheet, ReportData reportData, List<Student> students) {
+		
+		List<BaseEntity> funds = reportData.getFunds();
+		Map<Long, List<DonationMonthly>> mappedFunds = mapStudentMonthlyDonation(funds);
+		Object[] headerValues = getStudentDonationHeader();
+		
+		int columnOffset = 1;
+		int currentRow = 1; 
+		
+		createRow(sheet, currentRow, columnOffset, headerValues);
+		
+		for (int i = 0; i < students.size(); i++) {
+			Student student = students.get(i);
+			List<DonationMonthly> studentDonation = mappedFunds.get(student.getId());
+			
+			if(null != studentDonation || studentDonation.size() > 0) {
+				writeStudentDonationList(studentDonation, i+1);
+			}else {
+				createRow(sheet, currentRow, columnOffset, i+1,  student.getFullName());
+			}
+			
+			currentRow++;
+		}
+		 
+	}
+
+	private Object[] writeStudentDonationList(List<DonationMonthly> studentDonations, int number) {
+		// TODO Auto-generated method stub
+		String studentName = studentDonations.get(0).getStudent().getFullName();
+		
+		Object[] rowData = new Object[26]; 
+		rowData[0] = number;
+		rowData[1] = studentName;
+		int index = 2;
+		
+		Map<Integer, DonationMonthly> mappedStudentDonation = mapStudentDonationByMonth(studentDonations);
+		
+		for(int month : mappedStudentDonation.keySet()) {
+			DonationMonthly studentDonation = mappedStudentDonation.get(month);
+			Date transactionDate = studentDonation.getTransactionDate();
+			int tranMonth = DateUtil.getCalendarItem(transactionDate, Calendar.MONTH) + 1;
+			int tranDay = DateUtil.getCalendarItem(transactionDate, Calendar.DAY_OF_MONTH);
+			
+			rowData[index] = tranDay+"/"+tranMonth;
+			index++;
+			rowData[index] = curr(studentDonation.getNominal());
+			index++;
+		}
+		
+		return rowData;
+	}
+	
+	private Map<Integer, DonationMonthly> mapStudentDonationByMonth(List<DonationMonthly> studentDonations){
+		
+		Map<Integer, DonationMonthly> mappedData = fillMapWithMonthKeys(new DonationMonthly());
+		
+		for (DonationMonthly donationMonthly : studentDonations) {
+			int month = donationMonthly.getMonth();
+			mappedData.put(month, donationMonthly);
+		}
+		
+		return mappedData ;
+	}
+
+	private Map  fillMapWithMonthKeys(Object dafaultValue) {
+		Map map = new HashMap<>();
+		for (int i = 0; i <= 12; i++) {
+			map.put(i, dafaultValue);
+		} 
+		
+		return map;
+	}
+
+	private Object[] getStudentDonationHeader() {
+		Object[] values = new Object[26];
+		values[0] = "No";
+		values[1] = "Nama";
+		String[] monthNames = DateUtil.MONTH_NAMES;
+		int index = 2;
+		for (int i = 0; i < monthNames.length; i++) {
+			values[index] = monthNames[i];
+			index++;
+			values[index] = "";
+			index++;
+		}
+		
+		return values ;
+	}
+
+	public Map<Long, List<DonationMonthly>> mapStudentMonthlyDonation(List<BaseEntity> studentDonations){
+		Map<Long, List<DonationMonthly>> mappedFunds = new HashMap<>();
+		for (BaseEntity baseEntity : studentDonations) {
+			DonationMonthly donation = (DonationMonthly) baseEntity;
+			long studentId = donation.getStudent().getId();
+			
+			validateMapValueIfNull(mappedFunds, studentId, new ArrayList<>());
+			
+			mappedFunds.get(studentId).add(donation);
+			
+		}
+		
+		return mappedFunds;
+	}
+
+	private void validateMapValueIfNull(Map theMap, long mapKey, Object deafultValue) {
+		
+		if(theMap.get(mapKey) == null) {
+			theMap.put(mapKey, deafultValue);
+		}
 	}
 
 }

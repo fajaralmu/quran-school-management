@@ -37,14 +37,27 @@ public class RestReportController {
 	}
 	
 	@PostMapping(value = "/monthlygeneralcashflow", consumes = MediaType.APPLICATION_JSON_VALUE )
-	public void daily(@RequestBody WebRequest request, HttpServletRequest httpRequest,
+	public void monthlygeneralcashflow(@RequestBody WebRequest request, HttpServletRequest httpRequest,
 			HttpServletResponse httpResponse) throws Exception {
 		log.info("daily report {}", request);
 //		if(!userSessionService.hasSession(httpRequest)) {
 //			return ShopApiResponse.failedResponse();
 //		}
 		  
-		File result = excelReportService.getGeneralCashflowMonthlyReport(request);
+		File result = excelReportService.generateGeneralCashflowMonthlyReport(request);
+
+		writeFileReponse(httpResponse, result);
+	}
+	
+	@PostMapping(value = "/studentdonationreport", consumes = MediaType.APPLICATION_JSON_VALUE )
+	public void studentdonationreport(@RequestBody WebRequest request, HttpServletRequest httpRequest,
+			HttpServletResponse httpResponse) throws Exception {
+		log.info("studentdonationreport {}", request);
+//		if(!userSessionService.hasSession(httpRequest)) {
+//			return ShopApiResponse.failedResponse();
+//		}
+		  
+		File result = excelReportService.generateYearlyStudentMonthlyDonation(request);
 
 		writeFileReponse(httpResponse, result);
 	}
@@ -57,7 +70,7 @@ public class RestReportController {
 //			return ShopApiResponse.failedResponse();
 //		}
 		
-		File result = excelReportService.buildEntityReport(request);
+		File result = excelReportService.generateEntityReport(request);
 		
 		writeFileReponse(httpResponse, result);
 	}
