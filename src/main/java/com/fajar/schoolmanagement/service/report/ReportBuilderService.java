@@ -211,17 +211,20 @@ public class ReportBuilderService {
 		int currentRow = 1; 
 		
 		createRow(sheet, currentRow, columnOffset, headerValues);
+		currentRow++;
 		
 		for (int i = 0; i < students.size(); i++) {
 			Student student = students.get(i);
 			List<DonationMonthly> studentDonation = mappedFunds.get(student.getId());
 			
-			if(null != studentDonation || studentDonation.size() > 0) {
-				writeStudentDonationList(studentDonation, i+1);
+			Object[] studentRowData;
+			if(null != studentDonation && studentDonation.size() > 0) {
+				studentRowData = writeStudentDonationList(studentDonation, i+1);
 			}else {
-				createRow(sheet, currentRow, columnOffset, i+1,  student.getFullName());
+				studentRowData = new Object[]{ i+1,  student.getFullName() };
 			}
 			
+			createRow(sheet, currentRow, columnOffset, studentRowData);
 			currentRow++;
 		}
 		 
@@ -241,6 +244,12 @@ public class ReportBuilderService {
 		for(int month : mappedStudentDonation.keySet()) {
 			DonationMonthly studentDonation = mappedStudentDonation.get(month);
 			Date transactionDate = studentDonation.getTransactionDate();
+			
+			if(null == transactionDate) {
+				index+=2;
+				continue;
+			}
+			
 			int tranMonth = DateUtil.getCalendarItem(transactionDate, Calendar.MONTH) + 1;
 			int tranDay = DateUtil.getCalendarItem(transactionDate, Calendar.DAY_OF_MONTH);
 			
