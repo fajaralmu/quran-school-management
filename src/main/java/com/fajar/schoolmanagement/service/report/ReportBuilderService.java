@@ -242,9 +242,11 @@ public class ReportBuilderService {
 		Map<Integer, DonationMonthly> mappedStudentDonation = mapStudentDonationByMonth(studentDonations);
 		
 		for(int month : mappedStudentDonation.keySet()) {
+			
 			DonationMonthly studentDonation = mappedStudentDonation.get(month);
 			Date transactionDate = studentDonation.getTransactionDate();
 			
+			log.info("map mappedStudentDonation month: {}, transactionDate: {}", month, transactionDate);
 			if(null == transactionDate) {
 				index+=2;
 				continue;
@@ -276,7 +278,7 @@ public class ReportBuilderService {
 
 	private Map  fillMapWithMonthKeys(Object dafaultValue) {
 		Map map = new HashMap<>();
-		for (int i = 0; i <= 12; i++) {
+		for (int i = 1; i <= 12; i++) {
 			map.put(i, dafaultValue);
 		} 
 		
