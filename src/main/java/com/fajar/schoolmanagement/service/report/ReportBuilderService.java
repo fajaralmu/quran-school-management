@@ -13,6 +13,7 @@ import java.util.Map;
 
 import javax.annotation.PostConstruct;
 
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -206,11 +207,23 @@ public class ReportBuilderService {
 		List<BaseEntity> funds = reportData.getFunds();
 		Map<Long, List<DonationMonthly>> mappedFunds = mapStudentMonthlyDonation(funds);
 		Object[] headerValues = getStudentDonationHeader();
+		Object[] headerValuesSecondRow = getStudentDonationHeaderSecondRow();
 		
 		int columnOffset = 1;
 		int currentRow = 1; 
 		
+		//merge No Cell
+		ExcelReportUtil.addMergedRegionColumnOnly(sheet, currentRow, currentRow+1, columnOffset); 
+		//merge Name Cell
+		ExcelReportUtil.addMergedRegionColumnOnly(sheet, currentRow, currentRow+1, columnOffset + 1 );
+		for(int i = 0; i< 12; i++) {
+			int offset = columnOffset + 2 ;
+			ExcelReportUtil.addMergedRegionRownOnly(sheet, offset + i * 2, offset + i * 2 + 1, currentRow );
+		}
 		createRow(sheet, currentRow, columnOffset, headerValues);
+		currentRow++;
+						
+		createRow(sheet, currentRow, columnOffset, headerValuesSecondRow);
 		currentRow++;
 		
 		for (int i = 0; i < students.size(); i++) {
@@ -231,7 +244,7 @@ public class ReportBuilderService {
 	}
 
 	private Object[] writeStudentDonationList(List<DonationMonthly> studentDonations, int number) {
-		// TODO Auto-generated method stub
+		
 		String studentName = studentDonations.get(0).getStudent().getFullName();
 		
 		Object[] rowData = new Object[26]; 
@@ -295,6 +308,21 @@ public class ReportBuilderService {
 			values[index] = monthNames[i];
 			index++;
 			values[index] = "";
+			index++;
+		}
+		
+		return values ;
+	}
+	private Object[] getStudentDonationHeaderSecondRow() {
+		Object[] values = new Object[26];
+		values[0] = "";
+		values[1] = "";
+		String[] monthNames = DateUtil.MONTH_NAMES;
+		int index = 2;
+		for (int i = 0; i < monthNames.length; i++) {
+			values[index] = "Tanggal";
+			index++;
+			values[index] = "Rp";
 			index++;
 		}
 		

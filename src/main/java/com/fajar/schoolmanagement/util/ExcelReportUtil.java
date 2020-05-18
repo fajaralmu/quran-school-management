@@ -68,6 +68,13 @@ public class ExcelReportUtil {
 		}
 	}
 	
+	public static void addMergedRegionColumnOnly(XSSFSheet sheet , int firstRow, int lastRow, int col) {
+		sheet.addMergedRegion(new CellRangeAddress(firstRow, lastRow, col, col));
+	}
+	public static void addMergedRegionRownOnly(XSSFSheet sheet , int firstCol, int lastCol, int row) {
+		sheet.addMergedRegion(new CellRangeAddress(row, row, firstCol, lastCol));
+	}
+	
 	public static void setBorderTop(XSSFRow row, BorderStyle borderStyle) {
 		short first = row.getFirstCellNum();
 		short last = row.getLastCellNum();
