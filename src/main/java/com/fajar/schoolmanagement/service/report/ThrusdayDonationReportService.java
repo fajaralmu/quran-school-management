@@ -2,6 +2,7 @@ package com.fajar.schoolmanagement.service.report;
 
 import static com.fajar.schoolmanagement.service.report.ExcelReportUtil.createRow;
 import static com.fajar.schoolmanagement.service.report.ExcelReportUtil.curr;
+import static com.fajar.schoolmanagement.util.DateUtil.MONTH_NAMES;
 import static com.fajar.schoolmanagement.util.FileUtil.getFile;
 
 import java.io.File;
@@ -72,15 +73,15 @@ public class ThrusdayDonationReportService {
 		currentRow++;
 		Object[] initialBalanceRow = { "1/1", "Saldo Awal", "", curr(initialBalance.getActualBalance()) };
 		createRow(xsheet, currentRow, columnOffset, initialBalanceRow);
-		final long summaryFund = writeMonthlyCashflowTable(currentRow, mappedFunds, mappedSpendings, xsheet,
+		final int fundRowCount = writeMonthlyCashflowTable(currentRow, mappedFunds, mappedSpendings, xsheet,
 				columnOffset);
-		final int fundRowCount = 1 + CashflowReportService.getCashflowItemCount(mappedFunds); // one for intiial Balance
+		final long summaryFund = getSummary(reportData.getFunds()); // one for intiial Balance
 
 		// spending
-		final long summarySpending = writeMonthlyCashflowTable(currentRow, mappedSpendings, mappedFunds, xsheet, 5);
-		final int spendingRowCount = CashflowReportService.getCashflowItemCount(mappedSpendings);
+		final int spendingRowCount = writeMonthlyCashflowTable(currentRow, mappedSpendings, mappedFunds, xsheet, 5);
+		final long summarySpending =  getSummary(reportData.getSpendings());
 
-		int rowForTotal = fundRowCount > spendingRowCount ? fundRowCount + 2 : spendingRowCount + 2;
+		int rowForTotal = fundRowCount > spendingRowCount ? fundRowCount +3 : spendingRowCount +3;
 //		
 		// rowTotal
 		long grandTotalFund = summaryFund + initialBalance.getActualBalance();
@@ -93,16 +94,27 @@ public class ThrusdayDonationReportService {
 		log.info("grandTotalFund: {}, summarySpending: {}, grandTotalBalance: {}", grandTotalFund, summarySpending, grandTotalBalance);
 	}
 
-	private static long writeMonthlyCashflowTable(final int currentRow, Map<Integer, List<BaseEntity>> mappedCashflow,
-			Map<Integer, List<BaseEntity>> comparedCashflow, XSSFSheet xsheet, int columnOffset) {
-		long summaryCashflow = 0L;
-		int currentCashflowRow = currentRow;
-		int currentSpendingRow = currentRow;
+	private long getSummary(List<BaseEntity> cashflow) {
+		long summary = 0L;
+		for (BaseEntity baseEntity : cashflow) {
+			summary+=baseEntity.getTransactionNominal();
+		}
+		return summary;
+	}
 
+	private static int writeMonthlyCashflowTable(final int currentRow, Map<Integer, List<BaseEntity>> mappedCashflow,
+			Map<Integer, List<BaseEntity>> comparedCashflow, XSSFSheet xsheet, int columnOffset) {
+		 
+		int currentCashflowRow = currentRow;
+		int totalRow = 0; 
+		
 		/**
 		 * ================= fund ================ *
 		 */
 		for (Integer currentMonth : mappedCashflow.keySet()) {
+			currentCashflowRow++;
+			createRow(xsheet, currentCashflowRow, columnOffset, MONTH_NAMES[currentMonth-1], "", "", "");
+			
 			List<BaseEntity> cashflows = mappedCashflow.get(currentMonth);
 			List<BaseEntity> comparedCashflowInCurrentMonth = comparedCashflow.get(currentMonth);
 
@@ -119,7 +131,7 @@ public class ThrusdayDonationReportService {
 				Object[] cashflowRowValues = { day + "/" + currentMonth, fund.getTransactionName(),
 						curr(fund.getTransactionNominal()), "" };
 				createRow(xsheet, currentCashflowRow, columnOffset, cashflowRowValues);
-				summaryCashflow += fund.getTransactionNominal();
+//				summaryCashflow += fund.getTransactionNominal();
 				rowCounter++;
 			}
 
@@ -128,46 +140,15 @@ public class ThrusdayDonationReportService {
 				int gap = totalRowDedicatedForCurrentMonth - rowCounter;
 				for (int i = 0; i < gap; i++) {
 					createRow(xsheet, currentCashflowRow, columnOffset, "", "", "", "");
+					rowCounter++;
 					if (i < gap - 1)
 						currentCashflowRow++;
 				}
 			}
-		}
+			totalRow+=rowCounter;
+		} 
 
-//		/**
-//		 * ============ spending ==============
-//		 */
-//		
-//		for(Integer currentMonth : comparedCashflow.keySet()) {
-//			List<BaseEntity> spendings = comparedCashflow.get(currentMonth);
-//			List<BaseEntity> fundInCurrentMonth = mappedCashflow.get(currentMonth);
-//			
-//			int fundSize = fundInCurrentMonth.size();
-//			int spendingSize = spendings.size();
-//			int totalRowDedicatedForCurrentMonth = fundSize > spendingSize ? fundSize : spendingSize;
-//			int rowCounter = 0;
-//			
-//			for (BaseEntity spending : spendings) {
-//				
-//				int day = DateUtil.getCalendarItem(spending.getTransactionDate(), Calendar.DAY_OF_MONTH);
-//				currentSpendingRow++;
-//				Object[] fundRowValues = {day+"/"+currentMonth, spending.getTransactionName(), curr(spending.getTransactionNominal()), ""};
-//				createRow(xsheet, currentSpendingRow, columnOffset + 4, fundRowValues );
-//				summaryCashflow += spending.getTransactionNominal();
-//				rowCounter++;
-//			}
-//			if(rowCounter < totalRowDedicatedForCurrentMonth) {
-//				currentSpendingRow++;
-//				int gap = totalRowDedicatedForCurrentMonth - rowCounter;
-//				for(int i = 0;i<gap;i++) {
-//					createRow(xsheet, currentSpendingRow, columnOffset + 4, "", "", "", ""  );
-//					if(i < gap -1)
-//						currentSpendingRow++;
-//				}
-//			}
-//		}
-
-		return summaryCashflow;
+		return totalRow;
 	}
 
 }
