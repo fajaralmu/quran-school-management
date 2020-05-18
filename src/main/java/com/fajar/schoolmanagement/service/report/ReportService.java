@@ -29,7 +29,7 @@ public class ReportService {
 	@Autowired
 	private TransactionService transactionService;
 	@Autowired
-	private ReportBuilderService reportBuilderService;
+	private CashflowReportService cashflowReportService;
 	@Autowired
 	private EntityService entityService;
 	@Autowired
@@ -44,7 +44,13 @@ public class ReportService {
 		
 		ReportData transactionData = transactionService.getMonthlyGeneralCashflow(webRequest.getFilter()); 
 		
-		return reportBuilderService.generateMonthlyGeneralCashflow(transactionData);
+		return cashflowReportService.generateMonthlyGeneralCashflow(transactionData);
+	}
+	
+	public File generateThrusdayDonationCashflowReport(WebRequest webRequest) {
+		ReportData transactionData = transactionService.getYearlyThrusdayDonationCashflow(webRequest.getFilter());
+		
+		return cashflowReportService.generateThrusdayCashflowReport(transactionData);
 	}
 	
 	public File generateYearlyStudentMonthlyDonation(WebRequest webRequest) {
@@ -55,11 +61,11 @@ public class ReportService {
 		return result ;
 	}
 
-	public File getEntityReport(List<BaseEntity> entities, Class<? extends BaseEntity> entityClass) {
+	public File writeEntityReport(List<BaseEntity> entities, Class<? extends BaseEntity> entityClass) {
 		log.info("entities count: {}", entities.size());
 		EntityProperty entityProperty = EntityUtil.createEntityProperty(entityClass, null);
 		
-		File result = reportBuilderService.getEntityReport(entities, entityProperty);
+		File result = cashflowReportService.getEntityReport(entities, entityProperty);
 		return result;
 	}
 
@@ -67,7 +73,7 @@ public class ReportService {
 //		request.getFilter().setLimit(0);
 		WebResponse response = entityService.filter(request);
 		
-		File file = getEntityReport(response.getEntities(), response.getEntityClass());
+		File file = writeEntityReport(response.getEntities(), response.getEntityClass());
 		return file ;
 	}
 

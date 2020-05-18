@@ -1,7 +1,5 @@
 package com.fajar.schoolmanagement.service.report;
 
-import static com.fajar.schoolmanagement.service.report.ExcelReportUtil.addMergedRegionSingleColumn;
-import static com.fajar.schoolmanagement.service.report.ExcelReportUtil.addMergedRegionSingleRow;
 import static com.fajar.schoolmanagement.service.report.ExcelReportUtil.createRow;
 import static com.fajar.schoolmanagement.service.report.ExcelReportUtil.curr;
 import static com.fajar.schoolmanagement.util.FileUtil.getFile;
@@ -16,7 +14,6 @@ import java.util.Map;
 
 import javax.annotation.PostConstruct;
 
-import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,18 +23,15 @@ import com.fajar.schoolmanagement.dto.Filter;
 import com.fajar.schoolmanagement.dto.ReportData;
 import com.fajar.schoolmanagement.entity.BaseEntity;
 import com.fajar.schoolmanagement.entity.CashBalance;
-import com.fajar.schoolmanagement.entity.DonationMonthly;
-import com.fajar.schoolmanagement.entity.Student;
 import com.fajar.schoolmanagement.entity.setting.EntityProperty;
 import com.fajar.schoolmanagement.service.WebConfigService;
-import com.fajar.schoolmanagement.util.CollectionUtil;
 import com.fajar.schoolmanagement.util.DateUtil;
 
 import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
-public class ReportBuilderService {
+public class CashflowReportService {
 	private static final String BLANK = "";
 	@Autowired
 	private WebConfigService webConfigService;
@@ -98,7 +92,7 @@ public class ReportBuilderService {
 		long summarySpending = writeMonthlyCashflowTable(spendingRow, mappedSpendings, xsheet, 5);
 		int spendingRowCount = getCashflowItemCount(mappedSpendings);
 
-		int rowForTotal = fundRowCount > spendingRowCount ? fundRowCount : spendingRowCount;
+		int rowForTotal = fundRowCount > spendingRowCount ? fundRowCount + 2 : spendingRowCount + 2;
 		
 		//rowTotal
 		long grandTotalFund = summaryFund + initialBalance.getActualBalance();
@@ -148,7 +142,7 @@ public class ReportBuilderService {
 	}
 
 	private Map<Integer, List<BaseEntity>> sortFinancialEntityByDayOfMonth(List<BaseEntity> funds, int monthDays) {
-		Map<Integer, List<BaseEntity>> mappedFunds = fillMapKeysWithDays(monthDays);
+		Map<Integer, List<BaseEntity>> mappedFunds = fillMapKeysWithNumber(monthDays);
 
 		for (int i = 0; i < funds.size(); i++) {
 			BaseEntity fund = funds.get(i); 
@@ -158,10 +152,21 @@ public class ReportBuilderService {
 		}
 		
 		return mappedFunds;
-	}
-	 
+	} 
+	private Map<Integer, List<BaseEntity>> sortFinancialEntityByMonth(List<BaseEntity> funds ) {
+		Map<Integer, List<BaseEntity>> mappedFunds = fillMapKeysWithNumber(12);
 
-	private Map<Integer, List<BaseEntity>> fillMapKeysWithDays(int dayCount) {
+		for (int i = 0; i < funds.size(); i++) {
+			BaseEntity fund = funds.get(i); 
+			
+			int transactionDay = DateUtil.getCalendarItem(fund.getTransactionDate(), Calendar.MONTH) + 1; 
+			mappedFunds.get(transactionDay).add(fund);
+		}
+		
+		return mappedFunds;
+	} 
+
+	private Map<Integer, List<BaseEntity>> fillMapKeysWithNumber(int dayCount) {
 		Map<Integer, List<BaseEntity>> map = new HashMap<Integer, List<BaseEntity>>();
 		for (int day = 1; day <= dayCount; day++) {
 			map.put(day, new ArrayList<>());
@@ -182,6 +187,64 @@ public class ReportBuilderService {
 
 		File file = getFile(xwb, reportName);
 		return file;
+	}
+	
+	// ----------------- Thrusday Report -------------------//
+
+	public File generateThrusdayCashflowReport(ReportData transactionData) {
+		String time = DateUtil.formatDate(new Date(), "ddMMyyyy'T'hhmmss-a");
+		String sheetName = "Infaq_Kamis";
+
+		String reportName = reportPath + "/" + sheetName + "_" + time + ".xlsx";
+		XSSFWorkbook xwb = new XSSFWorkbook();
+		XSSFSheet xsheet = xwb.createSheet(sheetName); 
+
+		writeThrusdayCashflowReport(xsheet, transactionData);
+		
+		File file = getFile(xwb, reportName);
+		return file;
+	}
+
+	private void writeThrusdayCashflowReport(XSSFSheet xsheet, ReportData reportData) {
+		
+		Map<Integer, List<BaseEntity>> mappedFunds = sortFinancialEntityByMonth(reportData.getFunds());
+		Map<Integer, List<BaseEntity>> mappedSpendings = sortFinancialEntityByMonth(reportData.getSpendings());
+		CashBalance initialBalance = reportData.getInitialBalance();
+		
+		int currentRow = 1;
+		int columnOffset = 1;
+		
+		/**
+		 * build fund table
+		 */
+		Object[] headerValues = { "Tanggal", "Keterangan", "Debet", "Total", "Tanggal", "Keterangan", "Kredit", "Total" };
+		createRow(xsheet, currentRow , columnOffset, headerValues);
+		
+		//initial balance row
+		int fundRow = currentRow++;
+		int spendingRow = fundRow;
+		
+		//funds
+		fundRow++;
+		Object[] initialBalanceRow = {"1/1", "Saldo Awal", "", curr(initialBalance.getActualBalance())};
+		createRow(xsheet, fundRow, columnOffset, initialBalanceRow );
+		long summaryFund  = writeMonthlyCashflowTable(fundRow, mappedFunds, xsheet, columnOffset);  
+		int fundRowCount = 1 + getCashflowItemCount(mappedFunds); //one for intiial Balance
+		
+		//spending
+		long summarySpending = writeMonthlyCashflowTable(spendingRow, mappedSpendings, xsheet, 5);
+		int spendingRowCount = getCashflowItemCount(mappedSpendings);
+
+		int rowForTotal = fundRowCount > spendingRowCount ? fundRowCount + 2 : spendingRowCount + 2;
+		
+		//rowTotal
+		long grandTotalFund = summaryFund + initialBalance.getActualBalance();
+		long grandTotalBalance = grandTotalFund - summarySpending;
+		createRow(xsheet, rowForTotal, 1, "", "", curr(summaryFund), curr(grandTotalFund), "","", curr(summarySpending), curr(grandTotalBalance));
+		
+		log.info("Spending Row: {}", spendingRowCount);
+		log.info("Fund Row: {}", fundRowCount);
+		log.info("Total Fund: {}, initialBalance: {}", summaryFund, initialBalance.getActualBalance());
 	}  
 
 }

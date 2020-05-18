@@ -54,9 +54,10 @@ public class CashBalanceService {
 		}
 		
 		Object[] result = (Object[]) object;
+		int RESULT_LEGTH = 3; 
 		
 		CashBalance cashBalance = new CashBalance();
-		if(result[0] != null && result[1] != null && result[3] != null) {
+		if(result!= null && result.length == RESULT_LEGTH && result[0] != null && result[1] != null && result[2] != null) {
 			cashBalance.setCreditAmount(Long.valueOf(String.valueOf(result[0] )));
 			cashBalance.setDebitAmount(Long.valueOf(String.valueOf(result[1] )));
 			cashBalance.setActualBalance(Long.valueOf(String.valueOf(result[2] )));
