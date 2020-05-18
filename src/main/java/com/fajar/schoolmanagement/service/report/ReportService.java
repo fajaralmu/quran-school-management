@@ -34,6 +34,8 @@ public class ReportService {
 	private EntityService entityService;
 	@Autowired
 	private StudentDonationReportService studentDonationReportService;
+	@Autowired
+	private ThrusdayDonationReportService thrusdayDonationReportService;
 	
 	@PostConstruct
 	public void init() {
@@ -50,7 +52,7 @@ public class ReportService {
 	public File generateThrusdayDonationCashflowReport(WebRequest webRequest) {
 		ReportData transactionData = transactionService.getYearlyThrusdayDonationCashflow(webRequest.getFilter());
 		
-		return cashflowReportService.generateThrusdayCashflowReport(transactionData);
+		return thrusdayDonationReportService.generateThrusdayCashflowReport(transactionData);
 	}
 	
 	public File generateYearlyStudentMonthlyDonation(WebRequest webRequest) {

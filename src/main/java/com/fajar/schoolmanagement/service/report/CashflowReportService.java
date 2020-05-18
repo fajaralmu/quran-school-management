@@ -109,7 +109,7 @@ public class CashflowReportService {
 	 * @param mappedCashflow
 	 * @return
 	 */
-	private static int getCashflowItemCount( Map<Integer, List<BaseEntity>> mappedCashflow) {
+	public static int getCashflowItemCount( Map<Integer, List<BaseEntity>> mappedCashflow) {
 		int count = 0;
 		for(Integer day:mappedCashflow.keySet()) {
 			count += mappedCashflow.get(day).size();
@@ -153,7 +153,7 @@ public class CashflowReportService {
 		
 		return mappedFunds;
 	} 
-	private Map<Integer, List<BaseEntity>> sortFinancialEntityByMonth(List<BaseEntity> funds ) {
+	public static Map<Integer, List<BaseEntity>> sortFinancialEntityByMonth(List<BaseEntity> funds ) {
 		Map<Integer, List<BaseEntity>> mappedFunds = fillMapKeysWithNumber(12);
 
 		for (int i = 0; i < funds.size(); i++) {
@@ -166,7 +166,7 @@ public class CashflowReportService {
 		return mappedFunds;
 	} 
 
-	private Map<Integer, List<BaseEntity>> fillMapKeysWithNumber(int dayCount) {
+	public static Map<Integer, List<BaseEntity>> fillMapKeysWithNumber(int dayCount) {
 		Map<Integer, List<BaseEntity>> map = new HashMap<Integer, List<BaseEntity>>();
 		for (int day = 1; day <= dayCount; day++) {
 			map.put(day, new ArrayList<>());
@@ -191,60 +191,5 @@ public class CashflowReportService {
 	
 	// ----------------- Thrusday Report -------------------//
 
-	public File generateThrusdayCashflowReport(ReportData transactionData) {
-		String time = DateUtil.formatDate(new Date(), "ddMMyyyy'T'hhmmss-a");
-		String sheetName = "Infaq_Kamis";
-
-		String reportName = reportPath + "/" + sheetName + "_" + time + ".xlsx";
-		XSSFWorkbook xwb = new XSSFWorkbook();
-		XSSFSheet xsheet = xwb.createSheet(sheetName); 
-
-		writeThrusdayCashflowReport(xsheet, transactionData);
-		
-		File file = getFile(xwb, reportName);
-		return file;
-	}
-
-	private void writeThrusdayCashflowReport(XSSFSheet xsheet, ReportData reportData) {
-		
-		Map<Integer, List<BaseEntity>> mappedFunds = sortFinancialEntityByMonth(reportData.getFunds());
-		Map<Integer, List<BaseEntity>> mappedSpendings = sortFinancialEntityByMonth(reportData.getSpendings());
-		CashBalance initialBalance = reportData.getInitialBalance();
-		
-		int currentRow = 1;
-		int columnOffset = 1;
-		
-		/**
-		 * build fund table
-		 */
-		Object[] headerValues = { "Tanggal", "Keterangan", "Debet", "Total", "Tanggal", "Keterangan", "Kredit", "Total" };
-		createRow(xsheet, currentRow , columnOffset, headerValues);
-		
-		//initial balance row
-		int fundRow = currentRow++;
-		int spendingRow = fundRow;
-		
-		//funds
-		fundRow++;
-		Object[] initialBalanceRow = {"1/1", "Saldo Awal", "", curr(initialBalance.getActualBalance())};
-		createRow(xsheet, fundRow, columnOffset, initialBalanceRow );
-		long summaryFund  = writeMonthlyCashflowTable(fundRow, mappedFunds, xsheet, columnOffset);  
-		int fundRowCount = 1 + getCashflowItemCount(mappedFunds); //one for intiial Balance
-		
-		//spending
-		long summarySpending = writeMonthlyCashflowTable(spendingRow, mappedSpendings, xsheet, 5);
-		int spendingRowCount = getCashflowItemCount(mappedSpendings);
-
-		int rowForTotal = fundRowCount > spendingRowCount ? fundRowCount + 2 : spendingRowCount + 2;
-		
-		//rowTotal
-		long grandTotalFund = summaryFund + initialBalance.getActualBalance();
-		long grandTotalBalance = grandTotalFund - summarySpending;
-		createRow(xsheet, rowForTotal, 1, "", "", curr(summaryFund), curr(grandTotalFund), "","", curr(summarySpending), curr(grandTotalBalance));
-		
-		log.info("Spending Row: {}", spendingRowCount);
-		log.info("Fund Row: {}", fundRowCount);
-		log.info("Total Fund: {}, initialBalance: {}", summaryFund, initialBalance.getActualBalance());
-	}  
-
+	
 }
