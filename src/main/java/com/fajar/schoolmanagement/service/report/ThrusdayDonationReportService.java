@@ -148,7 +148,7 @@ public class ThrusdayDonationReportService {
 			totalRow+=rowCounter;
 		} 
 
-		return totalRow;
+		return totalRow +  mappedCashflow.keySet().size();
 	}
 
 }
