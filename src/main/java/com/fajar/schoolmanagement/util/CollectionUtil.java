@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.fajar.schoolmanagement.entity.BaseEntity;
+import com.fajar.schoolmanagement.entity.DonationMonthly;
 
 public class CollectionUtil {
 	public static <T> List<T> arrayToList(T[] array) {
@@ -47,6 +48,11 @@ public class CollectionUtil {
 			array[i] = validUrls.get(i).toString();
 		}
 		return array;
+	}
+
+	public static void avoidNullArray(List<DonationMonthly> studentDonations) {
+		// TODO Auto-generated method stub
+		
 	}
 	
 	

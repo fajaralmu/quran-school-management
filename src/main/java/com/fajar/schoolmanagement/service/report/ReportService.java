@@ -32,6 +32,8 @@ public class ReportService {
 	private ReportBuilderService reportBuilderService;
 	@Autowired
 	private EntityService entityService;
+	@Autowired
+	private StudentDonationReportService studentDonationReportService;
 	
 	@PostConstruct
 	public void init() {
@@ -49,7 +51,7 @@ public class ReportService {
 		
 		ReportData transactionData = transactionService.getYearlyMonthlyDonationCashflow(webRequest.getFilter());
 		List<BaseEntity> studentList = entityService.findAll(Student.class);
-		File result = reportBuilderService.generateYearlyStudentMonthlyDonationReport(transactionData, CollectionUtil.convertList(studentList));
+		File result = studentDonationReportService.generateMonthlyStudentDonationReport(transactionData, CollectionUtil.convertList(studentList));
 		return result ;
 	}
 

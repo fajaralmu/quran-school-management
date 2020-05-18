@@ -1,4 +1,4 @@
-package com.fajar.schoolmanagement.util;
+package com.fajar.schoolmanagement.service.report;
 
 import static com.fajar.schoolmanagement.util.EntityUtil.getDeclaredField;
 import static com.fajar.schoolmanagement.util.MapUtil.objectEquals;
@@ -29,6 +29,7 @@ import com.fajar.schoolmanagement.dto.FieldType;
 import com.fajar.schoolmanagement.entity.BaseEntity;
 import com.fajar.schoolmanagement.entity.setting.EntityElement;
 import com.fajar.schoolmanagement.entity.setting.EntityProperty;
+import com.fajar.schoolmanagement.util.DateUtil;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -68,10 +69,10 @@ public class ExcelReportUtil {
 		}
 	}
 	
-	public static void addMergedRegionColumnOnly(XSSFSheet sheet , int firstRow, int lastRow, int col) {
+	public static void addMergedRegionSingleColumn(XSSFSheet sheet , int firstRow, int lastRow, int col) {
 		sheet.addMergedRegion(new CellRangeAddress(firstRow, lastRow, col, col));
 	}
-	public static void addMergedRegionRownOnly(XSSFSheet sheet , int firstCol, int lastCol, int row) {
+	public static void addMergedRegionSingleRow(XSSFSheet sheet , int firstCol, int lastCol, int row) {
 		sheet.addMergedRegion(new CellRangeAddress(row, row, firstCol, lastCol));
 	}
 	
@@ -319,17 +320,7 @@ public class ExcelReportUtil {
 		}
 		if(value.getClass().getSuperclass().equals(CustomCell.class) && ((CustomCell)value).getValue() != null) { 
 		 
-			if(value instanceof CurrencyCell) {
-			 	String stringValue = ((CurrencyCell)value).getValue().toString();
-				value = (Double.parseDouble(stringValue)); 
-				cell.setCellValue((Double) value);
-				
-				if(null != fmt)
-					cell.getCellStyle().setDataFormat( fmt.getFormat("#,##0") );
-			}else if(value instanceof NumericCell) {
-				value = (Double.parseDouble(((CustomCell)value).getValue().toString() )); 
-				cell.setCellValue((Double) value);
-			}
+			((CustomCell)value).setValue(cell);  
 			
 		}else if(value instanceof Double  ) {
 			cell.setCellValue((Double) value);
@@ -352,6 +343,17 @@ public class ExcelReportUtil {
 			} 
 		}
 		
+	}
+	
+	public static CurrencyCell curr(long value) {
+		return new CurrencyCell(value);
+	}
+	
+	public static DateCell dateCell(String dateString, String pattern) {
+		return new DateCell(dateString, pattern);
+	}
+	public static DateCell dateCell(Date date , String pattern) {
+		return new DateCell(date, pattern);
 	}
 	
 	/**
