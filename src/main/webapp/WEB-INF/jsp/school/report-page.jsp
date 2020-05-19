@@ -28,16 +28,24 @@
 				<input id="input-year" type="number" />
 			</div>
 			<div class="report-item">
-				<button id="btn-report-monthly"  >Laporan Keuangan Bulanan</button>
+				<h3>Laporan Keuangan Bulanan</h3>
+				<p>Silakan pilih bulan dan tahun untuk menyusun laporan ini</p>
+				<button class="btn btn-info" id="btn-report-monthly"  >process</button>
 			</div>
 			<div class="report-item">
-				<button id="btn-report-donation-student" >Laporan Infaq Bulanan Siswa</button> 
+				<h3>Laporan Infaq Bulanan Siswa</h3>
+				<p>Silakan pilih tahun untuk menyusun laporan ini</p>
+				<button class="btn btn-info" id="btn-report-donation-student" >process</button> 
 			</div>
 			<div class="report-item">
-				<button id="btn-report-donation-thursday-cashflow"  >Lapotan Mutasi Infaq Kamis</button> 
+				<h3>Laporan Mutasi Infaq Kamis</h3>
+				<p>Silakan pilih tahun untuk menyusun laporan ini</p>
+				<button class="btn btn-info" id="btn-report-donation-thursday-cashflow"  >process</button> 
 			</div>
 			<div class="report-item">
-				<button id="btn-report-donation-thursday-fundhflow"  >Lapotan Pemasukan Infaq Kamis</button> 
+				<h3>Laporan Pemasukan Infaq Kamis</h3>
+				<p>Silakan pilih tahun untuk menyusun laporan ini</p>
+				<button class="btn btn-info" id="btn-report-donation-thursday-fundhflow"  >process</button> 
 			</div>
 		</div>
 	</div>
