@@ -233,7 +233,7 @@ public class ThrusdayDonationReportService {
 
 		for (int month : mappedFundsByMonth.keySet()) {
 
-			int monthDays = DateUtil.getMonthsDay(month, year);
+			int monthDays = DateUtil.getMonthsDay(month - 1, year);
 
 			List<BaseEntity> rawDonationThursdays = mappedFundsByMonth.get(month);
 			List<DonationThursday> donationThursdays = new ArrayList<>(); // maximum item: 5
@@ -244,6 +244,8 @@ public class ThrusdayDonationReportService {
 			int dayOfMonth = 1;
 
 			for (Date thursday : thrusdaysInCurrentMonth) {
+				if(null == thursday)
+					continue;
 
 				int currentDayOfMonth = getCalendarItem(thursday, DAY_OF_MONTH);
 				long transactionNominal = 0L;
