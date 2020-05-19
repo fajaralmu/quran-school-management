@@ -61,6 +61,19 @@ public class RestReportController {
 		writeFileReponse(httpResponse, result);
 	}
 	
+	@PostMapping(value = "/thrusdaydonationfundflow", consumes = MediaType.APPLICATION_JSON_VALUE )
+	public void thrusdaydonationfundflow(@RequestBody WebRequest request, HttpServletRequest httpRequest,
+			HttpServletResponse httpResponse) throws Exception {
+		log.info("daily report {}", request);
+//		if(!userSessionService.hasSession(httpRequest)) {
+//			return ShopApiResponse.failedResponse();
+//		}
+		  
+		File result = excelReportService.generateThrusdayDonationFundflowReport(request);
+
+		writeFileReponse(httpResponse, result);
+	}
+	
 	@PostMapping(value = "/studentdonationreport", consumes = MediaType.APPLICATION_JSON_VALUE )
 	public void studentdonationreport(@RequestBody WebRequest request, HttpServletRequest httpRequest,
 			HttpServletResponse httpResponse) throws Exception {

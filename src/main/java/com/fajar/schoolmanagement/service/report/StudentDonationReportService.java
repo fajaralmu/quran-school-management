@@ -9,7 +9,6 @@ import static com.fajar.schoolmanagement.util.FileUtil.getFile;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -78,19 +77,13 @@ public class StudentDonationReportService {
 	private void writeMonthlyStudentDonationReport(XSSFSheet sheet, ReportData reportData, List<Student> students) {
 
 		List<BaseEntity> funds = reportData.getFunds();
-		Map<Long, List<DonationMonthly>> mappedFunds = mapStudentMonthlyDonation(funds);
-		Object[] headerValues = getStudentDonationHeader();
-		Object[] headerValuesSecondRow = getStudentDonationHeaderSecondRow();
-
+		Map<Long, List<DonationMonthly>> mappedFunds = mapStudentMonthlyDonation(funds); 
 		int columnOffset = 1;
 		int currentRow = 1;
 
-		addMergedRegionForHeader(sheet, currentRow, columnOffset);
-		createRow(sheet, currentRow, columnOffset, headerValues);
-		currentRow++;
-
-		createRow(sheet, currentRow, columnOffset, headerValuesSecondRow);
-		currentRow++;
+		addMergedRegionForHeader(sheet, currentRow, columnOffset); 
+		createStudentDonationReportHeader(sheet, currentRow, columnOffset); 
+		currentRow+=2;
 
 		for (int i = 0; i < students.size(); i++) {
 			Student student = students.get(i);
@@ -102,6 +95,25 @@ public class StudentDonationReportService {
 			currentRow++;
 		}
 
+	}
+
+	private void createStudentDonationReportHeader(XSSFSheet sheet, int currentRow, int columnOffset) {
+		
+		createFirstHeader(sheet, currentRow, columnOffset);
+		currentRow++; 
+		createSecorndHeader(sheet, currentRow, columnOffset);
+	}
+
+	private void createSecorndHeader(XSSFSheet sheet, int currentRow, int columnOffset) {
+		
+		Object[] headerValuesSecondRow = getStudentDonationHeaderSecondRow();
+		createRow(sheet, currentRow, columnOffset, headerValuesSecondRow);
+	}
+
+	private void createFirstHeader(XSSFSheet sheet, int currentRow, int columnOffset) {
+		
+		Object[] headerValues = getStudentDonationHeader();
+		createRow(sheet, currentRow, columnOffset, headerValues);
 	}
 
 	private void addMergedRegionForHeader(XSSFSheet sheet, int currentRow, int columnOffset) {
@@ -134,13 +146,10 @@ public class StudentDonationReportService {
 			DonationMonthly studentDonation = mappedStudentDonation.get(month);
 			Date transactionDate = studentDonation.getTransactionDate();
 
-			log.info("map mappedStudentDonation month: {}, transactionDate: {}", month, transactionDate);
 			Object donationDate = "";
 			Object donationValue = "";
 
-			if (null != transactionDate) {
-				int tranMonth = DateUtil.getCalendarItem(transactionDate, Calendar.MONTH) + 1;
-				int tranDay = DateUtil.getCalendarItem(transactionDate, Calendar.DAY_OF_MONTH);
+			if (null != transactionDate) { 
 
 				donationDate = dateCell(transactionDate, "dd-MM-yyyy");
 				donationValue = curr(studentDonation.getNominal());

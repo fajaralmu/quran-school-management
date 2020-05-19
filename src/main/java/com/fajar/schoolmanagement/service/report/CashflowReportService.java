@@ -32,7 +32,7 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @Slf4j
 public class CashflowReportService {
-	private static final String BLANK = "";
+
 	@Autowired
 	private WebConfigService webConfigService;
 
@@ -74,17 +74,16 @@ public class CashflowReportService {
 		/**
 		 * build fund table
 		 */
-		Object[] headerValues = { "Tanggal", "Keterangan", "Debet", "Total", "Tanggal", "Keterangan", "Kredit", "Total" };
-		createRow(xsheet, currentRow , columnOffset, headerValues);
+		writeHeaderValuesForMonthlyCashflow(xsheet, currentRow , columnOffset );
 		
 		//initial balance row
 		int fundRow = currentRow++;
 		int spendingRow = fundRow;
 		
 		//funds
-		fundRow++;
-		Object[] initialBalanceRow = {"1/"+month, "Saldo Awal", "", curr(initialBalance.getActualBalance())};
-		createRow(xsheet, fundRow, columnOffset, initialBalanceRow );
+		fundRow++; 
+		initialBalance.setDate(DateUtil.getDate(reportData.getFilter().getYear(), month, 1));
+		writeInitialBalance(xsheet, fundRow, columnOffset, initialBalance );
 		long summaryFund  = writeMonthlyCashflowTable(fundRow, mappedFunds, xsheet, columnOffset);  
 		int fundRowCount = 1 + getCashflowItemCount(mappedFunds); //one for intiial Balance
 		
@@ -104,6 +103,18 @@ public class CashflowReportService {
 		log.info("Total Fund: {}, initialBalance: {}", summaryFund, initialBalance.getActualBalance());
 	}
 	
+	private void writeInitialBalance(XSSFSheet xsheet, int fundRow, int columnOffset, CashBalance initialBalance) {
+		int month = DateUtil.getCalendarItem(initialBalance.getDate(), Calendar.MONTH) + 1;
+		Object[] initialBalanceRow = {"1/"+month, "Saldo Awal", "", curr(initialBalance.getActualBalance())};
+		createRow(xsheet, fundRow, columnOffset, initialBalanceRow );
+	}
+
+	private void writeHeaderValuesForMonthlyCashflow(XSSFSheet xsheet, int currentRow, int columnOffset) {
+		
+		Object[] headerValues = { "Tanggal", "Keterangan", "Debet", "Total", "Tanggal", "Keterangan", "Kredit", "Total" };
+		createRow(xsheet, currentRow , columnOffset, headerValues);
+	}
+
 	/**
 	 * get list size in the map<integer, list>
 	 * @param mappedCashflow
@@ -141,7 +152,7 @@ public class CashflowReportService {
 		return monthDays;
 	}
 
-	private Map<Integer, List<BaseEntity>> sortFinancialEntityByDayOfMonth(List<BaseEntity> funds, int monthDays) {
+	public static Map<Integer, List<BaseEntity>> sortFinancialEntityByDayOfMonth(List<BaseEntity> funds, int monthDays) {
 		Map<Integer, List<BaseEntity>> mappedFunds = fillMapKeysWithNumber(monthDays);
 
 		for (int i = 0; i < funds.size(); i++) {

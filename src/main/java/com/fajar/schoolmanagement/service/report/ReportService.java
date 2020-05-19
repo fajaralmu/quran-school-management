@@ -79,4 +79,10 @@ public class ReportService {
 		return file ;
 	}
 
+	public File generateThrusdayDonationFundflowReport(WebRequest webRequest) { 
+		ReportData transactionData = transactionService.getYearlyThrusdayDonationCashflow(webRequest.getFilter());
+		
+		return thrusdayDonationReportService.generateThrusdayDonationReport(transactionData);
+	}
+
 }
