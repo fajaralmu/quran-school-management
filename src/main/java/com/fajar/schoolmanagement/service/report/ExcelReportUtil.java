@@ -355,6 +355,22 @@ public class ExcelReportUtil {
 	public static DateCell dateCell(Date date , String pattern) {
 		return new DateCell(date, pattern);
 	}
+
+	public static void autosizeColumn(XSSFSheet xsheet, CellRangeAddress cellRangeAddress) {
+		
+      int firstRow = cellRangeAddress.getFirstRow();
+      int lastRow = cellRangeAddress.getLastRow();
+      int firstCol = cellRangeAddress.getFirstColumn();
+      int lastCol = cellRangeAddress.getLastColumn();
+		
+      for(int row = firstRow; row <= lastRow; row++) {
+    	  XSSFRow xssfRow = xsheet.getRow(row);
+    	  if(null != xssfRow) {
+    		  autosizeColumn(xssfRow, lastCol, BorderStyle.THIN, null);
+    	  }
+      }
+		
+	}
 	
 	/**
 	 * 

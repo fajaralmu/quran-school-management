@@ -18,6 +18,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -175,30 +176,28 @@ public class ThrusdayDonationReportService {
 		XSSFWorkbook xwb = new XSSFWorkbook();
 		XSSFSheet xsheet = xwb.createSheet(sheetName);
 
-		writeThrusdayDonationReport(xsheet, transactionData);
+		writeThrusdayDonationFundReport(xsheet, transactionData);
 
 		File file = getFile(xwb, reportName);
 		return file;
 	}
 
-	private void writeThrusdayDonationReport(XSSFSheet xsheet, ReportData reportData) {
+	private void writeThrusdayDonationFundReport(XSSFSheet xsheet, ReportData reportData) {
 
 		Map<Integer, List<DonationThursday>> mappedDonation = getThrusdayDonationMappedForEachMonth(reportData);
-		int columnOffset = 1;
-		int currentRow = 1;
-		int maxWeek = 5;
+		int columnOffset = 1, currentRow = 1, maxWeek = 5;
 		createReportHeader(xsheet, currentRow, columnOffset);
 		currentRow++;
 		int dataRow = currentRow;
 
-		columnOffset--; //REMOVE if month starts at 0 
+		columnOffset--; // REMOVE if month starts at 0
 		for (int month = 1; month <= 12; month++) {
 			List<DonationThursday> donationInTheMonth = mappedDonation.get(month);
 			int dataColumn = columnOffset + 2 * month;
 			long summary = 0L;
 
 			for (int week = 0; week < maxWeek; week++) {
-				if(donationInTheMonth.size() > week) { 
+				if (donationInTheMonth.size() > week) {
 					DonationThursday summaryInTheWeek = donationInTheMonth.get(week);
 					if (null != summaryInTheWeek) {
 						DateCell dateCell = dateCell(summaryInTheWeek.getDate(), "dd-MM-yyyy");
@@ -209,23 +208,42 @@ public class ThrusdayDonationReportService {
 				dataRow++;
 			}
 
-			createRow(xsheet, dataRow, dataColumn, "", curr(summary));
+			createRow(xsheet, dataRow, dataColumn, curr(summary), "");
 
 			dataRow = currentRow;
 		}
+		
+		ExcelReportUtil.autosizeColumn(xsheet, new CellRangeAddress(1, 6, columnOffset, columnOffset + 25));
 
 	}
 
 	private void createReportHeader(XSSFSheet xsheet, int currentRow, int columnOffset) {
 
+		// Column Label
 		Object[] headerValues = getThrusdayDonationHeader();
 		createRow(xsheet, currentRow, columnOffset, headerValues);
+		addMergedRegionForHeaderOrTotal(xsheet, currentRow, columnOffset + 1);
 		currentRow++;
+
 		// Numbering
-		for (int i = currentRow; i <= currentRow + 5; i++) {
-			int number = i - currentRow +1;
+		int rowForTotal = currentRow + 5;
+		for (int i = currentRow; i < rowForTotal; i++) {
+			int number = i - currentRow + 1;
 			createRow(xsheet, i, columnOffset, number);
 		}
+		createRow(xsheet, rowForTotal, columnOffset, "Total");
+		addMergedRegionForHeaderOrTotal(xsheet, rowForTotal, columnOffset + 1);
+
+	}
+
+	private void addMergedRegionForHeaderOrTotal(XSSFSheet xsheet, int row, int columnOffset) {
+
+		for (int i = 0; i < 12; i++) {
+			int firstCol = i * 2 + columnOffset;
+			int lastCol = firstCol + 1;
+			ExcelReportUtil.addMergedRegionSingleRow(xsheet, firstCol, lastCol, row);
+		}
+		
 	}
 
 	private Map<Integer, List<DonationThursday>> getThrusdayDonationMappedForEachMonth(ReportData reportData) {
@@ -248,15 +266,15 @@ public class ThrusdayDonationReportService {
 			int dayOfMonth = 1;
 
 			for (Date thursday : thrusdaysInCurrentMonth) {
-				if(null == thursday)
+				if (null == thursday)
 					continue;
 
 				int currentDayOfMonth = getCalendarItem(thursday, DAY_OF_MONTH);
 				long transactionNominal = 0L;
 
-				loop:for (int day = dayOfMonth; day <= currentDayOfMonth; day++) {
+				loop: for (int day = dayOfMonth; day <= currentDayOfMonth; day++) {
 					List<BaseEntity> donationInTheDay = mappedDonationsByDay.get(day);
-					if(null == donationInTheDay) {
+					if (null == donationInTheDay) {
 						continue loop;
 					}
 					for (BaseEntity donation : donationInTheDay) {
@@ -285,7 +303,7 @@ public class ThrusdayDonationReportService {
 
 	private Object[] getThrusdayDonationHeader() {
 		Object[] values = new Object[25];
-		values[0] = "Minggu Ke"; 
+		values[0] = "Minggu Ke";
 		String[] monthNames = DateUtil.MONTH_NAMES;
 		int index = 1;
 		for (int i = 0; i < monthNames.length; i++) {
