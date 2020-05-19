@@ -191,22 +191,25 @@ public class ThrusdayDonationReportService {
 		currentRow++;
 		int dataRow = currentRow;
 
+		columnOffset--; //REMOVE if month starts at 0 
 		for (int month = 1; month <= 12; month++) {
 			List<DonationThursday> donationInTheMonth = mappedDonation.get(month);
 			int dataColumn = columnOffset + 2 * month;
 			long summary = 0L;
 
 			for (int week = 0; week < maxWeek; week++) {
-				DonationThursday summaryInTheWeek = donationInTheMonth.get(week);
-				if (null != summaryInTheWeek) {
-					DateCell dateCell = dateCell(summaryInTheWeek.getDate(), "dd-MM-yyyy");
-					createRow(xsheet, dataRow, dataColumn, dateCell, curr(summaryInTheWeek.getNominal()));
-					summary += summaryInTheWeek.getNominal();
+				if(donationInTheMonth.size() > week) { 
+					DonationThursday summaryInTheWeek = donationInTheMonth.get(week);
+					if (null != summaryInTheWeek) {
+						DateCell dateCell = dateCell(summaryInTheWeek.getDate(), "dd-MM-yyyy");
+						createRow(xsheet, dataRow, dataColumn, dateCell, curr(summaryInTheWeek.getNominal()));
+						summary += summaryInTheWeek.getNominal();
+					}
 				}
 				dataRow++;
 			}
 
-			createRow(xsheet, dataRow, dataColumn, curr(summary));
+			createRow(xsheet, dataRow, dataColumn, "", curr(summary));
 
 			dataRow = currentRow;
 		}
@@ -220,7 +223,8 @@ public class ThrusdayDonationReportService {
 		currentRow++;
 		// Numbering
 		for (int i = currentRow; i <= currentRow + 5; i++) {
-			createRow(xsheet, i, columnOffset, i);
+			int number = i - currentRow +1;
+			createRow(xsheet, i, columnOffset, number);
 		}
 	}
 
@@ -231,7 +235,7 @@ public class ThrusdayDonationReportService {
 				.sortFinancialEntityByMonth(reportData.getFunds());
 		final Map<Integer, List<DonationThursday>> thursdayDonationMap = new HashMap<>();
 
-		for (int month : mappedFundsByMonth.keySet()) {
+		for (final int month : mappedFundsByMonth.keySet()) {
 
 			int monthDays = DateUtil.getMonthsDay(month - 1, year);
 
@@ -240,7 +244,7 @@ public class ThrusdayDonationReportService {
 			Map<Integer, List<BaseEntity>> mappedDonationsByDay = CashflowReportService
 					.sortFinancialEntityByDayOfMonth(rawDonationThursdays, monthDays);
 
-			Date[] thrusdaysInCurrentMonth = getDaysInOneMonth(THURSDAY, month, year);
+			Date[] thrusdaysInCurrentMonth = getDaysInOneMonth(THURSDAY, month - 1, year);
 			int dayOfMonth = 1;
 
 			for (Date thursday : thrusdaysInCurrentMonth) {
@@ -250,8 +254,11 @@ public class ThrusdayDonationReportService {
 				int currentDayOfMonth = getCalendarItem(thursday, DAY_OF_MONTH);
 				long transactionNominal = 0L;
 
-				for (int day = dayOfMonth; day <= currentDayOfMonth; day++) {
+				loop:for (int day = dayOfMonth; day <= currentDayOfMonth; day++) {
 					List<BaseEntity> donationInTheDay = mappedDonationsByDay.get(day);
+					if(null == donationInTheDay) {
+						continue loop;
+					}
 					for (BaseEntity donation : donationInTheDay) {
 						transactionNominal += donation.getTransactionNominal();
 					}
@@ -277,11 +284,10 @@ public class ThrusdayDonationReportService {
 	}
 
 	private Object[] getThrusdayDonationHeader() {
-		Object[] values = new Object[26];
-		values[0] = "Minggu Ke";
-		values[1] = "Tanggal";
+		Object[] values = new Object[25];
+		values[0] = "Minggu Ke"; 
 		String[] monthNames = DateUtil.MONTH_NAMES;
-		int index = 2;
+		int index = 1;
 		for (int i = 0; i < monthNames.length; i++) {
 			values[index] = monthNames[i];
 			index++;
