@@ -12,6 +12,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.fajar.schoolmanagement.config.LogProxyFactory;
+import com.fajar.schoolmanagement.util.DateUtil;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -48,7 +49,7 @@ public class MvcAdminController extends BaseController {
 		setActivePage(request );
  
 		model.addAttribute("imagePath", webConfigService.getUploadedImagePath());
-		model.addAttribute("title", "Shop::Dashboard");
+		model.addAttribute("title", "App::Dashboard");
 		model.addAttribute("pageUrl", "school/home-page");
 		model.addAttribute("page", "dashboard");
 		model.addAttribute("currentMonth", cal.get(Calendar.MONTH) + 1);
@@ -57,5 +58,20 @@ public class MvcAdminController extends BaseController {
 		return basePage;
 	}
 
+	@RequestMapping(value = { "/report" })
+	public String reportDashboard(Model model, HttpServletRequest request, HttpServletResponse response)
+			throws IOException {
+		if (!userService.hasSession(request)) {
+			sendRedirectLogin(request, response);
+			return basePage;
+		}
+		model.addAttribute("title", "App::Report");
+		model.addAttribute("pageUrl", "school/report-page");
+		model.addAttribute("months", DateUtil.months());
+		
+		
+		return basePage;
+		
+	}
  
 }

@@ -135,6 +135,9 @@ public class BaseController {
 	 */
 	
 	public static Cookie getCookie(String name, Cookie[] cookies) {
+		if(null ==cookies) {
+			return null;
+		}
 		try {
 			for (Cookie cookie : cookies) {
 				if(cookie.getName().equals(name)) { return cookie; }
