@@ -8,6 +8,7 @@
 		width: 100%;
 		height: 200px;
 		border: solid 2px maroon; 
+		padding: 10px;
 	}
 </style>
 <div class="content" style="width: 100%">
@@ -16,7 +17,7 @@
 		<h2>Report Page</h2>
 		<p>Good ${timeGreeting}, ${loggedUser.displayName}. Please select
 			report you want to generate!</p>
-		<div style="display: grid; grid-template-columns: 30% 30% 30%; grid-column-gap: 10px">
+		<div style="display: grid; grid-template-columns: 30% 30% 30%; grid-column-gap: 10px;grid-row-gap: 10px">
 			<div class="report-item">
 				<h3>Month</h3>
 				<select id="select-month">
