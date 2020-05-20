@@ -40,6 +40,7 @@ public class ThrusdayDonationReportService {
 
 	@Autowired
 	private WebConfigService webConfigService;
+	
 
 	public File generateThrusdayCashflowReport(ReportData transactionData) {
 		String time = DateUtil.formatDate(new Date(), "ddMMyyyy'T'hhmmss-a");
@@ -55,7 +56,7 @@ public class ThrusdayDonationReportService {
 		return file;
 	}
 
-	private void writeThrusdayCashflowReport(XSSFSheet xsheet, ReportData reportData) {
+	public void writeThrusdayCashflowReport(XSSFSheet xsheet, ReportData reportData) {
 
 		Map<Integer, List<BaseEntity>> mappedFunds = CashflowReportService
 				.sortFinancialEntityByMonth(reportData.getFunds());

@@ -36,6 +36,8 @@ public class ReportService {
 	private StudentDonationReportService studentDonationReportService;
 	@Autowired
 	private ThrusdayDonationReportService thrusdayDonationReportService;
+	@Autowired
+	private OrphanDonationReportService orphanDonationReportService;
 	
 	@PostConstruct
 	public void init() {
@@ -83,6 +85,12 @@ public class ReportService {
 		ReportData transactionData = transactionService.getYearlyThrusdayDonationCashflow(webRequest.getFilter());
 		
 		return thrusdayDonationReportService.generateThrusdayDonationReport(transactionData);
+	}
+	
+	public File generateDonationOrphanReport(WebRequest request) {
+		ReportData transactionData = transactionService.getDonationOrphanReport(request.getFilter());
+		
+		return orphanDonationReportService.generateOrphanDonationReport(transactionData);
 	}
 
 }

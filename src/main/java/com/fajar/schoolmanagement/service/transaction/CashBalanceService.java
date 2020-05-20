@@ -12,6 +12,7 @@ import com.fajar.schoolmanagement.entity.CostFlow;
 import com.fajar.schoolmanagement.entity.DonationMonthly;
 import com.fajar.schoolmanagement.entity.DonationThursday;
 import com.fajar.schoolmanagement.repository.CashBalanceRepository;
+import com.fajar.schoolmanagement.repository.DonationOrphanRepository;
 import com.fajar.schoolmanagement.util.DateUtil;
 
 import lombok.extern.slf4j.Slf4j;
@@ -20,6 +21,8 @@ import lombok.extern.slf4j.Slf4j;
 public class CashBalanceService {
 	@Autowired
 	private CashBalanceRepository cashBalanceRepository; 
+	@Autowired
+	private DonationOrphanRepository donationOrphanRepository;
 	
 	public CashBalance getBalanceByTransactionItem(BaseEntity baseEntity) {
 		
@@ -63,6 +66,41 @@ public class CashBalanceService {
 			cashBalance.setActualBalance(Long.valueOf(String.valueOf(result[2] )));
 		}
 		return cashBalance;
+	}
+	
+	/**
+	 * get balance at the end of month
+	 * @param month starts at 1
+	 * @param year
+	 * @param isDonationThrusday
+	 * @return
+	 */
+	public CashBalance getOrphanFundBalanceBefore (int month, int year ) { 
+		 
+		
+		long debitValue = getFundFlowNominal(month, year, OrphanCashflowType.DONATION);
+		long creditValue = getFundFlowNominal(month, year, OrphanCashflowType.DISTRIBUTION);
+		
+		CashBalance result = new CashBalance();
+		result.setDebitAmount(debitValue);
+		result.setCreditAmount(creditValue);
+		return result ;
+	}
+
+	private long getFundFlowNominal(int month, int year, OrphanCashflowType cashflowType) {
+		Date date = DateUtil.getDate(year, month-1, 1);
+		String dateString = DateUtil.formatDate(date, "yyyy-MM-dd");
+		
+		long  Nominal = 0L; 
+		try{
+			Object result = donationOrphanRepository.getCashflowBefore(dateString, cashflowType.toString());
+			Nominal = Long.valueOf(result.toString());
+		}catch (Exception e) {
+			log.error("Error parsing orphan "+cashflowType);
+			e.printStackTrace();
+		}
+		
+		return Nominal;
 	}
 	
 	/**

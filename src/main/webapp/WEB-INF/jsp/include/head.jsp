@@ -149,7 +149,7 @@
 		menuContainer.style.textAlign = "center";
 		menuContainer.setAttribute("id", "menu-spoiler-"+pageCode);
 		menuContainer.setAttribute("class", "menu-spoiler");
-		menuContainer.innerHTML = "<h3>Available Menu</h2>";
+		menuContainer.innerHTML = "<h4>Available Menu</h4>";
 		
 		for (var i = 0; i < menus.length; i++) {
 			const menu = menus[i];

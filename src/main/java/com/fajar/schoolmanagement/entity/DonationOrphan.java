@@ -1,22 +1,18 @@
 package com.fajar.schoolmanagement.entity;
 
 import java.io.Serializable;
-import java.rmi.Remote;
 import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import com.fajar.schoolmanagement.annotation.Dto;
 import com.fajar.schoolmanagement.annotation.FormField;
 import com.fajar.schoolmanagement.dto.FieldType;
 import com.fajar.schoolmanagement.service.transaction.OrphanCashflowType;
-import com.fajar.schoolmanagement.service.transaction.SourceOfFund;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

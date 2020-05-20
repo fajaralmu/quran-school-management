@@ -51,6 +51,11 @@
 				<p>Silakan pilih tahun untuk menyusun laporan ini</p>
 				<button class="btn btn-info" id="btn-report-donation-thursday-fundhflow"  >process</button> 
 			</div>
+			<div class="report-item">
+				<h3>Laporan Dana Yatim</h3>
+				<p>Silakan pilih tahun untuk menyusun laporan ini</p>
+				<button class="btn btn-info" id="btn-report-donation-orphan"  >process</button> 
+			</div>
 		</div>
 	</div>
 </div>
@@ -70,6 +75,10 @@
 	function generateReportDonationThuFundflow(e){
 		printReport("thrusdaydonationfundflow");
 	}
+	function generateOrphanDonationReport(e){
+		printReport("orphandonationreport");
+	}
+	
 	function getRequestObject(month, year){
 		var reqObj = {
 				filter:{
@@ -116,6 +125,10 @@
 		document.getElementById("btn-report-donation-thursday-fundhflow").onclick = function(e){
 			generateReportDonationThuFundflow(e);
 		}
+		document.getElementById("btn-report-donation-orphan").onclicn = function(e){
+			generateOrphanDonationReport(e);
+		}
+		
 		document.getElementById("input-year").value = new Date().getFullYear();
 		document.getElementById("input-year").onchange = function(e){
 			selectedYear = e.target.value;

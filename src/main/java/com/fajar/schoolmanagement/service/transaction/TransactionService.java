@@ -16,10 +16,12 @@ import com.fajar.schoolmanagement.entity.CapitalFlow;
 import com.fajar.schoolmanagement.entity.CashBalance;
 import com.fajar.schoolmanagement.entity.CostFlow;
 import com.fajar.schoolmanagement.entity.DonationMonthly;
+import com.fajar.schoolmanagement.entity.DonationOrphan;
 import com.fajar.schoolmanagement.entity.DonationThursday;
 import com.fajar.schoolmanagement.repository.CapitalFlowRepository;
 import com.fajar.schoolmanagement.repository.CostFlowRepository;
 import com.fajar.schoolmanagement.repository.DonationMonthlyRepository;
+import com.fajar.schoolmanagement.repository.DonationOrphanRepository;
 import com.fajar.schoolmanagement.repository.DonationThursdayRepository;
 import com.fajar.schoolmanagement.util.CollectionUtil;
 
@@ -39,6 +41,8 @@ public class TransactionService {
 	private CapitalFlowRepository capitalFlowRepository;
 	@Autowired
 	private CostFlowRepository costFlowRepository;
+	@Autowired
+	private DonationOrphanRepository donationOrphanRepository;
 
 	@PostConstruct
 	public void init() {
@@ -112,5 +116,21 @@ public class TransactionService {
 		funds.addAll(capitalFlows);
 		
 		return funds;
+	}
+	
+	public ReportData getDonationOrphanReport(Filter filter) {
+		
+		CashBalance initialBalance = cashBalanceService.getOrphanFundBalanceBefore(1, filter.getYear());
+		List<DonationOrphan> funds = donationOrphanRepository.findByCashflowTypeAndYear(OrphanCashflowType.DONATION.toString(), filter.getYear());
+		List<DonationOrphan> spendings = donationOrphanRepository.findByCashflowTypeAndYear(OrphanCashflowType.DISTRIBUTION.toString(), filter.getYear());
+		
+		
+		ReportData reportData = new ReportData();
+		reportData.setInitialBalance(initialBalance);
+		reportData.setFunds(CollectionUtil.convertList(funds));
+		reportData.setSpendings(CollectionUtil.convertList(spendings));
+		
+		return reportData;
+		
 	}
 }
