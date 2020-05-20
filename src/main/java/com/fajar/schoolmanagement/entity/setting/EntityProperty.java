@@ -23,9 +23,9 @@ public class EntityProperty implements Serializable {
 	*/
 	private static final long serialVersionUID = 2648801606702528928L;
 	private String entityName;
-	private List<EntityElement> elements;
-	private String fieldNames;
-	private List<String> fieldNameList;
+	private String alias;
+	private String fieldNames; 
+	
 	private String idField;
 	private int formInputColumn;
 	@Builder.Default
@@ -33,15 +33,20 @@ public class EntityProperty implements Serializable {
 	@Builder.Default
 	private boolean withDetail = false;
 	private String detailFieldName;
+	
+	private String imageElementsJson;
+	private String dateElementsJson;
+	private String currencyElementsJson;
+	
 	@Builder.Default
 	private List<String> dateElements = new ArrayList<String>();
-	private String dateElementsJson;
 	@Builder.Default
-	private List<String> imageElements = new ArrayList<String>();
-	private String imageElementsJson;
+	private List<String> imageElements = new ArrayList<String>(); 
 	@Builder.Default
 	private List<String> currencyElements = new ArrayList<String>();
-	private String currencyElementsJson;
+	private List<EntityElement> elements;
+	private List<String> fieldNameList;
+	
 
 	public void setElementJsonList() {
 

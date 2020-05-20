@@ -32,23 +32,23 @@ public class Profile extends BaseEntity implements Serializable {
 	@FormField
 	private String name;
 	@Column(name = "mart_code", unique = true)
-	@FormField(type = FieldType.FIELD_TYPE_HIDDEN)
+	@FormField(type = FieldType.FIELD_TYPE_HIDDEN, lableName = "Kode Aplikasi")
 	private String martCode;
 	@Column(name = "short_description")
-	@FormField(type = FieldType.FIELD_TYPE_TEXTAREA)
+	@FormField(type = FieldType.FIELD_TYPE_TEXTAREA, lableName = "Deskripsi Singkat")
 	private String shortDescription;
 	@Column
-	@FormField(type = FieldType.FIELD_TYPE_TEXTAREA)
+	@FormField(type = FieldType.FIELD_TYPE_TEXTAREA, lableName = "Tentang")
 	private String about;
 	@Column(name = "welcoming_message")
-	@FormField(type = FieldType.FIELD_TYPE_TEXTAREA)
+	@FormField(type = FieldType.FIELD_TYPE_TEXTAREA, lableName = "Pesan Sambutan")
 	private String welcomingMessage;
 	@Column
-	@FormField(type = FieldType.FIELD_TYPE_TEXTAREA)
+	@FormField(type = FieldType.FIELD_TYPE_TEXTAREA, lableName = "Alamat")
 	private String address;
 
 	@Column
-	@FormField(type = FieldType.FIELD_TYPE_TEXTAREA)
+	@FormField(type = FieldType.FIELD_TYPE_TEXTAREA, lableName = "Kontak")
 	private String contact;
 	@Column
 	@FormField

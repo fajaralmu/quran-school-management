@@ -30,130 +30,129 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class EntityUtil {
 
-	
 	public static EntityProperty createEntityProperty(Class clazz, HashMap<String, List> listObject) {
 		if (clazz == null || clazz.getAnnotation(Dto.class) == null) {
 			return null;
 		}
-		
+
 		Dto dto = (Dto) clazz.getAnnotation(Dto.class);
 		final boolean ignoreBaseField = dto.ignoreBaseField();
-		
-		EntityProperty entityProperty = EntityProperty.builder().entityName(clazz.getSimpleName().toLowerCase()).build();
+
+		EntityProperty entityProperty = EntityProperty.builder().entityName(clazz.getSimpleName().toLowerCase())
+				.build();
 		try {
 
-			List<Field> fieldList 				= getDeclaredFields(clazz);
-			List<EntityElement> entityElements 	= new ArrayList<>();
-			List<String> fieldNames 			= new ArrayList<>(); 
-			String fieldToShowDetail 			= "";
-			
+			List<Field> fieldList = getDeclaredFields(clazz);
+			List<EntityElement> entityElements = new ArrayList<>();
+			List<String> fieldNames = new ArrayList<>();
+			String fieldToShowDetail = "";
+
 			for (Field field : fieldList) {
 
-				final EntityElement entityElement = new EntityElement(); 
+				final EntityElement entityElement = new EntityElement();
 				final FormField formField = field.getAnnotation(FormField.class);
 				final BaseField baseField = field.getAnnotation(BaseField.class);
 				final boolean skipBaseField = (baseField != null && ignoreBaseField);
-				
+
 				if (formField == null || skipBaseField) {
 					continue;
-				} 
-				
+				}
+
 				boolean idField = field.getAnnotation(Id.class) != null;
-				
+
 				if (idField) {
 					entityProperty.setIdField(field.getName());
 				}
-				
-				String lableName = formField.lableName().equals("") ? field.getName() : formField.lableName();  
-				
+
+				String lableName = formField.lableName().equals("") ? field.getName() : formField.lableName();
+
 				FieldType fieldType = formField.type();
-				
+
 				final String entityElementId = field.getName();
-				
+
 				/**
 				 * check entity field Type
 				 */
-				if (isNumericField(field)   ) { 
-					fieldType = FieldType.FIELD_TYPE_NUMBER; 
-					
-				} else if (field.getType().equals(Date.class) && field.getAnnotation(JsonFormat.class) == null) {  
+				if (isNumericField(field)) {
+					fieldType = FieldType.FIELD_TYPE_NUMBER;
+
+				} else if (field.getType().equals(Date.class) && field.getAnnotation(JsonFormat.class) == null) {
 					fieldType = FieldType.FIELD_TYPE_DATE;
-					
-				} else if(idField) {
+
+				} else if (idField) {
 					fieldType = FieldType.FIELD_TYPE_HIDDEN;
 				}
-				
+
 				/**
 				 * check @FormField.fieldType
 				 */
 				if (fieldType.equals(FieldType.FIELD_TYPE_IMAGE)) {
 					entityProperty.getImageElements().add(entityElementId);
-					
-				}else
-				if (fieldType.equals(FieldType.FIELD_TYPE_CURRENCY)) {
+
+				} else if (fieldType.equals(FieldType.FIELD_TYPE_CURRENCY)) {
 					entityProperty.getCurrencyElements().add(entityElementId);
-					
+
 					fieldType = FieldType.FIELD_TYPE_NUMBER;
 				} else if (fieldType.equals(FieldType.FIELD_TYPE_DATE)) {
 					entityProperty.getDateElements().add(entityElementId);
-					
+
 				} else if (fieldType.equals(FieldType.FIELD_TYPE_PLAIN_LIST)) {
 					String[] availableValues = formField.availableValues();
-					if(availableValues.length > 0) {
+					if (availableValues.length > 0) {
 						entityElement.setPlainListValues(Arrays.asList(availableValues));
-					}else if(field.getType().isEnum()) {
+					} else if (field.getType().isEnum()) {
 						Object[] enumConstants = field.getType().getEnumConstants();
 						entityElement.setPlainListValues(Arrays.asList(enumConstants));
-					}else {
+					} else {
 						log.error("Ivalid element: {}", field.getName());
 						continue;
 					}
 				}
-				 
-				
+
 				if (formField.detailFields().length > 0) {
 					entityElement.setDetailFields(String.join("~", formField.detailFields()));
 				}
 				if (formField.showDetail()) {
-					entityElement.setOptionItemName(formField.optionItemName()); 
+					entityElement.setOptionItemName(formField.optionItemName());
 					fieldToShowDetail = field.getName();
 				}
-				
+
 				/**
 				 * Check if @JoinColumn exist
 				 */
-				
-				boolean hasJoinColumn =  field.getAnnotation(JoinColumn.class) != null;
-				
+
+				boolean hasJoinColumn = field.getAnnotation(JoinColumn.class) != null;
+
 				if (hasJoinColumn) {
-					
+
 					Class referenceEntityClass = field.getType();
 					Field referenceEntityIdField = getIdField(referenceEntityClass);
-					
-					if(referenceEntityIdField == null) continue;  
-					
-					if(fieldType.equals(FIELD_TYPE_FIXED_LIST) && listObject != null) {  
-	
+
+					if (referenceEntityIdField == null)
+						continue;
+
+					if (fieldType.equals(FIELD_TYPE_FIXED_LIST) && listObject != null) {
+
 						List<BaseEntity> referenceEntityList = (List<BaseEntity>) listObject.get(field.getName());
-						
+
 						if (referenceEntityList != null) {
 							entityElement.setOptions(referenceEntityList);
 							entityElement.setJsonList(MyJsonUtil.listToJson(referenceEntityList));
 						}
-	
+
 					} else if (fieldType.equals(FIELD_TYPE_DYNAMIC_LIST)) {
-						 
+
 						entityElement.setEntityReferenceClass(referenceEntityClass.getSimpleName());
 					}
 
 					entityElement.setOptionValueName(referenceEntityIdField.getName());
 					entityElement.setOptionItemName(formField.optionItemName());
-					
+
 				}
-				
+
 				fieldNames.add(entityElementId);
-				
-				entityElement.setId(entityElementId );
+
+				entityElement.setId(entityElementId);
 				entityElement.setIdentity(idField);
 				entityElement.setLableName(StringUtil.extractCamelCase(lableName));
 				entityElement.setRequired(formField.required());
@@ -161,21 +160,22 @@ public class EntityUtil {
 				entityElement.setMultiple(formField.multiple());
 				entityElement.setClassName(field.getType().getCanonicalName());
 				entityElement.setShowDetail(formField.showDetail());
-				
+
 				entityElements.add(entityElement);
 			}
-			
+
+			entityProperty.setAlias(dto.value().isEmpty() ? clazz.getSimpleName() : dto.value());
 			entityProperty.setEditable(dto.editable());
 			entityProperty.setElementJsonList();
 			entityProperty.setElements(entityElements);
-			entityProperty.setDetailFieldName(fieldToShowDetail); 
+			entityProperty.setDetailFieldName(fieldToShowDetail);
 			entityProperty.setDateElementsJson(MyJsonUtil.listToJson(entityProperty.getDateElements()));
 			entityProperty.setFieldNames(MyJsonUtil.listToJson(fieldNames));
 			entityProperty.setFieldNameList(fieldNames);
 			entityProperty.setFormInputColumn(dto.formInputColumn().value);
-			
+
 			log.info("============ENTITY PROPERTY: {} ", entityProperty);
-			
+
 			return entityProperty;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -190,8 +190,6 @@ public class EntityUtil {
 			return null;
 		}
 	}
-	
-	
 
 	public static <T> T getFieldAnnotation(Field field, Class annotation) {
 		try {
@@ -200,7 +198,7 @@ public class EntityUtil {
 			return null;
 		}
 	}
-	
+
 	public static Field getDeclaredField(Class clazz, String fieldName) {
 		try {
 			Field field = clazz.getDeclaredField(fieldName);
@@ -217,12 +215,12 @@ public class EntityUtil {
 
 			try {
 				log.info("TRY ACCESS SUPERCLASS");
-				
+
 				Field superClassField = clazz.getSuperclass().getDeclaredField(fieldName);
 				superClassField.setAccessible(true);
 				return superClassField;
 			} catch (Exception e) {
-				 
+
 				log.error("FAILED Getting FIELD: " + fieldName);
 				e.printStackTrace();
 			}
@@ -233,6 +231,7 @@ public class EntityUtil {
 
 	/**
 	 * get fields of a class, accessible true
+	 * 
 	 * @param clazz
 	 * @return
 	 */
@@ -292,7 +291,8 @@ public class EntityUtil {
 	 * @param withId
 	 * @return
 	 */
-	public static BaseEntity copyFieldElementProperty(BaseEntity source, Class<? extends BaseEntity> targetClass, boolean withId) {
+	public static BaseEntity copyFieldElementProperty(BaseEntity source, Class<? extends BaseEntity> targetClass,
+			boolean withId) {
 		log.info("Will Copy Class :" + targetClass.getCanonicalName());
 
 		BaseEntity targetObject = null;
@@ -309,8 +309,8 @@ public class EntityUtil {
 
 			if (field.getAnnotation(Id.class) != null && !withId) {
 				continue;
-			}  
-			
+			}
+
 			Field currentField = getDeclaredField(targetClass, field.getName());
 
 			if (currentField == null)
@@ -327,13 +327,13 @@ public class EntityUtil {
 				e.printStackTrace();
 			}
 
-		} 
-		
-		if(targetObject.getCreatedDate() == null) {
+		}
+
+		if (targetObject.getCreatedDate() == null) {
 			targetObject.setCreatedDate(new Date());
 		}
 		targetObject.setModifiedDate(new Date());
-		
+
 		return targetObject;
 	}
 
@@ -342,12 +342,12 @@ public class EntityUtil {
 			validateDefaultValue(entities.get(i));
 		}
 	}
-	
+
 	public static <T extends BaseEntity> T validateDefaultValue(BaseEntity baseEntity) {
 		List<Field> fields = EntityUtil.getDeclaredFields(baseEntity.getClass());
-		
+
 		for (Field field : fields) {
-			
+
 			try {
 
 				field.setAccessible(true);
@@ -411,7 +411,7 @@ public class EntityUtil {
 		return (T) baseEntity;
 	}
 
-	public static <T extends List< BaseEntity>> T validateDefaultValue(List<BaseEntity> entities) {
+	public static <T extends List<BaseEntity>> T validateDefaultValue(List<BaseEntity> entities) {
 		for (BaseEntity baseEntity : entities) {
 			baseEntity = validateDefaultValue(baseEntity);
 		}

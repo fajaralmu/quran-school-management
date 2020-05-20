@@ -19,7 +19,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Dto(editable = false)
+@Dto(editable = false, value="Jurnal Keuangan")
 @Entity
 @Table(name="fin_balance")
 @Data

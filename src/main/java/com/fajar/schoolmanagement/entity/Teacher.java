@@ -15,7 +15,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Dto
+@Dto("Tenaga Pengajar")
 @Entity
 @Table(name = "teacher")
 @Data

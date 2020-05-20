@@ -17,7 +17,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Dto
+@Dto("Siswa")
 @Entity
 @Table(name = "student")
 @Data
@@ -32,48 +32,48 @@ public class Student extends BaseEntity {
 	private static final long serialVersionUID = -3004105950283886322L;
 
 	@Column(name = "full_name")
-	@FormField
+	@FormField(lableName = "Nama Lengkap")
 	private String fullName;
 
 	@Column(name = "name")
-	@FormField
+	@FormField( lableName = "Nama Panggilan")
 	private String name;
 
 	@Column(name = "place_of_birth")
-	@FormField
+	@FormField(lableName="Tempat Lahir")
 	private String placeOfBirth;
 
 	@Column(name = "date_of_birth")
-	@FormField
+	@FormField(lableName="Tanggal Lahir")
 	private Date dateOfBirth;
 
 	@Column
-	@FormField(type = FieldType.FIELD_TYPE_PLAIN_LIST, availableValues = { "Laki-laki", "Perempuan" })
+	@FormField(type = FieldType.FIELD_TYPE_PLAIN_LIST, availableValues = { "Laki-laki", "Perempuan" }, lableName="Jenis Kelamin")
 	private String gender;
 
 	@Column(name = "sibling_seq")
-	@FormField(type = FieldType.FIELD_TYPE_NUMBER)
+	@FormField(type = FieldType.FIELD_TYPE_NUMBER, lableName="Anak Ke")
 	private int siblingSequence;
 
 	@Column(name = "siblings_count")
-	@FormField(type = FieldType.FIELD_TYPE_NUMBER)
+	@FormField(type = FieldType.FIELD_TYPE_NUMBER, lableName="Jumlah Saudara")
 	private int siblingsCount;
 
 	@Column
-	@FormField
+	@FormField(lableName="Asal Sekolah")
 	private String school;
 
 	@Column
-	@FormField(type = FieldType.FIELD_TYPE_TEXTAREA)
+	@FormField(type = FieldType.FIELD_TYPE_TEXTAREA, lableName="Alamat")
 	private String address;
 
 	@Column(name = "image_url", unique = true)
-	@FormField(type = FieldType.FIELD_TYPE_IMAGE, required = false, multiple = false, defaultValue = "Default.BMP")
+	@FormField(type = FieldType.FIELD_TYPE_IMAGE, required = false, multiple = false, defaultValue = "Default.BMP", lableName="Foto")
 	private String imageUrl;
 
 	@JoinColumn(name = "parent_id")
 	@ManyToOne
-	@FormField(optionItemName = "fatherName", type = FieldType.FIELD_TYPE_DYNAMIC_LIST)
+	@FormField(optionItemName = "fatherName", type = FieldType.FIELD_TYPE_DYNAMIC_LIST, lableName="Nama Orang Tua/Ayah")
 	private StudentParent studentParent;
 
 }

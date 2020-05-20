@@ -22,7 +22,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Dto
+@Dto("Aliran Pengeluaran")
 @Entity
 @Table(name = "school_cost_flow")
 @Builder
@@ -47,7 +47,7 @@ public class CostFlow extends BaseEntity implements Remote, Serializable {
 
 	@JoinColumn(name = "cost_id")
 	@ManyToOne
-	@FormField(type = FieldType.FIELD_TYPE_FIXED_LIST, optionItemName = "name")
+	@FormField(type = FieldType.FIELD_TYPE_FIXED_LIST, optionItemName = "name", lableName ="Jenis Pengeluaran")
 	private Cost costType; 
 	
 	@Column(name="source_of_fund")

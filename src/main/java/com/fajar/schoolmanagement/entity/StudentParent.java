@@ -15,7 +15,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Dto
+@Dto("Wali Siswa")
 @Entity
 @Table (name="student_parent")
 @Data

@@ -14,7 +14,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-@Dto
+@Dto("Jenis Pengeluaran")
 @Entity
 @Table (name="school_cost_type")
 @Data

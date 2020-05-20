@@ -19,7 +19,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Dto
+@Dto("Aliran Dana")
 @Entity
 @Table(name = "fund_flow")
 @Builder
@@ -44,7 +44,7 @@ public class CapitalFlow extends BaseEntity implements Remote, Serializable{
 
 	@JoinColumn(name = "fund_id")
 	@ManyToOne
-	@FormField(type = FieldType.FIELD_TYPE_FIXED_LIST, optionItemName = "name")
+	@FormField(type = FieldType.FIELD_TYPE_FIXED_LIST, optionItemName = "name", lableName = "Tipe Aliran Dana")
 	private Capital fundType;
 
 	@Override

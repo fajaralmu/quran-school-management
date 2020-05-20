@@ -14,7 +14,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-@Dto
+@Dto( "Jenis Aliran Dana")
 @Entity
 @Table (name="school_fund_type")
 @Data

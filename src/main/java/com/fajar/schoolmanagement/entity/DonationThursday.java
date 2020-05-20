@@ -9,14 +9,13 @@ import javax.persistence.Table;
 import com.fajar.schoolmanagement.annotation.Dto;
 import com.fajar.schoolmanagement.annotation.FormField;
 import com.fajar.schoolmanagement.dto.FieldType;
-import com.fajar.schoolmanagement.entity.DonationMonthly.DonationMonthlyBuilder;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Dto 
+@Dto ("Infaq Kamis")
 @Entity
 @Table(name = "donation_thrusday")
 @Data

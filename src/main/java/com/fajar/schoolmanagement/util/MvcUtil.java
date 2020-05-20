@@ -19,8 +19,8 @@ public class MvcUtil {
 	}
 	
 	public static Model constructCommonModel(HttpServletRequest request, EntityProperty entityProperty, Model model,
-			String string, String string2) {
-		return constructCommonModel(request, entityProperty, model, string, string2, null);
+			String title, String string2) {
+		return constructCommonModel(request, entityProperty, model, title, string2, null);
 	}
 
 	public static Model constructCommonModel(HttpServletRequest request, EntityProperty entityProperty, Model model,
