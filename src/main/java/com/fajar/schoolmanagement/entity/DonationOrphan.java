@@ -15,6 +15,7 @@ import javax.persistence.Table;
 import com.fajar.schoolmanagement.annotation.Dto;
 import com.fajar.schoolmanagement.annotation.FormField;
 import com.fajar.schoolmanagement.dto.FieldType;
+import com.fajar.schoolmanagement.service.transaction.OrphanCashflowType;
 import com.fajar.schoolmanagement.service.transaction.SourceOfFund;
 
 import lombok.AllArgsConstructor;
@@ -22,14 +23,14 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Dto("Aliran Pengeluaran")
+@Dto("Dana Yatim")
 @Entity
-@Table(name = "school_cost_flow")
+@Table(name = "school_orphan_donation")
 @Builder
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class CostFlow extends BaseEntity implements Remote, Serializable {
+public class DonationOrphan extends BaseEntity implements  Serializable {
 
 	/**
 	 * 
@@ -44,30 +45,24 @@ public class CostFlow extends BaseEntity implements Remote, Serializable {
 	@Column
 	@FormField(type = FieldType.FIELD_TYPE_CURRENCY)
 	private long nominal;
-
-	@JoinColumn(name = "cost_id")
-	@ManyToOne
-	@FormField(type = FieldType.FIELD_TYPE_FIXED_LIST, optionItemName = "name", lableName = "Jenis Pengeluaran")
-	private Cost costType;
-
-	@Column(name = "source_of_fund")
+	
+	 
+	@Column(name="cashflow_type")
 	@Enumerated(EnumType.STRING)
-	@FormField(type = FieldType.FIELD_TYPE_PLAIN_LIST, availableValues = {}, lableName = "Sumber Dana")
-	private SourceOfFund fundSource;
-
+	@FormField(type = FieldType.FIELD_TYPE_PLAIN_LIST, availableValues = {}, lableName = "Tipe Aliran Dana")
+	private OrphanCashflowType cashflowType;
+	
 	/** $$$ **/
 	@Override
-	public Date getTransactionDate() {
+	public Date getTransactionDate() { 
 		return date;
 	}
-
 	@Override
 	public String getTransactionName() {
 		return description;
 	}
-
 	@Override
-	public long getTransactionNominal() {
+	public long getTransactionNominal() { 
 		return nominal;
 	}
 

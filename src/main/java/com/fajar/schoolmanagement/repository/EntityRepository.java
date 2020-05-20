@@ -26,6 +26,7 @@ import com.fajar.schoolmanagement.entity.CashBalance;
 import com.fajar.schoolmanagement.entity.Cost;
 import com.fajar.schoolmanagement.entity.CostFlow;
 import com.fajar.schoolmanagement.entity.DonationMonthly;
+import com.fajar.schoolmanagement.entity.DonationOrphan;
 import com.fajar.schoolmanagement.entity.DonationThursday;
 import com.fajar.schoolmanagement.entity.Menu;
 import com.fajar.schoolmanagement.entity.Page;
@@ -86,6 +87,8 @@ public class EntityRepository {
 	private DonationMonthlyRepository DonationMonthlyRepository;
 	@Autowired
 	private DonationThursdayRepository DonationThursdayRepository;
+	@Autowired
+	private DonationOrphanRepository donationOrphanRepository;
 
 	/**
 	 * end jpaRepositories
@@ -150,7 +153,7 @@ public class EntityRepository {
 		 * commons
 		 */
 		toCommonUpdateService(Capital.class, Cost.class, Page.class, StudentParent.class, Student.class, Teacher.class,
-				Profile.class);
+				Profile.class, DonationOrphan.class);
 
 		/**
 		 * special

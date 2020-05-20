@@ -11,6 +11,7 @@ import com.fajar.schoolmanagement.entity.CapitalFlow;
 import com.fajar.schoolmanagement.entity.Cost;
 import com.fajar.schoolmanagement.entity.CostFlow;
 import com.fajar.schoolmanagement.entity.DonationMonthly;
+import com.fajar.schoolmanagement.entity.DonationOrphan;
 import com.fajar.schoolmanagement.entity.DonationThursday;
 import com.fajar.schoolmanagement.entity.Menu;
 import com.fajar.schoolmanagement.entity.Page;
@@ -64,6 +65,7 @@ public class WebRequest implements Serializable {
 	private CapitalFlow capitalflow;
 	private DonationMonthly donationmonthly;
 	private DonationThursday donationthursday;
+	private DonationOrphan donationorphan;
 	 
 	/**
 	 * ==========end entity============
