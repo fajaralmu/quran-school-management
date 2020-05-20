@@ -129,7 +129,7 @@
 				e) {
 			generateReportDonationThuFundflow(e);
 		}
-		document.getElementById("btn-report-donation-orphan").onclicn = function(
+		document.getElementById("btn-report-donation-orphan").onclick = function(
 				e) {
 			generateOrphanDonationReport(e);
 		}
