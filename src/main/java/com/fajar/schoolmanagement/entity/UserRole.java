@@ -1,7 +1,5 @@
 package com.fajar.schoolmanagement.entity;
 
-import java.io.Serializable;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
@@ -21,7 +19,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserRole extends BaseEntity  implements Serializable{
+public class UserRole extends BaseEntity{
 
 	
 	/**

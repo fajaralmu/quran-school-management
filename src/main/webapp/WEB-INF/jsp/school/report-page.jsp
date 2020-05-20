@@ -4,12 +4,12 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <style>
-	.report-item{
-		width: 100%;
-		height: 250px;
-		border: solid 2px maroon; 
-		padding: 10px;
-	}
+.report-item {
+	width: 100%;
+	height: 250px;
+	border: solid 2px maroon;
+	padding: 10px;
+}
 </style>
 <div class="content" style="width: 100%">
 
@@ -17,9 +17,10 @@
 		<h2>Report Page</h2>
 		<p>Good ${timeGreeting}, ${loggedUser.displayName}. Please select
 			report you want to generate!</p>
-			
-			
-		<div style="display: grid; grid-template-columns: 30% 30% 30%; grid-column-gap: 10px;grid-row-gap: 10px">
+
+
+		<div
+			style="display: grid; grid-template-columns: 30% 30% 30%; grid-column-gap: 10px; grid-row-gap: 10px">
 			<div class="report-item">
 				<h3>Filter</h3>
 				<h4>Month</h4>
@@ -34,74 +35,74 @@
 			<div class="report-item">
 				<h3>Laporan Keuangan Bulanan</h3>
 				<p>Silakan pilih bulan dan tahun untuk menyusun laporan ini</p>
-				<button class="btn btn-info" id="btn-report-monthly"  >process</button>
+				<button class="btn btn-info" id="btn-report-monthly">process</button>
 			</div>
 			<div class="report-item">
 				<h3>Laporan Infaq Bulanan Siswa</h3>
 				<p>Silakan pilih tahun untuk menyusun laporan ini</p>
-				<button class="btn btn-info" id="btn-report-donation-student" >process</button> 
+				<button class="btn btn-info" id="btn-report-donation-student">process</button>
 			</div>
 			<div class="report-item">
 				<h3>Laporan Mutasi Infaq Kamis</h3>
 				<p>Silakan pilih tahun untuk menyusun laporan ini</p>
-				<button class="btn btn-info" id="btn-report-donation-thursday-cashflow"  >process</button> 
+				<button class="btn btn-info"
+					id="btn-report-donation-thursday-cashflow">process</button>
 			</div>
 			<div class="report-item">
 				<h3>Laporan Pemasukan Infaq Kamis</h3>
 				<p>Silakan pilih tahun untuk menyusun laporan ini</p>
-				<button class="btn btn-info" id="btn-report-donation-thursday-fundhflow"  >process</button> 
+				<button class="btn btn-info"
+					id="btn-report-donation-thursday-fundhflow">process</button>
 			</div>
 			<div class="report-item">
 				<h3>Laporan Dana Yatim</h3>
 				<p>Silakan pilih tahun untuk menyusun laporan ini</p>
-				<button class="btn btn-info" id="btn-report-donation-orphan"  >process</button> 
+				<button class="btn btn-info" id="btn-report-donation-orphan">process</button>
 			</div>
 		</div>
 	</div>
 </div>
-<script type="text/javascript"> 
+<script type="text/javascript">
 	var selectedMonth = 1;
 	var selectedYear = new Date().getFullYear();
 
-	function generateReportMonthly(e){
+	function generateReportMonthly(e) {
 		printReport("monthlygeneralcashflow");
 	}
-	function generateReportDonationStudent(e){
+	function generateReportDonationStudent(e) {
 		printReport("studentdonationreport");
 	}
-	function generateReportDonationThuCashflow(e){
+	function generateReportDonationThuCashflow(e) {
 		printReport("thrusdaydonationcashflow");
 	}
-	function generateReportDonationThuFundflow(e){
+	function generateReportDonationThuFundflow(e) {
 		printReport("thrusdaydonationfundflow");
 	}
-	function generateOrphanDonationReport(e){
+	function generateOrphanDonationReport(e) {
 		printReport("orphandonationreport");
 	}
-	
-	function getRequestObject(month, year){
+
+	function getRequestObject(month, year) {
 		var reqObj = {
-				filter:{
-					
-				}
+			filter : {}
 		};
-		if(month!=null){
+		if (month != null) {
 			reqObj.filter.month = month;
 		}
-		if(year!=null){
+		if (year != null) {
 			reqObj.filter.year = year;
 		}
 		return reqObj;
 	}
 
-	function printReport( endpoint) {
-		
+	function printReport(endpoint) {
+
 		var confirmed = confirm("Continue Generating Report?");
-		if(confirmed != 1){
+		if (confirmed != 1) {
 			return;
 		}
 		var requestObject = getRequestObject(selectedMonth, selectedYear);
-		console.log("requestObject: ",requestObject);
+		console.log("requestObject: ", requestObject);
 		postReq("<spring:url value="/api/report/" />" + endpoint,
 				requestObject, function(xhr) {
 
@@ -113,31 +114,35 @@
 	}
 
 	function init() {
-		document.getElementById("btn-report-monthly").onclick = function(e){
+		document.getElementById("btn-report-monthly").onclick = function(e) {
 			generateReportMonthly(e);
 		}
-		document.getElementById("btn-report-donation-student").onclick = function(e){
+		document.getElementById("btn-report-donation-student").onclick = function(
+				e) {
 			generateReportDonationStudent(e);
 		}
-		document.getElementById("btn-report-donation-thursday-cashflow").onclick = function(e){
+		document.getElementById("btn-report-donation-thursday-cashflow").onclick = function(
+				e) {
 			generateReportDonationThuCashflow(e);
 		}
-		document.getElementById("btn-report-donation-thursday-fundhflow").onclick = function(e){
+		document.getElementById("btn-report-donation-thursday-fundhflow").onclick = function(
+				e) {
 			generateReportDonationThuFundflow(e);
 		}
-		document.getElementById("btn-report-donation-orphan").onclicn = function(e){
+		document.getElementById("btn-report-donation-orphan").onclicn = function(
+				e) {
 			generateOrphanDonationReport(e);
 		}
-		
+
 		document.getElementById("input-year").value = new Date().getFullYear();
-		document.getElementById("input-year").onchange = function(e){
+		document.getElementById("input-year").onchange = function(e) {
 			selectedYear = e.target.value;
 		}
-		document.getElementById("select-month").onchange = function(e){
+		document.getElementById("select-month").onchange = function(e) {
 			selectedMonth = e.target.value;
 		}
-		
+
 	}
-	
+
 	init();
 </script>

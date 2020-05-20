@@ -1,7 +1,5 @@
 package com.fajar.schoolmanagement.entity;
 
-import java.io.Serializable;
-import java.rmi.Remote;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -29,7 +27,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class CostFlow extends BaseEntity implements Remote, Serializable {
+public class CostFlow extends BaseEntity   {
 
 	/**
 	 * 

@@ -1,6 +1,5 @@
 package com.fajar.schoolmanagement.entity;
 
-import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -26,7 +25,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class DonationOrphan extends BaseEntity implements  Serializable {
+public class DonationOrphan extends BaseEntity  {
 
 	/**
 	 * 

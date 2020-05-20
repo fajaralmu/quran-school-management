@@ -1,6 +1,5 @@
 package com.fajar.schoolmanagement.entity;
 
-import java.io.Serializable;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -18,14 +17,14 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Dto(formInputColumn = FormInputColumn.ONE_COLUMN, ignoreBaseField = false)
+@Dto(formInputColumn = FormInputColumn.ONE_COLUMN, ignoreBaseField = false, value ="Halaman Aplikasi")
 @Entity
 @Table(name = "page")
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Page extends BaseEntity implements Serializable {
+public class Page extends BaseEntity {
 	/**
 	* 
 	*/
