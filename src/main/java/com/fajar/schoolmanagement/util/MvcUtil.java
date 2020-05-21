@@ -1,12 +1,15 @@
 package com.fajar.schoolmanagement.util;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.ui.Model;
 
+import com.fajar.schoolmanagement.entity.Menu;
 import com.fajar.schoolmanagement.entity.setting.EntityProperty;
 
 public class MvcUtil {
@@ -56,6 +59,28 @@ public class MvcUtil {
 		model.addAttribute("options", optionJson);
 		model.addAttribute("singleRecord", false);
 		return model;
+	}
+	
+	public static List<Menu> getReportMenus(){
+		
+		
+		List<Menu> menus = new ArrayList<Menu>();
+		menus.add(getReportMenu("Keuangan Bulanan", "monthlygeneralcashflow", "Bulan", "Tahun"));
+		menus.add(getReportMenu("Infaq Bulanan Siswa", "studentdonationreport", "Tahun"));
+		menus.add(getReportMenu("Mutasi Infaq Kamis", "thrusdaydonationcashflow", "Tahun"));
+		menus.add(getReportMenu("Pemasukan Infaq Kamis", "thrusdaydonationfundflow", "Tahun"));
+		menus.add(getReportMenu("Dana Yatim", "orphandonationreport", "Tahun"));
+		return menus ;
+	}
+
+	private static Menu getReportMenu(String title, String link, String... mandatoryFields) {
+		Menu menu = new Menu();
+		menu.setName(title);
+		menu.setUrl(link);
+		String mandatoryInfo = String.join(" and ", mandatoryFields);
+		String desc = "Please select "+mandatoryInfo+" to process this report";
+		menu.setDescription(desc);
+		return menu;
 	}
 
 }
