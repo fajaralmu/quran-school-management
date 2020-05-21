@@ -31,8 +31,7 @@ import com.fajar.schoolmanagement.util.DateUtil;
 import lombok.extern.slf4j.Slf4j;
 
 @Service
-@Slf4j
-
+@Slf4j 
 public class ThrusdayDonationReportService {
 
 	@Autowired
@@ -40,7 +39,9 @@ public class ThrusdayDonationReportService {
 	
 
 	public File generateThrusdayCashflowReport(ReportData transactionData) {
-		String time = DateUtil.formatDate(new Date(), "ddMMyyyy'T'hhmmss-a");
+		log.info("generateThrusdayCashflowReport");
+		
+		String time = ReportMappingUtil.getReportDateString();
 		String sheetName = "Mutasi_Infaq_Kamis";
 
 		String reportName = webConfigService.getReportPath() + "/" + sheetName + "_" + time + ".xlsx";
@@ -51,6 +52,7 @@ public class ThrusdayDonationReportService {
 		reportBuilder.writeReport();
 
 		File file = getFile(xwb, reportName);
+		log.info("generated ThrusdayCashflowReport");
 		return file;
 	}
 
@@ -60,7 +62,8 @@ public class ThrusdayDonationReportService {
 	// ================================================ FUNDS FLOW ONLY
 
 	public File generateThrusdayDonationReport(ReportData transactionData) {
-		String time = DateUtil.formatDate(new Date(), "ddMMyyyy'T'hhmmss-a");
+		log.info("generateThrusdayDonationReport");
+		String time = ReportMappingUtil.getReportDateString();
 		String sheetName = "Infaq_Kamis";
 
 		String reportName = webConfigService.getReportPath() + "/" + sheetName + "_" + time + ".xlsx";
@@ -70,6 +73,7 @@ public class ThrusdayDonationReportService {
 		writeThrusdayDonationFundReport(xsheet, transactionData);
 
 		File file = getFile(xwb, reportName);
+		log.info("generated ThrusdayDonationReport");
 		return file;
 	}
 
@@ -140,7 +144,7 @@ public class ThrusdayDonationReportService {
 	private Map<Integer, List<DonationThursday>> getThrusdayDonationMappedForEachMonth(ReportData reportData) {
 
 		int year = reportData.getFilter().getYear();
-		final Map<Integer, List<BaseEntity>> mappedFundsByMonth = CashflowReportService
+		final Map<Integer, List<BaseEntity>> mappedFundsByMonth = ReportMappingUtil
 				.sortFinancialEntityByMonth(reportData.getFunds());
 		final Map<Integer, List<DonationThursday>> thursdayDonationMap = new HashMap<>();
 
@@ -150,7 +154,7 @@ public class ThrusdayDonationReportService {
 
 			List<BaseEntity> rawDonationThursdays = mappedFundsByMonth.get(month);
 			List<DonationThursday> donationThursdays = new ArrayList<>(); // maximum item: 5
-			Map<Integer, List<BaseEntity>> mappedDonationsByDay = CashflowReportService
+			Map<Integer, List<BaseEntity>> mappedDonationsByDay = ReportMappingUtil
 					.sortFinancialEntityByDayOfMonth(rawDonationThursdays, monthDays);
 
 			Date[] thrusdaysInCurrentMonth = getDaysInOneMonth(THURSDAY, month - 1, year);

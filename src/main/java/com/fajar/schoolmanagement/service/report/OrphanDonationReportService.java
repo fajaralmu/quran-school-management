@@ -4,7 +4,6 @@ package com.fajar.schoolmanagement.service.report;
 import static com.fajar.schoolmanagement.util.FileUtil.getFile;
 
 import java.io.File;
-import java.util.Date;
 
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -13,7 +12,6 @@ import org.springframework.stereotype.Service;
 
 import com.fajar.schoolmanagement.dto.ReportData;
 import com.fajar.schoolmanagement.service.WebConfigService;
-import com.fajar.schoolmanagement.util.DateUtil;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -26,7 +24,7 @@ public class OrphanDonationReportService {
 
 	public File generateOrphanDonationReport(ReportData transactionData) {
 		log.info("will generate: OrphanDonationReport");
-		String time = DateUtil.formatDate(new Date(), "ddMMyyyy'T'hhmmss-a");
+		String time = ReportMappingUtil.getReportDateString();
 		String sheetName = "Dana_Yatim";
 
 		String reportName = webConfigService.getReportPath() + "/" + sheetName + "_" + time + ".xlsx";

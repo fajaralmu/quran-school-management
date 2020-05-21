@@ -39,7 +39,7 @@ public class StudentDonationReportService {
 	public File generateMonthlyStudentDonationReport(ReportData reportData, List<Student> students) {
 
 		Filter filter = reportData.getFilter();
-		String time = DateUtil.formatDate(new Date(), "ddMMyyyy'T'hhmmss-a");
+		String time = ReportMappingUtil.getReportDateString();
 		String sheetName = "Infaq_Bulanan_Santri-" + filter.getMonth() + "-" + filter.getYear();
 
 		String reportName = webConfigService.getReportPath() + "/" + sheetName + "_" + time + ".xlsx";

@@ -38,6 +38,8 @@ public class ReportService {
 	private ThrusdayDonationReportService thrusdayDonationReportService;
 	@Autowired
 	private OrphanDonationReportService orphanDonationReportService;
+	@Autowired
+	private EntityReportService entityReportService;
 	
 	@PostConstruct
 	public void init() {
@@ -69,7 +71,7 @@ public class ReportService {
 		log.info("entities count: {}", entities.size());
 		EntityProperty entityProperty = EntityUtil.createEntityProperty(entityClass, null);
 		
-		File result = cashflowReportService.getEntityReport(entities, entityProperty);
+		File result = entityReportService.getEntityReport(entities, entityProperty);
 		return result;
 	}
 

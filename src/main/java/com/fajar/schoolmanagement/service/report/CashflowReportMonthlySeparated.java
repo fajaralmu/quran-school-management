@@ -31,8 +31,8 @@ public class CashflowReportMonthlySeparated {
 	public CashflowReportMonthlySeparated(ReportData reportData, XSSFSheet sheet) {
 		this.reportData = reportData;
 		this.xsheet = sheet;
-		mappedFunds = CashflowReportService.sortFinancialEntityByMonth(reportData.getFunds());
-		mappedSpendings = CashflowReportService.sortFinancialEntityByMonth(reportData.getSpendings());
+		mappedFunds = ReportMappingUtil.sortFinancialEntityByMonth(reportData.getFunds());
+		mappedSpendings = ReportMappingUtil.sortFinancialEntityByMonth(reportData.getSpendings());
 	}
 
 	public void writeReport() {
