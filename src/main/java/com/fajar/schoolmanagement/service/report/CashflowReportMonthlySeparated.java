@@ -5,7 +5,10 @@ import static com.fajar.schoolmanagement.service.report.ExcelReportUtil.curr;
 import static com.fajar.schoolmanagement.util.DateUtil.MONTH_NAMES;
 import static com.fajar.schoolmanagement.util.DateUtil.getCalendarItem;
 import static java.util.Calendar.DAY_OF_MONTH;
+import static java.util.Calendar.MONTH;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -22,18 +25,18 @@ public class CashflowReportMonthlySeparated {
 
 	final ReportData reportData;
 	final XSSFSheet xsheet;
+	final Map<Integer, List<BaseEntity>> mappedFunds;
+	final Map<Integer, List<BaseEntity>> mappedSpendings;
 
 	public CashflowReportMonthlySeparated(ReportData reportData, XSSFSheet sheet) {
 		this.reportData = reportData;
 		this.xsheet = sheet;
+		mappedFunds = CashflowReportService.sortFinancialEntityByMonth(reportData.getFunds());
+		mappedSpendings = CashflowReportService.sortFinancialEntityByMonth(reportData.getSpendings());
 	}
 
 	public void writeReport() {
 
-		Map<Integer, List<BaseEntity>> mappedFunds = CashflowReportService
-				.sortFinancialEntityByMonth(reportData.getFunds());
-		Map<Integer, List<BaseEntity>> mappedSpendings = CashflowReportService
-				.sortFinancialEntityByMonth(reportData.getSpendings());
 		CashBalance initialBalance = reportData.getInitialBalance();
 
 		int currentRow = 1;
@@ -105,14 +108,10 @@ public class CashflowReportMonthlySeparated {
 					: comparedCashflowSize;
 			int rowCounter = 0;
 
-			for (BaseEntity fund : cashflows) {
-
-				int day = getCalendarItem(fund.getTransactionDate(), DAY_OF_MONTH);
-				currentCashflowRow++;
-				Object[] cashflowRowValues = { day + "/" + currentMonth, fund.getTransactionName(),
-						curr(fund.getTransactionNominal()), "" };
-				createRow(xsheet, currentCashflowRow, columnOffset, cashflowRowValues);
-
+			for (BaseEntity cashflow : cashflows) {
+ 
+				currentCashflowRow++;  
+				writeCashflowRow(cashflow,  currentCashflowRow, columnOffset); 
 				rowCounter++;
 			}
 
@@ -131,5 +130,17 @@ public class CashflowReportMonthlySeparated {
 
 		return totalRow + mappedCashflow.keySet().size();
 	}
+
+	private void writeCashflowRow(BaseEntity fund, int currentCashflowRow, int columnOffset) {
+		
+		int day = getCalendarItem(fund.getTransactionDate(), DAY_OF_MONTH);
+		int month = getCalendarItem(fund.getTransactionDate(), Calendar.MONTH )+1;
+		log.info("fund.getTransactionDate(): {}, month: {}", fund.getTransactionDate(), month);
+		Object[] cashflowRowValues = { day + "/" + month, fund.getTransactionName(),
+				curr(fund.getTransactionNominal()), "" };
+		createRow(xsheet, currentCashflowRow, columnOffset, cashflowRowValues);
+	}
+	
+	 
 
 }
