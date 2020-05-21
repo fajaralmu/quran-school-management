@@ -1,7 +1,9 @@
 package com.fajar.schoolmanagement.controller;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
@@ -12,6 +14,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.fajar.schoolmanagement.config.LogProxyFactory;
+import com.fajar.schoolmanagement.entity.Menu;
 import com.fajar.schoolmanagement.util.DateUtil;
 
 import lombok.extern.slf4j.Slf4j;
@@ -68,10 +71,33 @@ public class MvcAdminController extends BaseController {
 		model.addAttribute("title", "App::Report");
 		model.addAttribute("pageUrl", "school/report-page");
 		model.addAttribute("months", DateUtil.months());
+		model.addAttribute("reportMenus",getReportMenus());
 		
 		
 		return basePage;
 		
+	}
+	
+	public List<Menu> getReportMenus(){
+		
+		
+		List<Menu> menus = new ArrayList<Menu>();
+		menus.add(getReportMenu("Keuangan Bulanan", "monthlygeneralcashflow", "Bulan", "Tahun"));
+		menus.add(getReportMenu("Infaq Bulanan Siswa", "studentdonationreport", "Tahun"));
+		menus.add(getReportMenu("Mutasi Infaq Kamis", "thrusdaydonationcashflow", "Tahun"));
+		menus.add(getReportMenu("Pemasukan Infaq Kamis", "thrusdaydonationfundflow", "Tahun"));
+		menus.add(getReportMenu("Dana Yatim", "orphandonationreport", "Tahun"));
+		return menus ;
+	}
+
+	private Menu getReportMenu(String title, String link, String... mandatoryFields) {
+		Menu menu = new Menu();
+		menu.setName(title);
+		menu.setUrl(link);
+		String mandatoryInfo = String.join(" and ", mandatoryFields);
+		String desc = "Please select "+mandatoryInfo+" to process this report";
+		menu.setDescription(desc);
+		return menu;
 	}
  
 }

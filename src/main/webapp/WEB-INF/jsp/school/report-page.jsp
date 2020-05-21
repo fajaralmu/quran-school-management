@@ -32,56 +32,20 @@
 				<h4>Year</h4>
 				<input id="input-year" type="number" />
 			</div>
-			<div class="report-item">
-				<h3>Laporan Keuangan Bulanan</h3>
-				<p>Silakan pilih bulan dan tahun untuk menyusun laporan ini</p>
-				<button class="btn btn-info" id="btn-report-monthly">process</button>
-			</div>
-			<div class="report-item">
-				<h3>Laporan Infaq Bulanan Siswa</h3>
-				<p>Silakan pilih tahun untuk menyusun laporan ini</p>
-				<button class="btn btn-info" id="btn-report-donation-student">process</button>
-			</div>
-			<div class="report-item">
-				<h3>Laporan Mutasi Infaq Kamis</h3>
-				<p>Silakan pilih tahun untuk menyusun laporan ini</p>
-				<button class="btn btn-info"
-					id="btn-report-donation-thursday-cashflow">process</button>
-			</div>
-			<div class="report-item">
-				<h3>Laporan Pemasukan Infaq Kamis</h3>
-				<p>Silakan pilih tahun untuk menyusun laporan ini</p>
-				<button class="btn btn-info"
-					id="btn-report-donation-thursday-fundhflow">process</button>
-			</div>
-			<div class="report-item">
-				<h3>Laporan Dana Yatim</h3>
-				<p>Silakan pilih tahun untuk menyusun laporan ini</p>
-				<button class="btn btn-info" id="btn-report-donation-orphan">process</button>
-			</div>
+			<c:forEach var="reportMenu" items="${reportMenus }">
+				<div class="report-item">
+					<h3>${reportMenu.name }</h3>
+					<p>${reportMenu.description }</p>
+					<button class="btn btn-info report-process" name="${reportMenu.url }">process</button>
+				</div>
+			</c:forEach>
 		</div>
 	</div>
 </div>
 <script type="text/javascript">
 	var selectedMonth = 1;
-	var selectedYear = new Date().getFullYear();
-
-	function generateReportMonthly(e) {
-		printReport("monthlygeneralcashflow");
-	}
-	function generateReportDonationStudent(e) {
-		printReport("studentdonationreport");
-	}
-	function generateReportDonationThuCashflow(e) {
-		printReport("thrusdaydonationcashflow");
-	}
-	function generateReportDonationThuFundflow(e) {
-		printReport("thrusdaydonationfundflow");
-	}
-	function generateOrphanDonationReport(e) {
-		printReport("orphandonationreport");
-	}
-
+	var selectedYear = new Date().getFullYear(); 
+	
 	function getRequestObject(month, year) {
 		var reqObj = {
 			filter : {}
@@ -114,26 +78,13 @@
 	}
 
 	function init() {
-		document.getElementById("btn-report-monthly").onclick = function(e) {
-			generateReportMonthly(e);
-		}
-		document.getElementById("btn-report-donation-student").onclick = function(
-				e) {
-			generateReportDonationStudent(e);
-		}
-		document.getElementById("btn-report-donation-thursday-cashflow").onclick = function(
-				e) {
-			generateReportDonationThuCashflow(e);
-		}
-		document.getElementById("btn-report-donation-thursday-fundhflow").onclick = function(
-				e) {
-			generateReportDonationThuFundflow(e);
-		}
-		document.getElementById("btn-report-donation-orphan").onclick = function(
-				e) {
-			generateOrphanDonationReport(e);
-		}
+		 
+		initButtonEvents();
+		initFilterEvents();
 
+	}
+	
+	function initFilterEvents(){
 		document.getElementById("input-year").value = new Date().getFullYear();
 		document.getElementById("input-year").onchange = function(e) {
 			selectedYear = e.target.value;
@@ -141,7 +92,17 @@
 		document.getElementById("select-month").onchange = function(e) {
 			selectedMonth = e.target.value;
 		}
-
+	}
+	
+	function initButtonEvents(){
+		var buttons = document.getElementsByClassName("report-process");
+		for(var i =0;i<buttons.length;i++){
+			const button = buttons[i];
+			button.onclick = function(e){
+				printReport(e.target.name);
+			}
+		}
+		
 	}
 
 	init();
