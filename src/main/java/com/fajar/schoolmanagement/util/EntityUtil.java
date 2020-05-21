@@ -1,29 +1,21 @@
 package com.fajar.schoolmanagement.util;
 
-import static com.fajar.schoolmanagement.dto.FieldType.FIELD_TYPE_DYNAMIC_LIST;
-import static com.fajar.schoolmanagement.dto.FieldType.FIELD_TYPE_FIXED_LIST;
-
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 
-import com.fajar.schoolmanagement.annotation.BaseField;
 import com.fajar.schoolmanagement.annotation.Dto;
 import com.fajar.schoolmanagement.annotation.FormField;
-import com.fajar.schoolmanagement.dto.FieldType;
 import com.fajar.schoolmanagement.entity.BaseEntity;
 import com.fajar.schoolmanagement.entity.setting.EntityElement;
 import com.fajar.schoolmanagement.entity.setting.EntityProperty;
-import com.fasterxml.jackson.annotation.JsonFormat;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -38,7 +30,7 @@ public class EntityUtil {
 		Dto dto = (Dto) clazz.getAnnotation(Dto.class);
 		final boolean ignoreBaseField = dto.ignoreBaseField();
 
-		EntityProperty entityProperty = EntityProperty.builder().entityName(clazz.getSimpleName().toLowerCase())
+		EntityProperty entityProperty = EntityProperty.builder().ignoreBaseField(ignoreBaseField).entityName(clazz.getSimpleName().toLowerCase())
 				.build();
 		try {
 
@@ -49,119 +41,18 @@ public class EntityUtil {
 
 			for (Field field : fieldList) {
 
-				final EntityElement entityElement = new EntityElement();
-				final FormField formField = field.getAnnotation(FormField.class);
-				final BaseField baseField = field.getAnnotation(BaseField.class);
-				final boolean skipBaseField = (baseField != null && ignoreBaseField);
-
-				if (formField == null || skipBaseField) {
+				final EntityElement entityElement = new EntityElement(field, entityProperty, listObject);
+				 
+				if (false == entityElement.build()) {
 					continue;
+				} 
+				if(entityElement.isDetailField()) {
+					fieldToShowDetail = entityElement.getId();
 				}
-
-				boolean idField = field.getAnnotation(Id.class) != null;
-
-				if (idField) {
-					entityProperty.setIdField(field.getName());
-				}
-
-				String lableName = formField.lableName().equals("") ? field.getName() : formField.lableName();
-
-				FieldType fieldType = formField.type();
-
-				final String entityElementId = field.getName();
-
-				/**
-				 * check entity field Type
-				 */
-				if (isNumericField(field)) {
-					fieldType = FieldType.FIELD_TYPE_NUMBER;
-
-				} else if (field.getType().equals(Date.class) && field.getAnnotation(JsonFormat.class) == null) {
-					fieldType = FieldType.FIELD_TYPE_DATE;
-
-				} else if (idField) {
-					fieldType = FieldType.FIELD_TYPE_HIDDEN;
-				}
-
-				/**
-				 * check @FormField.fieldType
-				 */
-				if (fieldType.equals(FieldType.FIELD_TYPE_IMAGE)) {
-					entityProperty.getImageElements().add(entityElementId);
-
-				} else if (fieldType.equals(FieldType.FIELD_TYPE_CURRENCY)) {
-					entityProperty.getCurrencyElements().add(entityElementId);
-
-					fieldType = FieldType.FIELD_TYPE_NUMBER;
-				} else if (fieldType.equals(FieldType.FIELD_TYPE_DATE)) {
-					entityProperty.getDateElements().add(entityElementId);
-
-				} else if (fieldType.equals(FieldType.FIELD_TYPE_PLAIN_LIST)) {
-					String[] availableValues = formField.availableValues();
-					if (availableValues.length > 0) {
-						entityElement.setPlainListValues(Arrays.asList(availableValues));
-					} else if (field.getType().isEnum()) {
-						Object[] enumConstants = field.getType().getEnumConstants();
-						entityElement.setPlainListValues(Arrays.asList(enumConstants));
-					} else {
-						log.error("Ivalid element: {}", field.getName());
-						continue;
-					}
-				}
-
-				if (formField.detailFields().length > 0) {
-					entityElement.setDetailFields(String.join("~", formField.detailFields()));
-				}
-				if (formField.showDetail()) {
-					entityElement.setOptionItemName(formField.optionItemName());
-					fieldToShowDetail = field.getName();
-				}
-
-				/**
-				 * Check if @JoinColumn exist
-				 */
-
-				boolean hasJoinColumn = field.getAnnotation(JoinColumn.class) != null;
-
-				if (hasJoinColumn) {
-
-					Class referenceEntityClass = field.getType();
-					Field referenceEntityIdField = getIdField(referenceEntityClass);
-
-					if (referenceEntityIdField == null)
-						continue;
-
-					if (fieldType.equals(FIELD_TYPE_FIXED_LIST) && listObject != null) {
-
-						List<BaseEntity> referenceEntityList = (List<BaseEntity>) listObject.get(field.getName());
-
-						if (referenceEntityList != null) {
-							entityElement.setOptions(referenceEntityList);
-							entityElement.setJsonList(MyJsonUtil.listToJson(referenceEntityList));
-						}
-
-					} else if (fieldType.equals(FIELD_TYPE_DYNAMIC_LIST)) {
-
-						entityElement.setEntityReferenceClass(referenceEntityClass.getSimpleName());
-					}
-
-					entityElement.setOptionValueName(referenceEntityIdField.getName());
-					entityElement.setOptionItemName(formField.optionItemName());
-
-				}
-
-				fieldNames.add(entityElementId);
-
-				entityElement.setId(entityElementId);
-				entityElement.setIdentity(idField);
-				entityElement.setLableName(StringUtil.extractCamelCase(lableName));
-				entityElement.setRequired(formField.required());
-				entityElement.setType(fieldType.value);
-				entityElement.setMultiple(formField.multiple());
-				entityElement.setClassName(field.getType().getCanonicalName());
-				entityElement.setShowDetail(formField.showDetail());
-
+				
+				fieldNames.add(entityElement.getId());  
 				entityElements.add(entityElement);
+				
 			}
 
 			entityProperty.setAlias(dto.value().isEmpty() ? clazz.getSimpleName() : dto.value());
