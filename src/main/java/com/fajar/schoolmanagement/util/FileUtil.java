@@ -17,6 +17,7 @@ public class FileUtil {
 	 * @return
 	 */
 	public static File getFile(XSSFWorkbook xssfWorkbook, String fileName) {
+		log.info("Will writing report :{}",fileName);
 		/**
 		 * Write file to disk
 		 */

@@ -37,7 +37,8 @@ public class StudentDonationReportService {
 	private WebConfigService webConfigService;
 
 	public File generateMonthlyStudentDonationReport(ReportData reportData, List<Student> students) {
-
+		log.info("generateMonthlyStudentDonationReport");
+		
 		Filter filter = reportData.getFilter();
 		String time = ReportMappingUtil.getReportDateString();
 		String sheetName = "Infaq_Bulanan_Santri-" + filter.getMonth() + "-" + filter.getYear();
@@ -48,6 +49,7 @@ public class StudentDonationReportService {
 		writeMonthlyStudentDonationReport(xsheet, reportData, students);
 
 		File file = getFile(xwb, reportName);
+		log.info("generated: MonthlyStudentDonationReport");
 		return file;
 
 	}
