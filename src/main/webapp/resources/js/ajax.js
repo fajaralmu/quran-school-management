@@ -21,6 +21,9 @@ function postReq(url, requestObject, callback, blob) {
 			try {
 				this['data'] = JSON.parse(this.responseText);
 			} catch (e) {
+				console.log("ERROR parsing response");
+				//console.log("Response Text: ",this.responseText)
+				
 				this['data'] = "{}";
 			}
 			callback(this);

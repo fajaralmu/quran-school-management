@@ -160,7 +160,9 @@
 			"entity" : "page",
 			"filter" : {
 				"limit" : 0,
-				"page" : 0
+				"page" : 0,
+				"orderBy":"sequence",
+				"orderType":"asc"
 			}
 		};
 
@@ -188,11 +190,16 @@
 		};
 		postReq("<spring:url value="/api/admin/savepagesequence" />", reqObj,
 				function(xhr) {
-
-					alert("DONE..");
-
+					var response = xhr.data;
+					console.log("RESPONSE: ", response)
+					if(response.code == "00"){
+						alert("DONE..");
+					}else{
+						alert("Error: "+response.message+response.code);
+					}
+					 
 					infoDone();
-				}, true);
+				});
 	}
 
 	fetchPages();
