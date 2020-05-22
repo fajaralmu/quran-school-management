@@ -20,22 +20,16 @@ import com.fajar.schoolmanagement.config.LogProxyFactory;
 import com.fajar.schoolmanagement.dto.WebRequest;
 import com.fajar.schoolmanagement.dto.WebResponse;
 import com.fajar.schoolmanagement.service.MessagingService;
-import com.fajar.schoolmanagement.service.UserAccountService;
-import com.fajar.schoolmanagement.service.UserSessionService;
 
 @CrossOrigin
 @RestController
 @RequestMapping("/api/admin")
-public class RestAdminController {
-	Logger log = LoggerFactory.getLogger(RestAdminController.class);
-	@Autowired
-	private UserAccountService accountService;
-	@Autowired
-	private UserSessionService userSessionService;
+public class RestAdminController extends BaseController {
+	Logger log = LoggerFactory.getLogger(RestAdminController.class);  
 	@Autowired
 	private MessagingService messagingService;
 	@Autowired
-	private RestPublicController restPublicController;
+	private RestPublicController restPublicController; 
 
 	public RestAdminController() {
 		log.info("------------------RestAdminController-----------------");
@@ -102,5 +96,14 @@ public class RestAdminController {
 		return response;
 	}
 
+	@PostMapping(value =  "/savepagesequence", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public WebResponse savePageSequence(@RequestBody WebRequest request, HttpServletRequest httpRequest,
+			HttpServletResponse httpResponse) throws IOException {
+		if (!accountService.validateToken(httpRequest)) {
+			return WebResponse.failedResponse();
+		}
+		WebResponse response = componentService.savePageSequence(request);
+		return response;
+	}
 
 }

@@ -29,14 +29,13 @@
 
 
 		<div style="display: grid; grid-template-columns: 70% 20%;">
-			<div id="pages" style="width: 100%; padding: 10px">
-				
-			</div>
+			<div id="pages" style="width: 100%; padding: 10px"></div>
 			<div>
 				<button class="btn btn-info" onclick="up()">Up</button>
 				<button class="btn btn-info" onclick="down()">Down</button>
 			</div>
 		</div>
+		<button class="btn btn-success" onclick="save()">Save</button>
 	</div>
 </div>
 <script type="text/javascript">
@@ -46,7 +45,7 @@
 	var pages = {};
 
 	function initEvents() {
-		contentItems = document.getElementsByClassName("content-item"); 
+		contentItems = document.getElementsByClassName("content-item");
 		for (var i = 0; i < contentItems.length; i++) {
 			const contentItem = contentItems[i];
 			contentItem.onclick = function(e) {
@@ -60,7 +59,7 @@
 		pagesContainer.innerHTML = "";
 		for (var i = 0; i < pages.length; i++) {
 			const page = pages[i];
-			if(page == null){
+			if (page == null) {
 				console.log("PAGE IS NULL");
 				continue;
 			}
@@ -73,10 +72,10 @@
 	function createEntityElements(entity) {
 
 		var className = "content-item";
-		if(entity.id == selectedId){
+		if (entity.id == selectedId) {
 			className = "content-item selected";
 		}
-		
+
 		const div = createHtmlTag("div", {
 			"id" : entity.id,
 			"class" : className,
@@ -85,7 +84,7 @@
 			})
 		});
 		return div;
-	}	
+	}
 
 	function contentItemOnClick(contentItem) {
 		refresh();
@@ -100,42 +99,42 @@
 		}
 	}
 
-	function up() {  
-	  
+	function up() {
+
 		for (var i = 0; i < pages.length; i++) {
-			const page = pages[i]; 
-			if(page.id == selectedId){
-				 
-				const newIndex = getNewIndexUp(i, pages.length); 
+			const page = pages[i];
+			if (page.id == selectedId) {
+
+				const newIndex = getNewIndexUp(i, pages.length);
 				swapArray(newIndex, i, pages);
 				break;
 			}
-			 
+
 		}
-		 
+
 		populatePages();
-		
+
 	}
-	
-	function swapArray(index, indexToSwap, array){
+
+	function swapArray(index, indexToSwap, array) {
 		const oldValue = array[index];
-		
+
 		//swap
-		array[index] = array[indexToSwap]; 
+		array[index] = array[indexToSwap];
 		array[indexToSwap] = oldValue;
 	}
-	
-	function getNewIndexUp(currentIndex, arrayLength){
+
+	function getNewIndexUp(currentIndex, arrayLength) {
 		var newIndex = currentIndex - 1;
-		if(newIndex < 0){
+		if (newIndex < 0) {
 			newIndex = arrayLength - 1;
 		}
 		return newIndex;
 	}
-	
-	function getNewIndexDown(currentIndex, arrayLength){
+
+	function getNewIndexDown(currentIndex, arrayLength) {
 		var newIndex = currentIndex + 1;
-		if(newIndex >= arrayLength ){
+		if (newIndex >= arrayLength) {
 			newIndex = 0;
 		}
 		return newIndex;
@@ -143,16 +142,16 @@
 
 	function down() {
 		for (var i = 0; i < pages.length; i++) {
-			const page = pages[i]; 
-			if(page.id == selectedId){
-				 
+			const page = pages[i];
+			if (page.id == selectedId) {
+
 				const newIndex = getNewIndexDown(i, pages.length);
 				swapArray(newIndex, i, pages);
 				break;
 			}
-			 
+
 		}
-		 
+
 		populatePages();
 	}
 
@@ -169,19 +168,32 @@
 				function(response) {
 					pages = response.entities;
 					populatePages();
-					 
+
 					infoDone();
 				}, true);
 	}
-	
-	function getPageById(id){ 
+
+	function getPageById(id) {
 		for (var i = 0; i < pages.length; i++) {
-			if(pages[i].id == id){
+			if (pages[i].id == id) {
 				return pages[i];
 			}
 		}
 		return null;
 	}
-	
+
+	function save() {
+		const reqObj = {
+			"pages" : pages
+		};
+		postReq("<spring:url value="/api/admin/savepagesequence" />", reqObj,
+				function(xhr) {
+
+					alert("DONE..");
+
+					infoDone();
+				}, true);
+	}
+
 	fetchPages();
 </script>

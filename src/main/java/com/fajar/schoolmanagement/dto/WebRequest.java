@@ -1,6 +1,7 @@
 package com.fajar.schoolmanagement.dto;
 
 import java.io.Serializable;
+import java.util.List;
 
 import org.apache.commons.math3.stat.descriptive.summary.Product;
 
@@ -38,9 +39,7 @@ public class WebRequest implements Serializable {
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 110411933791444017L;
-
-
+	private static final long serialVersionUID = 110411933791444017L;  
 	
 	/**
 	 * ==========================================
@@ -78,6 +77,7 @@ public class WebRequest implements Serializable {
 	private String destination;
 	private String username;
 	private String value;
+	private List<Page> pages;
 	
 	 
 
