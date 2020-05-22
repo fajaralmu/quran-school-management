@@ -23,11 +23,11 @@ import lombok.extern.slf4j.Slf4j;
 public class EntityUtil {
 
 	public static EntityProperty createEntityProperty(Class clazz, HashMap<String, List> listObject) {
-		if (clazz == null || clazz.getAnnotation(Dto.class) == null) {
+		if (clazz == null || getClassAnnotation(clazz, Dto.class) == null) {
 			return null;
 		}
 
-		Dto dto = (Dto) clazz.getAnnotation(Dto.class);
+		Dto dto = (Dto) getClassAnnotation(clazz, Dto.class);
 		final boolean ignoreBaseField = dto.ignoreBaseField();
 
 		EntityProperty entityProperty = EntityProperty.builder().ignoreBaseField(ignoreBaseField).entityName(clazz.getSimpleName().toLowerCase())
@@ -128,8 +128,8 @@ public class EntityUtil {
 	 */
 	public static List<Field> getDeclaredFields(Class clazz) {
 		Field[] baseField = clazz.getDeclaredFields();
-
-		List<EntityElement> entityElements = new ArrayList<EntityElement>();
+//
+//		List<EntityElement> entityElements = new ArrayList<EntityElement>();
 		List<Field> fieldList = new ArrayList<>();
 
 		for (Field field : baseField) {
@@ -152,7 +152,7 @@ public class EntityUtil {
 	public static Field getIdField(Class clazz) {
 		log.info("Get ID FIELD FROM :" + clazz.getCanonicalName());
 
-		if (clazz.getAnnotation(Entity.class) == null) {
+		if (getClassAnnotation(clazz, Entity.class) == null) {
 			return null;
 		}
 		List<Field> fields = getDeclaredFields(clazz);
@@ -330,8 +330,12 @@ public class EntityUtil {
 		return null;
 	}
 
-	public static boolean existInList(Object o, List l) {
-		for (Object object : l) {
+	public static boolean existInList(Object o, List list) {
+		if(null == list) {
+			log.error("LIST IS NULL");
+			return false;
+		}
+		for (Object object : list) {
 			if (object.equals(o)) {
 				return true;
 			}

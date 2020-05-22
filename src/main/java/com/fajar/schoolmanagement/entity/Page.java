@@ -51,6 +51,9 @@ public class Page extends BaseEntity {
 	@FormField(type = FieldType.FIELD_TYPE_IMAGE, required = false, defaultValue = "DefaultIcon.BMP")
 	@Column(name = "image_url")
 	private String imageUrl;
+	@Column()
+	@FormField(type=FieldType.FIELD_TYPE_NUMBER,lableName = "Urutan Ke")
+	private int sequence;
 
 	@Transient
 	private List<Menu> menus;

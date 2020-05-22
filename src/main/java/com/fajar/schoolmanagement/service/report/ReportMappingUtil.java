@@ -106,7 +106,7 @@ public class ReportMappingUtil {
 			/**
 			 * checking the value type
 			 */
-			elementLoop: for(int i = 0; i< entityElements.size();i++) {
+			for(int i = 0; i< entityElements.size();i++) {
 				
 				Object value = mapEntityValue(entity, entityElements.get(i));
 				values[seqNum] = value;

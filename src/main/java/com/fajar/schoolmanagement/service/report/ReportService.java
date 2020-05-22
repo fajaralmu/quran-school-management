@@ -63,7 +63,8 @@ public class ReportService {
 		
 		ReportData transactionData = transactionService.getYearlyMonthlyDonationCashflow(webRequest.getFilter());
 		List<BaseEntity> studentList = entityService.findAll(Student.class);
-		File result = studentDonationReportService.generateMonthlyStudentDonationReport(transactionData, CollectionUtil.convertList(studentList));
+		List<Student> convertList = CollectionUtil.convertList(studentList);
+		File result = studentDonationReportService.generateMonthlyStudentDonationReport(transactionData, convertList);
 		return result ;
 	}
 

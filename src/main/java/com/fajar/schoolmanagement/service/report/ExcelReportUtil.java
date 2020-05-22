@@ -264,7 +264,7 @@ public class ExcelReportUtil {
 		
       int firstRow = cellRangeAddress.getFirstRow();
       int lastRow = cellRangeAddress.getLastRow();
-      int firstCol = cellRangeAddress.getFirstColumn();
+//      int firstCol = cellRangeAddress.getFirstColumn();
       int lastCol = cellRangeAddress.getLastColumn();
 		
       for(int row = firstRow; row <= lastRow; row++) {

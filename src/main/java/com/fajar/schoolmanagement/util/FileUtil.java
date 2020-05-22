@@ -34,7 +34,7 @@ public class FileUtil {
 			} finally {
 			    bos.close();
 			}
-			byte[] bytes = bos.toByteArray();
+//			byte[] bytes = bos.toByteArray();
 			return f;
 		} catch ( Exception e) { 
 			e.printStackTrace();

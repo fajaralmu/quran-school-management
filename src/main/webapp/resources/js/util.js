@@ -29,8 +29,8 @@ function createHtmlTag(tagName, object){
 		}
 		tag.setAttribute(key, object[key]);
 	}
-	
-	tag.innerHTML = object["innerHTML"];
+	if(object["innerHTML"])
+		tag.innerHTML = object["innerHTML"];
 	if(object["child"])
 		tag.appendChild(object["child"]);
 	return tag;
