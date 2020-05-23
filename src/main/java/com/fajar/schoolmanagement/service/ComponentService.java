@@ -52,12 +52,7 @@ public class ComponentService {
 				Page page = defaultSettingPage();
 
 				final Page savedPage = pageRepository.save(page);
-				return new ArrayList<Page>() {
-					private static final long serialVersionUID = 1L;
-					{
-						add(savedPage);
-					}
-				};
+				return CollectionUtil.listOf(savedPage);
 			}
 
 			return pages;

@@ -24,8 +24,7 @@
 
 	<div id="content-report">
 		<h2>Report Page</h2>
-		<p>Good ${timeGreeting}, ${loggedUser.displayName}. Please select
-			report you want to generate!</p>
+		<p>Good ${timeGreeting}, ${loggedUser.displayName}. Please set the menu display order</p>
 
 
 		<div style="display: grid; grid-template-columns: 70% 20%;">

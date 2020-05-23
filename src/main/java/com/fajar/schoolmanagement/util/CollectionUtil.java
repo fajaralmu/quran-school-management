@@ -30,6 +30,12 @@ public class CollectionUtil {
 		return list;
 	}
  
+	public static <T> List listOf(Object o) {
+		
+		List list = new ArrayList<>();
+		list.add(o);
+		return list ;
+	}
 
 	public static <T> List  convertList(List list) {
 		List<T> newList = new ArrayList<T>();

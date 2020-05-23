@@ -100,12 +100,16 @@
 		for(let i = 0; i< pagesLink.length;i++){
 			pageLink = pagesLink[i];
 			
-			if(pageLink.getAttribute("menupage") != "true")
-				continue;
-			
-			pageLink.onmouseover = function(e){
-				fetchMenus(e);
-			}; 
+			if(pageLink.getAttribute("menupage") == "true")
+			{
+				pageLink.onmouseover = function(e){
+						fetchMenus(e);
+				}; 
+			}else{
+				pageLink.onmouseover = function(e){
+					hideAllMenuSpoiler();
+				}
+			}
 		}
 		
 		_byId("header-wrapper").onmouseleave = function(e){
@@ -145,11 +149,11 @@
 			hideMenuByPageCode(pageCode);	
 		}
 		
-		menuContainer.style.width = "100%";
+		menuContainer.style.width = "60%";
 		menuContainer.style.textAlign = "center";
 		menuContainer.setAttribute("id", "menu-spoiler-"+pageCode);
 		menuContainer.setAttribute("class", "menu-spoiler");
-		menuContainer.innerHTML = "<h4>Available Menu</h4>";
+		menuContainer.innerHTML = "<h5>Available Menu</h5>";
 		
 		for (var i = 0; i < menus.length; i++) {
 			const menu = menus[i];
