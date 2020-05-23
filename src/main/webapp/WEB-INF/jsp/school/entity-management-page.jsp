@@ -22,6 +22,7 @@
 	var singleRecord = ${singleRecord == null ||singleRecord == false ? false:true}
 	var entityIdValue = "${entityId}";
 	var managedEntity = {};
+	//var entityPropJson = ${entityPropJson};
 	
 </script> 
 

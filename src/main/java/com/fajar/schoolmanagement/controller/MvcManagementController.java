@@ -71,6 +71,7 @@ public class MvcManagementController extends BaseController {
 			return ERROR_404_PAGE;
 		}
 		model = entityManagementPageService.setModel(request, model, name);
+		
 		return basePage;
 	}
 

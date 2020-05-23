@@ -54,7 +54,7 @@
 	</bean>
 	
 	<!-- persistance -->
-
+	<bean id="objectMapper" class="com.fasterxml.jackson.databind.ObjectMapper"/>
 	 
 	<bean id="transactionManager"
 		class="org.springframework.orm.jpa.JpaTransactionManager">

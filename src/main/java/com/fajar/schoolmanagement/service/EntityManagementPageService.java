@@ -12,12 +12,17 @@ import com.fajar.schoolmanagement.entity.setting.EntityManagementConfig;
 import com.fajar.schoolmanagement.entity.setting.EntityProperty;
 import com.fajar.schoolmanagement.repository.EntityRepository;
 import com.fajar.schoolmanagement.util.EntityUtil;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Service
 public class EntityManagementPageService {
+	 
+	@Autowired
+	private ObjectMapper objectMapper;
 	
 	@Autowired
-	private EntityRepository entityRepository;
+	private EntityRepository entityRepository; 
 	
 	public Model setModel(HttpServletRequest request, Model model, String key) {
 		
@@ -29,7 +34,12 @@ public class EntityManagementPageService {
 		
 		EntityProperty entityProperty = EntityUtil.createEntityProperty(entityConfig.getEntityClass(), null); 
 		model = constructCommonModel(request, entityProperty, model, entityConfig.getEntityClass().getSimpleName(), "management");
-		
+		try {
+			model.addAttribute("entityPropJson", objectMapper.writeValueAsString(entityProperty));
+		} catch (JsonProcessingException e) {
+			 
+			e.printStackTrace();
+		}
 		return model;
 	}
 

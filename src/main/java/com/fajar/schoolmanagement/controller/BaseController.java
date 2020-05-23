@@ -25,6 +25,8 @@ import com.fajar.schoolmanagement.service.UserSessionService;
 import com.fajar.schoolmanagement.service.WebConfigService;
 import com.fajar.schoolmanagement.util.DateUtil;
 import com.fajar.schoolmanagement.util.MvcUtil;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.extern.slf4j.Slf4j; 
 @Controller 
@@ -45,8 +47,8 @@ public class BaseController {
 	protected UserSessionService userService; 
 	@Autowired
 	protected ComponentService componentService; 
- 
-
+	@Autowired	
+	protected ObjectMapper objectMapper; 
 
 	@ModelAttribute("profile")
 	public Profile getProfile(HttpServletRequest request) {
@@ -110,6 +112,16 @@ public class BaseController {
 	public List<Page> pages(HttpServletRequest request){
 		
 		return componentService.getPages(request);
+	}
+	
+	protected String writeValueAsString(Object object) {
+		try {
+			return objectMapper.writeValueAsString(object);
+		} catch (JsonProcessingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return "{}";
+		}
 	}
 	
 	/**
