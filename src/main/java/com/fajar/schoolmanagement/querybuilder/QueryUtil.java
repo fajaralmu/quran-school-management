@@ -1,6 +1,8 @@
 package com.fajar.schoolmanagement.querybuilder;
 
+import static com.fajar.schoolmanagement.util.EntityUtil.getClassAnnotation;
 import static com.fajar.schoolmanagement.util.EntityUtil.getDeclaredField;
+import static com.fajar.schoolmanagement.util.EntityUtil.getIdFieldOfAnObject;
 import static com.fajar.schoolmanagement.util.StringUtil.buildString;
 
 import java.lang.reflect.Field;
@@ -20,10 +22,6 @@ import com.fajar.schoolmanagement.entity.BaseEntity;
 import com.fajar.schoolmanagement.util.EntityUtil;
 import com.fajar.schoolmanagement.util.StringUtil;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -92,7 +90,7 @@ public class QueryUtil {
 		}
  
 		Class fieldClass 		= field.getType();
-		Field idForeignField 	= EntityUtil.getIdField(fieldClass);
+		Field idForeignField 	= getIdFieldOfAnObject(fieldClass);
 
 		String joinTableName 	= getTableName(fieldClass);
 		String tableName 		= getTableName(entityClass);
@@ -118,23 +116,21 @@ public class QueryUtil {
 
 		StringBuilder sql = new StringBuilder("");
 
-		CustomEntity customModel = EntityUtil.getClassAnnotation(entityClass, CustomEntity.class);
+		CustomEntity customModel = getClassAnnotation(entityClass, CustomEntity.class);
 
 		List<Field> fields = EntityUtil.getDeclaredFields(entityClass);
 		for (Field field : fields) {
 
-			if (customModel != null
-					) {//&& EntityUtil.existInList(field.getName(), Arrays.asList(customModel.rootFilter()))) {
+			if (customModel != null ) {
+				//&& EntityUtil.existInList(field.getName(), Arrays.asList(customModel.rootFilter()))) {
 				continue;
 			}
 
 			JoinColumn joinColumn = field.getAnnotation(JoinColumn.class);
 			if (joinColumn != null) {
 
-				String sqlItem = createLeftJoinQueryByField(entityClass, field);
-
-				sql = sql.append(sqlItem);
-
+				String sqlItem = createLeftJoinQueryByField(entityClass, field); 
+				sql = sql.append(sqlItem); 
 			}
 		}
 
@@ -412,36 +408,34 @@ public class QueryUtil {
 		Field orderByField = getDeclaredField(entityClass, orderBy);
 
 		if (orderByField == null) {
+			log.error("Order by field of {} not found: {}",orderBy, entityClass.getName() );
 			return null;
 		}
-		Field idField = EntityUtil.getIdField(entityClass);
-
-		if (idField == null) {
-			return null;
-		}
-		String columnName 	= idField.getName();
-		String tableName 	= getTableName(entityClass);
+		 
+		String orderColumnName;
+		String tableName;
 
 		if (orderByField.getAnnotation(JoinColumn.class) != null) {
 			
-			Class fieldClass 	= orderByField.getType();
+			Class fieldType 	= orderByField.getType();
 			FormField formField = orderByField.getAnnotation(FormField.class);
-			tableName 			= getTableName(fieldClass);
-			
+			tableName 			= getTableName(fieldType); 
+			String joinFieldName = formField.optionItemName();
 
 			try {
-				Field fieldField = fieldClass.getDeclaredField(formField.optionItemName());
-				columnName = getColumnName(fieldField);
+				Field fieldField = fieldType.getDeclaredField(joinFieldName);
+				orderColumnName = getColumnName(fieldField);
 
 			} catch ( Exception e) {
 				e.printStackTrace();
 				return null;
 			}
 		} else {
-			columnName = getColumnName(orderByField);
+			tableName = getTableName(entityClass);
+			orderColumnName = getColumnName(orderByField);
 		}
 
-		String orderField = doubleQuoteMysql(tableName).concat(".").concat(doubleQuoteMysql(columnName));
+		String orderField = doubleQuoteMysql(tableName).concat(".").concat(doubleQuoteMysql(orderColumnName));
 
 		return buildString(SQL_KEYWORD_ORDERBY, orderField, orderType);
 	}
@@ -449,11 +443,11 @@ public class QueryUtil {
 	public static String getTableName(Class entityClass) {
 		log.info("getTableName From entity class: " + entityClass.getCanonicalName());
 		
-		Table table = (Table) entityClass.getAnnotation(Table.class);
+		Table table = getClassAnnotation(entityClass, Table.class);
 
 		if (table != null) {
-
-			if (table.name() != null && !table.name().equals("")) {
+			boolean tableNameExist = table.name() != null && !table.name().equals("");
+			if (tableNameExist) {
 				return table.name();
 			}
 		}
@@ -480,10 +474,6 @@ public class QueryUtil {
 
 	static String doubleQuoteMysql(Object str) {
 		return StringUtil.doubleQuoteMysql(str.toString());
-	}
-
-	
-	
-	
+	}  
 
 }

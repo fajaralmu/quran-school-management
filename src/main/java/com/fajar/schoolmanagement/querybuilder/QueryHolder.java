@@ -1,6 +1,5 @@
 package com.fajar.schoolmanagement.querybuilder;
 
-import static com.fajar.schoolmanagement.querybuilder.QueryUtil.SQL_KEYWORDSET_SELECT_COUNT;
 import static com.fajar.schoolmanagement.querybuilder.QueryUtil.SQL_KEYWORD_FROM;
 import static com.fajar.schoolmanagement.querybuilder.QueryUtil.SQL_KEYWORD_SELECT;
 import static com.fajar.schoolmanagement.querybuilder.QueryUtil.doubleQuoteMysql;
@@ -11,10 +10,6 @@ import java.util.List;
 
 import com.fajar.schoolmanagement.dto.Filter;
 import com.fajar.schoolmanagement.entity.BaseEntity;
-
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
  
 public abstract class QueryHolder implements Serializable{ 
 	

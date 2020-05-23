@@ -149,7 +149,7 @@ public class EntityUtil {
 		return fieldList;
 	}
 
-	public static Field getIdField(Class clazz) {
+	public static Field getIdFieldOfAnObject(Class clazz) {
 		log.info("Get ID FIELD FROM :" + clazz.getCanonicalName());
 
 		if (getClassAnnotation(clazz, Entity.class) == null) {

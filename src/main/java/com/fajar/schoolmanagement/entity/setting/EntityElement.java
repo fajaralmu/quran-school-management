@@ -168,7 +168,7 @@ public class EntityElement implements Serializable {
 		if (hasJoinColumn) {
 
 			Class referenceEntityClass = field.getType();
-			Field referenceEntityIdField = EntityUtil.getIdField(referenceEntityClass);
+			Field referenceEntityIdField = EntityUtil.getIdFieldOfAnObject(referenceEntityClass);
 
 			if (referenceEntityIdField == null)
 				return false;
