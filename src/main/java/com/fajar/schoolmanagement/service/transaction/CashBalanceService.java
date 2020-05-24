@@ -6,11 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.fajar.schoolmanagement.entity.BaseEntity;
-import com.fajar.schoolmanagement.entity.CapitalFlow;
 import com.fajar.schoolmanagement.entity.CashBalance;
-import com.fajar.schoolmanagement.entity.CostFlow;
-import com.fajar.schoolmanagement.entity.DonationMonthly;
-import com.fajar.schoolmanagement.entity.DonationThursday;
+import com.fajar.schoolmanagement.entity.FinancialEntity;
 import com.fajar.schoolmanagement.repository.CashBalanceRepository;
 import com.fajar.schoolmanagement.repository.DonationOrphanRepository;
 import com.fajar.schoolmanagement.util.DateUtil;
@@ -19,6 +16,8 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Service
 public class CashBalanceService {
+	private static final String DATE_FORMAT = "yyyy-MM-dd";
+	
 	@Autowired
 	private CashBalanceRepository cashBalanceRepository; 
 	@Autowired
@@ -44,27 +43,52 @@ public class CashBalanceService {
 	 * @param isDonationThrusday
 	 * @return
 	 */
-	public CashBalance getBalanceBefore (int month, int year, boolean isDonationThrusday) { 
+	public CashBalance getBalanceBefore (int month, int year, boolean isDonationThrusday) {  
 		
-		Date date = DateUtil.getDate(year, month-1, 1);
-		String dateString = DateUtil.formatDate(date, "yyyy-MM-dd");
+		String dateString = getDateString(month, year);
 		
-		Object object;
+		Object resultObject;
 		if(isDonationThrusday) {
-			object = cashBalanceRepository.getDonationThrusdayBalanceBefore(dateString);
+			resultObject 	= cashBalanceRepository.getDonationThrusdayBalanceBefore(dateString);
 		}else {
-			object	= cashBalanceRepository.getBalanceBefore(dateString );
+			resultObject	= cashBalanceRepository.getBalanceBefore(dateString );
 		}
 		
-		Object[] result = (Object[]) object;
+		Object[] result = (Object[]) resultObject;
 		int RESULT_LEGTH = 3; 
 		
-		CashBalance cashBalance = new CashBalance();
-		if(result!= null && result.length == RESULT_LEGTH && result[0] != null && result[1] != null && result[2] != null) {
-			cashBalance.setCreditAmount(Long.valueOf(String.valueOf(result[0] )));
-			cashBalance.setDebitAmount(Long.valueOf(String.valueOf(result[1] )));
-			cashBalance.setActualBalance(Long.valueOf(String.valueOf(result[2] )));
+		if(result!= null && result.length == RESULT_LEGTH && isNotNull(result)) {
+			return populateCashBalanceObject(result);
 		}
+		return new CashBalance();
+	}
+	
+	public boolean isNotNull(Object[] array) {
+		int size = array.length;
+		
+		for(int i = 0; i < size - 1; i++) {
+			try {
+				if(array[i] == null) {
+					return false;
+				}
+			}catch (Exception e) { 
+				return false;
+			}
+		}
+		
+		return true;
+	}
+	
+	/**
+	 * 
+	 * @param resultObject, 3 sized array
+	 * @return
+	 */
+	private static CashBalance populateCashBalanceObject(Object[] resultObject) {
+		CashBalance cashBalance = new CashBalance();
+		cashBalance.setCreditAmount(Long.valueOf(String.valueOf(resultObject[0] )));
+		cashBalance.setDebitAmount(Long.valueOf(String.valueOf(resultObject[1] )));
+		cashBalance.setActualBalance(Long.valueOf(String.valueOf(resultObject[2] )));
 		return cashBalance;
 	}
 	
@@ -76,7 +100,6 @@ public class CashBalanceService {
 	 * @return
 	 */
 	public CashBalance getOrphanFundBalanceBefore (int month, int year ) { 
-		 
 		
 		long debitValue = getFundFlowNominal(month, year, OrphanCashflowType.DONATION);
 		long creditValue = getFundFlowNominal(month, year, OrphanCashflowType.DISTRIBUTION);
@@ -88,8 +111,8 @@ public class CashBalanceService {
 	}
 
 	private long getFundFlowNominal(int month, int year, OrphanCashflowType cashflowType) {
-		Date date = DateUtil.getDate(year, month-1, 1);
-		String dateString = DateUtil.formatDate(date, "yyyy-MM-dd");
+ 
+		String dateString = getDateString(month, year);
 		
 		long  Nominal = 0L; 
 		try{
@@ -103,31 +126,22 @@ public class CashBalanceService {
 		return Nominal;
 	}
 	
+	private String getDateString(int month, int year) {
+		Date date = DateUtil.getDate(year, month-1, 1);
+		String dateString = DateUtil.formatDate(date, DATE_FORMAT);		
+		return dateString;
+	}
+
 	/**
 	 * set values for cash balance based on given entity
-	 * @param baseEntity
+	 * @param financialEntity
 	 * @return
 	 */
-	public static CashBalance mapCashBalance(BaseEntity baseEntity) { 
+	public static CashBalance mapCashBalance(FinancialEntity financialEntity) { 
 		
-		 BalanceJournalInfo journalInfo = getJournalInfo(baseEntity);
-		 
+		 BalanceJournalInfo journalInfo =  financialEntity.getBalanceJournalInfo(); 
 		 return journalInfo.getBalanceObject();
-	}
-	
-	private static BalanceJournalInfo getJournalInfo(BaseEntity baseEntity) {
-		if(baseEntity instanceof CostFlow) {
-			return new CostJournalInfo((CostFlow) baseEntity); 
-		}else if(baseEntity instanceof CapitalFlow) {
-			return new FundJournalInfo((CapitalFlow) baseEntity);
-		}else if(baseEntity instanceof DonationMonthly) {
-			return new DonationMonthlyJournalInfo((DonationMonthly) baseEntity);
-		}else if(baseEntity instanceof DonationThursday){
-			return new DonationTrhusdayJournalInfo((DonationThursday) baseEntity);
-		}else {
-			return null;
-		}
-	}
+	} 
 	
 	/**
 	 * update balance

@@ -392,8 +392,7 @@ public class QueryUtil {
 			queryItem.setColumnName(columnName);
 			queryItem.setDateMode(mode);
 			queryItem.setValue( filter.get(key).toString());
-			queryItem.setExacts(true);
-			 
+			queryItem.setExacts(true); 
 			
 			return queryItem;
 		}

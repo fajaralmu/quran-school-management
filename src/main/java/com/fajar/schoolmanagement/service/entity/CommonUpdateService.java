@@ -84,7 +84,7 @@ public class CommonUpdateService extends BaseEntityUpdateService{
 					switch (formfield.type()) {
 						case FIELD_TYPE_IMAGE:
 							
-							if(!newRecord && fieldValue == null && existingEntity != null) {
+							if(newRecord == false && fieldValue == null && existingEntity != null) {
 								Object existingImage = field.get(existingEntity);
 								field.set(entity, existingImage);
 							}else {
@@ -117,19 +117,25 @@ public class CommonUpdateService extends BaseEntityUpdateService{
 	private String updateImage(Field field, BaseEntity object) { 
 		try {
 			Object base64Value = field.get(object);
-			if(null != base64Value && base64Value.toString().trim().isEmpty() == false) {
-				String imageName = fileService.writeImage(object.getClass().getSimpleName(), base64Value.toString());
-				
-				return imageName;
-			}
+			return writeImage(object, base64Value);  
 			
 		} catch (IllegalArgumentException | IllegalAccessException e) {
 
 			e.printStackTrace();
-		} catch (IOException e) {
-
-			e.printStackTrace();
-		}
+		}  
 		return null;
+	}
+
+	private String writeImage(BaseEntity object, Object base64Value)   {
+		String fileName = null;
+		if(null != base64Value && base64Value.toString().trim().isEmpty() == false) {
+			try {
+				fileName = fileService.writeImage(object.getClass().getSimpleName(), base64Value.toString());
+			} catch (IOException e) { 
+				log.error("Error writing image for {}", object.getClass().getSimpleName());
+				e.printStackTrace();
+			}
+		}
+		return fileName;
 	}
 }

@@ -10,10 +10,13 @@ import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.PrePersist;
 
+import org.apache.commons.lang3.NotImplementedException;
+
 import com.fajar.schoolmanagement.annotation.BaseField;
 import com.fajar.schoolmanagement.annotation.Dto;
 import com.fajar.schoolmanagement.annotation.FormField;
 import com.fajar.schoolmanagement.dto.FieldType;
+import com.fajar.schoolmanagement.service.transaction.BalanceJournalInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Dto
@@ -124,6 +127,12 @@ public class BaseEntity implements Serializable, FinancialEntity{
 	@Override
 	public long getTransactionNominal() { 
 		return 0;
+	}
+
+	@Override
+	public BalanceJournalInfo getBalanceJournalInfo() {
+		
+		throw new NotImplementedException("Not Implemented");
 	}
 	
 	

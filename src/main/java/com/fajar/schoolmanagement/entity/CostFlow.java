@@ -13,6 +13,8 @@ import javax.persistence.Table;
 import com.fajar.schoolmanagement.annotation.Dto;
 import com.fajar.schoolmanagement.annotation.FormField;
 import com.fajar.schoolmanagement.dto.FieldType;
+import com.fajar.schoolmanagement.service.transaction.BalanceJournalInfo;
+import com.fajar.schoolmanagement.service.transaction.CostJournalInfo;
 import com.fajar.schoolmanagement.service.transaction.SourceOfFund;
 
 import lombok.AllArgsConstructor;
@@ -69,4 +71,8 @@ public class CostFlow extends BaseEntity   {
 		return nominal;
 	}
 
+	@Override
+	public BalanceJournalInfo getBalanceJournalInfo() {
+		return new CostJournalInfo(this); 
+	}
 }
