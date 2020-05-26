@@ -11,9 +11,11 @@
 	var page = 0;
 	var limit = 5;
 	var totalData = 0;
+	
 	var imgElements = ${entityProperty.imageElementsJson};
 	var currencyElements = ${entityProperty.currencyElementsJson};
 	var dateElements = ${entityProperty.dateElementsJson};
+	
 	var fieldNames = ${entityProperty.fieldNames};
 	var optionElements = ${options};
 	var imagesData = {};
@@ -467,87 +469,92 @@
 	function populateForm(entity) {
 		clear();
 		for (let j = 0; j < fieldNames.length; j++) {
-			let entityValue = entity[fieldNames[j]];
-			let entityValueAsObject = entityValue;
-			//element
-			let elementField = _byId(fieldNames[j]);
-
-			let enableDetail = elementField.getAttribute("showdetail") == "true";
-			let isMultipleSelect = elementField.nodeName == "SELECT"
-				&& elementField.getAttribute("multiple") == "multiple"
-			let isImageField = isImage(fieldNames[j]);
-			let isDateField = isDate(fieldNames[j]);
-
-			//handle object type value
-			if (typeof (entityValue) == "object" && entityValue != null) {
-
-
-				let objectValueName = managedEntity["valueField_" + fieldNames[j]]
-				entityValue = entityValueAsObject[objectValueName];
-				//handle multiple select
-				if (isMultipleSelect) {
-					let option = document.createElement("option");
-					//foreign key field name
-					objectValueName = elementField
-							.getAttribute("itemvaluefield");
-					option.value = entityValueAsObject[objectValueName];
-					//converter field name
-					let objectItemName = elementField
-							.getAttribute("itemnamefield");
-					option.innerHTML = entityValueAsObject[objectItemName];
-					option.selected = true;
-					elementField.append(option);
-					//set input value same as converter field name
-					let inputField = _byId("input-"
-							+ fieldNames[j]);
-					inputField.value = entityValueAsObject[objectItemName];
-				}
-				//handle regular select
-				else{
-					elementField.value = entityValue;
-				}
-			} 
-			//handle image type value
-			else if (isImageField) {
-				let displayElement = _byId(fieldNames[j]
-						+ "-display");
-				let url = "${host}/${contextPath}/${imagePath}/";
-				if (displayElement == null && entityValue != null) {
-					_byId(fieldNames[j]).innerHTML = "";
-					let entityValues = entityValue.split("~");
-					console.log(fieldNames[j], "values", entityValues);
-					for (let i = 0; i < entityValues.length; i++) {
-						let array_element = entityValues[i];
-						doAddImageList(fieldNames[j], url + array_element,
-								array_element);
-					}
-				} else {
-					let resourceUrl = url + entityValue;
-					displayElement.src = resourceUrl;
-					displayElement.setAttribute("originaldata", resourceUrl);
-					displayElement.setAttribute("originalvalue", entityValue);
-				}
-			}
-			//handle regular value
-			else if (!isMultipleSelect) {
-				//datefield
-				if (isDateField) {
-					let date = new Date(entityValue);
-					entityValue = toDateInput(date);
-				} 
-				//has detail values
-				else if (enableDetail) {
-					entityValue = entity[elementField.getAttribute("name")];
-					elementField.setAttribute(
-							elementField.getAttribute("name"), entityValue);
-				}
-				elementField.value = entityValue;
-
-			}
+			const fieldName = fieldNames[j];
+			setFieldOfEntity(entity, fieldName);
 
 		}
 		//show("modal-entity-form");
 		$('#modal-entity-form').modal('show');
+	}
+	
+	function setFieldOfEntity(entity, fieldName){
+		let entityValue = entity[fieldName];
+		let entityValueAsObject = entityValue;
+		//element
+		const elementField = _byId(fieldName);
+
+		const enableDetail = elementField.getAttribute("showdetail") == "true";
+		const isMultipleSelect = elementField.nodeName == "SELECT"
+			&& elementField.getAttribute("multiple") == "multiple";
+		const isImageField = isImage(fieldName);
+		const isDateField = isDate(fieldName);
+		const isObject = typeof (entityValue) == "object";
+
+		//handle object type value
+		if (isObject && entityValue != null) {
+
+
+			let objectValueName = managedEntity["valueField_" + fieldName]
+			entityValue = entityValueAsObject[objectValueName];
+			//handle multiple select
+			if (isMultipleSelect) {
+				const option = document.createElement("option");
+				//foreign key field name
+				objectValueName = elementField
+						.getAttribute("itemvaluefield");
+				option.value = entityValueAsObject[objectValueName];
+				//converter field name
+				const objectItemName = elementField
+						.getAttribute("itemnamefield");
+				option.innerHTML = entityValueAsObject[objectItemName];
+				option.selected = true;
+				elementField.append(option);
+				//set input value same as converter field name
+				const inputField = _byId("input-"+ fieldName);
+				inputField.value = entityValueAsObject[objectItemName];
+			}
+			//handle regular select
+			else{
+				elementField.value = entityValue;
+			}
+		} 
+		//handle image type value
+		else if (isImageField) {
+			const displayElement = _byId(fieldName
+					+ "-display");
+			const url = "${host}/${contextPath}/${imagePath}/";
+			if (displayElement == null && entityValue != null) {
+				_byId(fieldName).innerHTML = "";
+				const entityValues = entityValue.split("~");
+				console.log(fieldName, "values", entityValues);
+				for (let i = 0; i < entityValues.length; i++) {
+					const array_element = entityValues[i];
+					doAddImageList(fieldName, url + array_element,
+							array_element);
+				}
+			} else {
+				const resourceUrl = url + entityValue;
+				displayElement.src = resourceUrl;
+				displayElement.setAttribute("originaldata", resourceUrl);
+				displayElement.setAttribute("originalvalue", entityValue);
+			}
+		}
+		//handle regular value
+		else if (!isMultipleSelect) {
+			//datefield
+			if (isDateField) {
+				const date = new Date(entityValue);
+				entityValue = toDateInput(date);
+			} 
+			//has detail values
+			else if (enableDetail) {
+				entityValue = entity[elementField.getAttribute("name")];
+				elementField.setAttribute(
+						elementField.getAttribute("name"), entityValue);
+			}
+			elementField.value = entityValue;
+
+		}
 	}
 
 	function clear() {
