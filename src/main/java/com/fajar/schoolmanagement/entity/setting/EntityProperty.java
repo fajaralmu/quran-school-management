@@ -11,12 +11,14 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Dto
+@Slf4j
 public class EntityProperty implements Serializable {
 	/**
 	* 
@@ -75,6 +77,18 @@ public class EntityProperty implements Serializable {
 			}
 		}
 		this.fieldNames = MyJsonUtil.listToJson(fieldNameList);
+	}
+
+	public void determineIdField() {
+		if(null == elements) {
+			log.error("Entity ELements is NULL");
+			return;
+		}
+		for(EntityElement entityElement : elements) {
+			if(entityElement.isIdField() && getIdField() == null) {
+				setIdField(entityElement.getId());
+			}
+		}
 	}
 
 }

@@ -53,9 +53,7 @@ public class EntityUtil {
 				fieldNames.add(entityElement.getId());  
 				entityElements.add(entityElement);
 				
-				if(entityElement.isIdField() && entityProperty.getIdField() == null) {
-					entityProperty.setIdField(entityElement.getId());
-				}
+				
 				
 			}
 
@@ -68,6 +66,7 @@ public class EntityUtil {
 			entityProperty.setFieldNames(MyJsonUtil.listToJson(fieldNames));
 			entityProperty.setFieldNameList(fieldNames);
 			entityProperty.setFormInputColumn(dto.formInputColumn().value);
+			entityProperty.determineIdField();
 
 			log.info("============ENTITY PROPERTY: {} ", entityProperty);
 

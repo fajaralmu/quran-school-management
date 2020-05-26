@@ -12,16 +12,16 @@
 	var limit = 5;
 	var totalData = 0;
 	
-	var imgElements = ${entityProperty.imageElementsJson};
-	var currencyElements = ${entityProperty.currencyElementsJson};
-	var dateElements = ${entityProperty.dateElementsJson};
+	const imgElements = ${entityProperty.imageElementsJson};
+	const currencyElements = ${entityProperty.currencyElementsJson};
+	const dateElements = ${entityProperty.dateElementsJson};
 	
-	var fieldNames = ${entityProperty.fieldNames};
-	var optionElements = ${options};
+	const fieldNames = ${entityProperty.fieldNames};
+	const optionElements = ${options};
 	var imagesData = {};
-	var idField = "${entityProperty.idField}";
-	var  editable = ${entityProperty.editable};
-	var singleRecord = ${singleRecord == null ||singleRecord == false ? false:true}
+	const idField = "${entityProperty.idField}";
+	const editable = ${entityProperty.editable};
+	const singleRecord = ${singleRecord == null ||singleRecord == false ? false:true}
 	var entityIdValue = "${entityId}";
 	var managedEntity = {};
 	//var entityPropJson = ${entityPropJson};
@@ -97,9 +97,9 @@
 		add single image
 	*/
 	function addImagesData(id) {
-		let imageTag = _byId(id + "-display");
+		const imageTag = _byId(id + "-display");
 		toBase64(_byId(id), function(result) {
-			let imageData = {
+			const imageData = {
 				id : result
 			};
 			imageTag.src = result;
@@ -113,7 +113,7 @@
 	*/
 	function cancelImagesData(id) {
 		_byId(id).value = null;
-		let imageTag = _byId(id + "-display");
+		const imageTag = _byId(id + "-display");
 		imageTag.src = imageTag.getAttribute("originaldata");
 		//remove from imagesData object
 		imagesData[id] = null;
@@ -122,13 +122,13 @@
 	//load dropdown list for multiple select
 	function loadList(inputElement) {
 
-		let element = _byId(inputElement.name);
+		const element = _byId(inputElement.name);
 		element.innerHTML = "";
 		//converter field
-		let itemField = element.getAttribute("itemNameField");
+		const itemField = element.getAttribute("itemNameField");
 		//foreign key field
-		let valueField = element.getAttribute("itemValueField");
-		let filterValue = inputElement.value;
+		const valueField = element.getAttribute("itemValueField");
+		const filterValue = inputElement.value;
 		var requestObject = {
 			"entity" : element.name,
 			"filter" : {
@@ -141,8 +141,8 @@
 
 		doLoadDropDownItems("<spring:url value="/api/entity/get" />", requestObject, function(entities){
 			for (let i = 0; i < entities.length; i++) {
-				let entity = entities[i];
-				let option = document.createElement("option");
+				const entity = entities[i];
+				const option = document.createElement("option");
 				option.value = entity[valueField];
 				option.innerHTML = entity[itemField];
 				option.onclick = function() {
@@ -181,7 +181,7 @@
 		if (page < 0) {
 			page = this.page;
 		}
-		var requestObject = buildRequestObject(page);
+		const requestObject = buildRequestObject(page);
 		doLoadEntities("<spring:url value="/api/entity/get" />", requestObject, function(response){
 			
 			var entities = response.entities;
@@ -198,14 +198,13 @@
 	}
 	
 	function printExcel(){
-		var confirmed = confirm("Do you want to download excel file?");
+		const confirmed = confirm("Do you want to download excel file?");
 		if(!confirmed){
 			return;
 		}
 		
-		var requestObject = buildRequestObject(this.page); 
-		
-		var limit = prompt("input row count", this.limit);
+		const requestObject = buildRequestObject(this.page);  
+		const limit = prompt("input row count", this.limit);
 		
 		if(limit == null){
 			return;
@@ -235,13 +234,15 @@
 			};
 			requestObject.filter.fieldsFilter = {};
 			for (let i = 0; i < filterFields.length; i++) {
-				let filterField = filterFields[i];
+				const filterField = filterFields[i];
 				if (filterField.value != "") {
-					let fieldName = filterField.getAttribute("field");
-					let filterValue = filterField.value;
-					let checkBoxExact = _byId("checkbox-exact-"+fieldName);
+					var fieldName = filterField.getAttribute("field");
+					const filterValue = filterField.value;
+					const checkBoxExact = _byId("checkbox-exact-"+fieldName);
+					
 					console.log("EXACT",checkBoxExact != null && checkBoxExact.checked);
 					console.log("CHECKBOX",checkBoxExact);
+					
 					if(checkBoxExact != null && checkBoxExact.checked){
 						fieldName = fieldName+"[EXACTS]";
 					}
@@ -296,103 +297,122 @@
 		//CONTENT
 		for (let i = 0; i < entities.length; i++) {
 			const entity = entities[i];
-			const row = document.createElement("tr");
-			row.setAttribute("valign", "top");
-			row.setAttribute("class", "entity-record");
-			
-			const number = i * 1 + 1 + page * limit;
-			row.append(createCell(number));
-			for (let j = 0; j < fieldNames.length; j++) {
-				let entityValue = entity[fieldNames[j]];
-				//handle object type value
-				if (typeof (entityValue) == "object" && entityValue != null) {
-					console.log("TYPE ", typeof (entityValue), fieldNames[j]);
-					let objectFieldName = managedEntity["itemField_" + fieldNames[j]];
-					entityValue = entityValue[objectFieldName];
-				}
-				
-				//handle date type value
-				else if (isDate(fieldNames[j])) {
-					entityValue = new Date(entityValue);
-				}
-				//handle if currency value
-				//else if (isCurrency(fieldNames[j])) {
-				else if(typeof (entityValue) == "number" && entityValue != null){
-					var dom = createHtmlTag("span",{
-						 style:"font-family:consolas",
-						 innerHTML:beautifyNominal(entityValue)
-					});
-					entityValue = domToString(dom);//"<span style=\"font-family:consolas\">"+ beautifyNominal(entityValue) +"</span>";
-				}
-				//handle image type value
-				else if (isImage(fieldNames[j])) {
-					if (entityValue.split("~") != null) {
-						entityValue = entityValue.split("~")[0];
-					}
-					var dom = createHtmlTag("img",{
-						 width:30,
-						 height:30,
-						 src:"${host}${contextPath}/${imagePath}/" + (entityValue)
-					});
-					entityValue = domToString(dom);
-						//"<img width=\"30\" height=\"30\" src=\"${host}/${contextPath}/${imagePath}/" + (entityValue) + "\" />";
-				}
-				//regular value
-				else if (  entityValue != null) {
-					
-					let isUrl = typeof (entityValue) == "string" && (entityValue.trim().startsWith("http://") || entityValue.trim().startsWith("https://"));
-					let isColor =  typeof (entityValue) == "string" && entityValue.startsWith("#") && entityValue.trim().length == 7;
-					
-					//limit string characters count 
-					if ( typeof (entityValue) == "string" && entityValue.length > 35 && !isUrl) {
-						entityValue = entityValue.substring(0, 35) + "...";
-					}
-					if(isUrl){
-						entityValue  ="<a href=\""+entityValue+"\">"+entityValue+"</a>";
-					}else if(isColor){
-						entityValue = "<span style=\"color:"+entityValue+"; font-size: 1.3em \"><b>"+entityValue+"</b></span>";
-					}
-				}
-				row.append(createCell(entityValue));
-			}
-			let optionCell = createCell("");
-			
-			//button edit
-			let buttonEdit = createButton("btn-edit-" + i, editable?"Edit":"Detail");
-			buttonEdit.className = "btn btn-warning"
-			buttonEdit.onclick = function() {
-				alert("will Edit: " + entity[idField]);
-				getById(entity[idField], function(entity) {
-					populateForm(entity);
-				});
-			}
-			/* row.onclick = function() {
-				alert("will Edit: " + entity[idField]);
-				getById(entity[idField], function(entity) {
-					populateForm(entity);
-				});
-			} */
-			let btnOptionGroup = createDiv("btn-group-option-"+ i,"btn-group btn-group-sm");
-			btnOptionGroup.append(buttonEdit);
-			
-			//button delete
-			if(editable){
-				let buttonDelete = createButton("delete_" + i, "Delete");
-				buttonDelete.className = "btn btn-danger";
-				buttonDelete.onclick = function() {
-					if (!confirm("will Delete: " + entity[idField])) {
-						return;
-					}
-					deleteEntity(entity[idField]);
-				}
-				btnOptionGroup.append(buttonDelete);
-			}
-			
-			
-			optionCell.append(btnOptionGroup);
-			row.append(optionCell);
-			entityTBody.append(row);
+			populateRow(entityTBody, entity, i);
 		}
+	}
+	
+	function populateRow(entityTBody, entity, index){
+		const row = document.createElement("tr");
+		row.setAttribute("valign", "top");
+		row.setAttribute("class", "entity-record");
+		
+		const number = index * 1 + 1 + page * limit;
+		row.append(createCell(number));
+		
+		for (let j = 0; j < fieldNames.length; j++) {
+			const rawValue = entity[fieldNames[j]];
+			const fieldName = fieldNames[j];
+			const finalValue = getEntityFinalValue(rawValue, fieldName);
+			
+			row.append(createCell(finalValue));
+		}
+		const optionCell = createCell("");
+		const btnOptionGroup = getButtonOptionGroup(entity, index);		
+		
+		optionCell.append(btnOptionGroup);
+		row.append(optionCell);
+		entityTBody.append(row);
+	}
+	
+	function getButtonOptionGroup(entity, index){
+		//button edit
+		const buttonEdit = createButton("btn-edit-" + index, editable?"Edit":"Detail");
+		buttonEdit.className = "btn btn-warning"
+		buttonEdit.onclick = function() {
+			alert("will Edit: " + entity[idField]);
+			getById(entity[idField], function(entity) {
+				populateForm(entity);
+			});
+		}
+		/* row.onclick = function() {
+			alert("will Edit: " + entity[idField]);
+			getById(entity[idField], function(entity) {
+				populateForm(entity);
+			});
+		} */
+		const btnOptionGroup = createDiv("btn-group-option-"+ index,"btn-group btn-group-sm");
+		btnOptionGroup.append(buttonEdit);
+		
+		//button delete
+		if(editable){
+			const buttonDelete = createButton("delete_" + index, "Delete");
+			buttonDelete.className = "btn btn-danger";
+			buttonDelete.onclick = function() {
+				if (!confirm("will Delete: " + entity[idField])) {
+					return;
+				}
+				deleteEntity(entity[idField]);
+			}
+			btnOptionGroup.append(buttonDelete);
+		}
+		return btnOptionGroup;
+		
+	}
+	
+	function getEntityFinalValue(entityValue, fieldName){
+		//handle object type value
+		const isObject = typeof (entityValue) == "object" && entityValue != null;
+		
+		if (isObject) {
+			console.log("TYPE ", typeof (entityValue), fieldName);
+			let objectFieldName = managedEntity["itemField_" + fieldName];
+			entityValue = entityValue[objectFieldName];
+		}
+		
+		//handle date type value
+		else if (isDate(fieldName)) {
+			entityValue = new Date(entityValue);
+		}
+		//handle if currency value
+		//else if (isCurrency(fieldName)) {
+		else if(typeof (entityValue) == "number" && entityValue != null){
+			var dom = createHtmlTag("span",{
+				 style:"font-family:consolas",
+				 innerHTML:beautifyNominal(entityValue)
+			});
+			entityValue = domToString(dom);//"<span style=\"font-family:consolas\">"+ beautifyNominal(entityValue) +"</span>";
+		}
+		//handle image type value
+		else if (isImage(fieldName)) {
+			if (entityValue.split("~") != null) {
+				entityValue = entityValue.split("~")[0];
+			}
+			var dom = createHtmlTag("img",{
+				 width:30,
+				 height:30,
+				 src:"${host}${contextPath}/${imagePath}/" + (entityValue)
+			});
+			entityValue = domToString(dom);
+				//"<img width=\"30\" height=\"30\" src=\"${host}/${contextPath}/${imagePath}/" + (entityValue) + "\" />";
+		}
+		//regular value
+		else if (  entityValue != null) {
+			
+			let isUrl = typeof (entityValue) == "string" && (entityValue.trim().startsWith("http://") || entityValue.trim().startsWith("https://"));
+			let isColor =  typeof (entityValue) == "string" && entityValue.startsWith("#") && entityValue.trim().length == 7;
+			
+			//limit string characters count 
+			if ( typeof (entityValue) == "string" && entityValue.length > 35 && !isUrl) {
+				entityValue = entityValue.substring(0, 35) + "...";
+			}
+			if(isUrl){
+				entityValue  ="<a href=\""+entityValue+"\">"+entityValue+"</a>";
+			}else if(isColor){
+				entityValue = "<span style=\"color:"+entityValue+"; font-size: 1.3em \"><b>"+entityValue+"</b></span>";
+			}
+		}
+		
+		return entityValue;
 	}
 
 	function createTableHeader() {
