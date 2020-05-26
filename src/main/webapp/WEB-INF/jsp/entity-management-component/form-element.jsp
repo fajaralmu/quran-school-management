@@ -172,7 +172,7 @@
 			</div>
 			<div class="modal-footer">
 				<c:if test="${entityProperty.editable == true }">
-					<button id="btn-submit" onclick="submit()"
+					<button id="btn-submit"  
 						class="btn btn-primary">Save Changes</button>
 					<c:if test="${singleRecord == false }">
 						<input  type="reset" id="btn-clear" 

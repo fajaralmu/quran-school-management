@@ -12,16 +12,16 @@
 	var limit = 5;
 	var totalData = 0;
 	
-	const imgElements = ${entityProperty.imageElementsJson};
-	const currencyElements = ${entityProperty.currencyElementsJson};
-	const dateElements = ${entityProperty.dateElementsJson};
+	var imgElements = ${entityProperty.imageElementsJson};
+	var currencyElements = ${entityProperty.currencyElementsJson};
+	var dateElements = ${entityProperty.dateElementsJson};
 	
-	const fieldNames = ${entityProperty.fieldNames};
-	const optionElements = ${options};
+	var fieldNames = ${entityProperty.fieldNames};
+	var optionElements = ${options};
 	var imagesData = {};
-	const idField = "${entityProperty.idField}";
-	const editable = ${entityProperty.editable};
-	const singleRecord = ${singleRecord == null ||singleRecord == false ? false:true}
+	var idField = "${entityProperty.idField}";
+	var editable = ${entityProperty.editable};
+	var singleRecord = ${singleRecord == null ||singleRecord == false ? false:true}
 	var entityIdValue = "${entityId}";
 	var managedEntity = {};
 	//var entityPropJson = ${entityPropJson};
@@ -327,10 +327,11 @@
 	function getButtonOptionGroup(entity, index){
 		//button edit
 		const buttonEdit = createButton("btn-edit-" + index, editable?"Edit":"Detail");
-		buttonEdit.className = "btn btn-warning"
+		buttonEdit.className = "btn btn-warning";
+		const _idField = this.idField;
 		buttonEdit.onclick = function() {
-			alert("will Edit: " + entity[idField]);
-			getById(entity[idField], function(entity) {
+			alert("will Edit: " + entity[_idField]);
+			getById(entity[_idField], function(entity) {
 				populateForm(entity);
 			});
 		}
@@ -348,10 +349,10 @@
 			const buttonDelete = createButton("delete_" + index, "Delete");
 			buttonDelete.className = "btn btn-danger";
 			buttonDelete.onclick = function() {
-				if (!confirm("will Delete: " + entity[idField])) {
+				if (!confirm("will Delete: " + entity[_idField])) {
 					return;
 				}
-				deleteEntity(entity[idField]);
+				deleteEntity(entity[_idField]);
 			}
 			btnOptionGroup.append(buttonDelete);
 		}
@@ -600,9 +601,9 @@
 
 	//add image to image list
 	function doAddImageList(id, src, originalvalue) {
-		let listParent = _byId(id);//+"-input-list");
+		const listParent = _byId(id);//+"-input-list");
 		//current item list elements
-		let itemLists = document.getElementsByClassName(id + "-input-item");
+		const itemLists = document.getElementsByClassName(id + "-input-item");
 		let length = 0;
 		if (itemLists != null)
 			length = itemLists.length;
@@ -613,14 +614,14 @@
 		}
 		
 		//begin create new list item element
-		let elmentIdAndIndex = id + "-" + index;
+		const elmentIdAndIndex = id + "-" + index;
 		//create list item
-		let listItem = createDiv(elmentIdAndIndex + "-input-item", id + "-input-item");
+		const listItem = createDiv(elmentIdAndIndex + "-input-item", id + "-input-item");
 		
 		//create file input for choosing image
-		let input = createInput(elmentIdAndIndex, "input-file", "file");
+		const input = createInput(elmentIdAndIndex, "input-file", "file");
 		//create image tag for displaying image
-		let imgTag = createImgTag(elmentIdAndIndex + "-display", null, "50", "50", src);
+		const imgTag = createImgTag(elmentIdAndIndex + "-display", null, "50", "50", src);
 		if (src != null) {
 			//with full path
 			imgTag.setAttribute("originaldata", src);
@@ -628,20 +629,20 @@
 			imgTag.setAttribute("originalvalue", originalvalue);
 		}
 		//button SET selected image
-		let btnAddData = createButton(elmentIdAndIndex + "-file-ok-btn", "ok");
+		const btnAddData = createButton(elmentIdAndIndex + "-file-ok-btn", "ok");
 		btnAddData.className = "btn btn-primary btn-sm";
 		btnAddData.onclick = function() {
 			addImagesData(elmentIdAndIndex);
 		}
 		//button CANCEL selectedImage
-		let btnCancelData = createButton(elmentIdAndIndex + "-file-cancel-btn", "cancel");
+		const btnCancelData = createButton(elmentIdAndIndex + "-file-cancel-btn", "cancel");
 		btnCancelData.className = "btn btn-warning btn-sm";
 		btnCancelData.onclick = function() {
 			cancelImagesData(elmentIdAndIndex);
 		}
 
 		//button REMOVE list item
-		let btnRemoveListItem = createButton(elmentIdAndIndex + "-remove-list", "remove");
+		const btnRemoveListItem = createButton(elmentIdAndIndex + "-remove-list", "remove");
 		btnRemoveListItem.className = "btn btn-danger btn-sm";
 		btnRemoveListItem.onclick = function() {
 			removeImageList(elmentIdAndIndex);
@@ -655,7 +656,7 @@
 		listItem.append(btnRemoveListItem);
 		
 		//append image display
-		let wrapperDiv = createDiv(elmentIdAndIndex + "-wrapper-img", "wrapper");
+		const wrapperDiv = createDiv(elmentIdAndIndex + "-wrapper-img", "wrapper");
 		wrapperDiv.append(imgTag);
 		listItem.append(wrapperDiv);
 
@@ -782,7 +783,8 @@
 			var isNew = true;
 			for (var i = 0; i < fields.length; i++) {
 				var field = fields[i];
-				let fieldId = field.id;
+				var fieldId = field.id;
+				
 				console.log("FIELD ", field);
 				if (field.required
 						&& (field.value == "" || field.value == null)
@@ -795,54 +797,10 @@
 						&& field.value != "" && field.value != null) {
 					isNew = false;
 				}
-				if (field.nodeName == "SELECT" && field.getAttribute("plainlist") == null) { //handle select element
-					let _idField = field.getAttribute("itemValueField");
-					entity[fieldId] = {};
-					entity[fieldId][_idField] = field.value;
-				} else if (isImage(fieldId)) { //handle image element
-					
-					//handle multiple images
-					if (field.getAttribute("name") == "input-list") {
-						let itemLists = document.getElementsByClassName(fieldId
-								+ "-input-item");
-						console.log(fieldId, "item list length",
-								itemLists.length);
-						if (itemLists == null || itemLists.length == 0) {
-							continue;
-						}
-						let length = itemLists.length;
-						entity[fieldId] = "";
-						for (var j = 0; j < length; j++) {
-							let elmentIdAndIndex = fieldId + "-" + j;
-							let imgTag = _byId(elmentIdAndIndex
-									+ "-display");
-							
-							//check original image
-							let originalValue = imgTag
-									.getAttribute("originalvalue");
-							if (originalValue != null) {
-								entity[fieldId] += "{ORIGINAL>>"
-										+ originalValue + "}";
-							}
-
-							//if current value has NOT been updated
-							if (imagesData[fieldId + "-" + j] == null
-									|| imagesData[fieldId + "-" + j].trim() == "") {
-								entity[fieldId] += "~";
-							} else {
-							//if current value has been UPDATED
-								entity[fieldId] += imagesData[elmentIdAndIndex] + "~";
-							}
-						}
-
-					} 
-					// single image
-					else { 
-						entity[fieldId] = imagesData[fieldId];
-					}
-				} else {//regular element
-					entity[fieldId] = field.value;
-				}
+				
+				const finalValue = getFinalValueForSubmit(field);
+				entity[fieldId] = finalValue;
+				
 			}
 			
 			requestObject[entityName] = entity;
@@ -862,13 +820,79 @@
 					loadEntity(this.page);
 					clear();
 				}
-			})
-		};
+			});
+		}
+		
+		function getFinalValueForSubmit(field){
+			var fieldId = field.id;
+			var finalValue = field.value;
+			
+			if (field.nodeName == "SELECT" && field.getAttribute("plainlist") == null) { //handle select element
+				const _idField = field.getAttribute("itemValueField");
+				finalValue = {};
+				finalValue[_idField] = field.value;
+			} else if (isImage(fieldId)) { //handle image element
+				
+				//handle multiple images
+				if (field.getAttribute("name") == "input-list") {
+					let itemLists = document.getElementsByClassName(fieldId
+							+ "-input-item");
+					console.log(fieldId, "item list length",
+							itemLists.length);
+					if (itemLists == null || itemLists.length == 0) {
+						return null;
+					}
+					let length = itemLists.length;
+					finalValue = "";
+					for (var j = 0; j < length; j++) {
+						let elmentIdAndIndex = fieldId + "-" + j;
+						let imgTag = _byId(elmentIdAndIndex
+								+ "-display");
+						
+						//check original image
+						let originalValue = imgTag
+								.getAttribute("originalvalue");
+						if (originalValue != null) {
+							finalValue += "{ORIGINAL>>"
+									+ originalValue + "}";
+						}
+
+						//if current value has NOT been updated
+						if (imagesData[fieldId + "-" + j] == null
+								|| imagesData[fieldId + "-" + j].trim() == "") {
+							finalValue += "~";
+						} else {
+						//if current value has been UPDATED
+							finalValue += imagesData[elmentIdAndIndex] + "~";
+						}
+					}
+
+				} 
+				// single image
+				else { 
+					finalValue = imagesData[fieldId];
+				}
+			} else {//regular element not changed
+				//finalValue = field.value;
+			}
+			
+			return finalValue;
+		}
 
 		function deleteEntity(entityId) {
 			doDeleteEntity("<spring:url value="/api/entity/delete" />", entityName, idField, entityId, function(){
 				loadEntity(page);
 			});
 		}
+			
+		function initEvents(){
+			_byId("btn-submit").onclick = function(e){
+				submit();
+			}	
+		 
+		}
+		
+		initEvents();
+		
 	</script>
 </c:if>
