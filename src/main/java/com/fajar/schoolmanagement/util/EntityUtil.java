@@ -53,6 +53,10 @@ public class EntityUtil {
 				fieldNames.add(entityElement.getId());  
 				entityElements.add(entityElement);
 				
+				if(entityElement.isIdField() && entityProperty.getIdField() == null) {
+					entityProperty.setIdField(entityElement.getId());
+				}
+				
 			}
 
 			entityProperty.setAlias(dto.value().isEmpty() ? clazz.getSimpleName() : dto.value());

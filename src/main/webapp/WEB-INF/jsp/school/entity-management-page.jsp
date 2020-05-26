@@ -295,11 +295,12 @@
 
 		//CONTENT
 		for (let i = 0; i < entities.length; i++) {
-			let entity = entities[i];
-			let row = document.createElement("tr");
+			const entity = entities[i];
+			const row = document.createElement("tr");
 			row.setAttribute("valign", "top");
 			row.setAttribute("class", "entity-record");
-			number = i * 1 + 1 + page * limit;
+			
+			const number = i * 1 + 1 + page * limit;
 			row.append(createCell(number));
 			for (let j = 0; j < fieldNames.length; j++) {
 				let entityValue = entity[fieldNames[j]];
@@ -491,8 +492,7 @@
 		const isObject = typeof (entityValue) == "object";
 
 		//handle object type value
-		if (isObject && entityValue != null) {
-
+		if (isObject && entityValue != null) { 
 
 			let objectValueName = managedEntity["valueField_" + fieldName]
 			entityValue = entityValueAsObject[objectValueName];
@@ -776,9 +776,9 @@
 					isNew = false;
 				}
 				if (field.nodeName == "SELECT" && field.getAttribute("plainlist") == null) { //handle select element
-					let idField = field.getAttribute("itemValueField");
+					let _idField = field.getAttribute("itemValueField");
 					entity[fieldId] = {};
-					entity[fieldId][idField] = field.value;
+					entity[fieldId][_idField] = field.value;
 				} else if (isImage(fieldId)) { //handle image element
 					
 					//handle multiple images

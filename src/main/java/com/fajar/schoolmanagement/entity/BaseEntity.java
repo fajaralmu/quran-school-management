@@ -130,6 +130,7 @@ public class BaseEntity implements Serializable, FinancialEntity{
 	}
 
 	@Override
+	@JsonIgnore
 	public BalanceJournalInfo getBalanceJournalInfo() {
 		
 		throw new NotImplementedException("Not Implemented");
