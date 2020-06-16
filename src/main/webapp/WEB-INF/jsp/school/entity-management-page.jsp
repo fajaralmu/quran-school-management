@@ -235,13 +235,10 @@
 			requestObject.filter.fieldsFilter = {};
 			for (let i = 0; i < filterFields.length; i++) {
 				const filterField = filterFields[i];
-				if (filterField.value != "") {
-					var fieldName = filterField.getAttribute("field");
-					const filterValue = filterField.value;
+				const filterValue = filterField.value;
+				if (filterValue != "") {
+					var fieldName = filterField.getAttribute("field"); 
 					const checkBoxExact = _byId("checkbox-exact-"+fieldName);
-					
-					console.log("EXACT",checkBoxExact != null && checkBoxExact.checked);
-					console.log("CHECKBOX",checkBoxExact);
 					
 					if(checkBoxExact != null && checkBoxExact.checked){
 						fieldName = fieldName+"[EXACTS]";
@@ -366,7 +363,7 @@
 		
 		if (isObject) {
 			console.log("TYPE ", typeof (entityValue), fieldName);
-			let objectFieldName = managedEntity["itemField_" + fieldName];
+			const objectFieldName = managedEntity["itemField_" + fieldName];
 			entityValue = entityValue[objectFieldName];
 		}
 		

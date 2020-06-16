@@ -14,11 +14,9 @@ import com.fajar.schoolmanagement.dto.WebRequest;
 import com.fajar.schoolmanagement.dto.WebResponse;
 import com.fajar.schoolmanagement.entity.BaseEntity;
 import com.fajar.schoolmanagement.entity.Student;
-import com.fajar.schoolmanagement.entity.setting.EntityProperty;
 import com.fajar.schoolmanagement.service.EntityService;
 import com.fajar.schoolmanagement.service.transaction.TransactionService;
 import com.fajar.schoolmanagement.util.CollectionUtil;
-import com.fajar.schoolmanagement.util.EntityUtil;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -62,27 +60,24 @@ public class ReportService {
 	public File generateYearlyStudentMonthlyDonation(WebRequest webRequest) {
 		
 		ReportData transactionData = transactionService.getYearlyMonthlyDonationCashflow(webRequest.getFilter());
-		List<BaseEntity> studentList = entityService.findAll(Student.class);
+		List<BaseEntity> studentList = getAllStudents();
 		List<Student> convertList = CollectionUtil.convertList(studentList);
 		File result = studentDonationReportService.generateMonthlyStudentDonationReport(transactionData, convertList);
 		return result ;
 	}
-
-	public File writeEntityReport(List<BaseEntity> entities, Class<? extends BaseEntity> entityClass) {
-		log.info("entities count: {}", entities.size());
-		EntityProperty entityProperty = EntityUtil.createEntityProperty(entityClass, null);
-		
-		File result = entityReportService.getEntityReport(entities, entityProperty);
-		return result;
+ 
+	private List<BaseEntity> getAllStudents() {
+		List<BaseEntity> students = entityService.findAll(Student.class);
+		return students;
 	}
 
 	public File generateEntityReport(WebRequest request) { 
 //		request.getFilter().setLimit(0);
 		WebResponse response = entityService.filter(request);
 		
-		File file = writeEntityReport(response.getEntities(), response.getEntityClass());
+		File file = entityReportService.generateEntityReport(response.getEntities(), response.getEntityClass());
 		return file ;
-	}
+	} 
 
 	public File generateThrusdayDonationFundflowReport(WebRequest webRequest) { 
 		ReportData transactionData = transactionService.getYearlyThrusdayDonationCashflow(webRequest.getFilter());

@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import com.fajar.schoolmanagement.entity.BaseEntity;
 import com.fajar.schoolmanagement.entity.setting.EntityProperty;
 import com.fajar.schoolmanagement.service.WebConfigService;
+import com.fajar.schoolmanagement.util.EntityUtil;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -40,6 +41,14 @@ public class EntityReportService {
 
 		File file = getFile(xwb, reportName);
 		return file;
+	}
+
+	public File generateEntityReport(List<BaseEntity> entities, Class<? extends BaseEntity> entityClass) {
+		log.info("entity: {}, entities count: {}",entityClass, entities.size());
+		EntityProperty entityProperty = EntityUtil.createEntityProperty(entityClass, null);
+		
+		File result = getEntityReport(entities, entityProperty);
+		return result;
 	}
 
 	

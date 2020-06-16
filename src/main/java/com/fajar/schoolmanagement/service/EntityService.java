@@ -3,6 +3,7 @@ package com.fajar.schoolmanagement.service;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -201,7 +202,13 @@ public class EntityService {
 	}
 	
 	public List<BaseEntity> findAll(Class<? extends BaseEntity> _class){
-		return entityRepository.findAll(_class);
+		List resultList = entityRepository.findAll(_class);
+		
+		if(null == resultList) {
+			resultList = new ArrayList<>();
+		}
+		
+		return  resultList;
 	}
 //	
 //	public List<Cost> getAllCostType() {
