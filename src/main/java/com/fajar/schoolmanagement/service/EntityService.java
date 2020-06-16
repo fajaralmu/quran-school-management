@@ -210,18 +210,5 @@ public class EntityService {
 		
 		return  resultList;
 	}
-//	
-//	public List<Cost> getAllCostType() {
-//		return entityRepository.findAll(Cost.class);
-//	}
-//	
-//	public List<Unit> getAllUnit() { 
-//		return entityRepository.findAll(Unit.class);
-//	}
-//
-//
-//	public List<Capital> getAllCapitalType() { 
-//		return entityRepository.findAll(Capital.class);
-//	}
 
 }
