@@ -1,6 +1,6 @@
 package com.fajar.schoolmanagement.service.report;
 
-import static com.fajar.schoolmanagement.service.report.ExcelReportUtil.createTable;
+import static com.fajar.schoolmanagement.report.builder.ExcelReportUtil.createTable;
 import static com.fajar.schoolmanagement.service.report.ReportMappingUtil.getEntitiesTableValues;
 import static com.fajar.schoolmanagement.service.report.ReportMappingUtil.getReportDateString;
 import static com.fajar.schoolmanagement.util.FileUtil.getFile;

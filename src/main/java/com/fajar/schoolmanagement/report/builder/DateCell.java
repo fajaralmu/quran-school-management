@@ -1,4 +1,4 @@
-package com.fajar.schoolmanagement.service.report;
+package com.fajar.schoolmanagement.report.builder;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

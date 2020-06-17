@@ -3,8 +3,10 @@ package com.fajar.schoolmanagement.dto;
 import java.io.Serializable;
 import java.util.List;
 
+import com.fajar.schoolmanagement.entity.BaseEntity;
 import com.fajar.schoolmanagement.entity.CashBalance;
 import com.fajar.schoolmanagement.entity.FinancialEntity;
+import com.fajar.schoolmanagement.entity.setting.EntityProperty;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -26,5 +28,9 @@ public class ReportData implements Serializable {
 	private List<FinancialEntity> spendings;
 	private CashBalance initialBalance;
 	private Filter filter;
+	private List<BaseEntity> entities;
+	private EntityProperty entityProperty;
+	
+	private String reportName;
 
 }

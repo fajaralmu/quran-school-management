@@ -1,4 +1,4 @@
-package com.fajar.schoolmanagement.service.report;
+package com.fajar.schoolmanagement.report.builder;
 
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFDataFormat;

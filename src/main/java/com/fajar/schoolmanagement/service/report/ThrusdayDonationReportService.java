@@ -1,8 +1,8 @@
 package com.fajar.schoolmanagement.service.report;
 
-import static com.fajar.schoolmanagement.service.report.ExcelReportUtil.createRow;
-import static com.fajar.schoolmanagement.service.report.ExcelReportUtil.curr;
-import static com.fajar.schoolmanagement.service.report.ExcelReportUtil.dateCell;
+import static com.fajar.schoolmanagement.report.builder.ExcelReportUtil.createRow;
+import static com.fajar.schoolmanagement.report.builder.ExcelReportUtil.curr;
+import static com.fajar.schoolmanagement.report.builder.ExcelReportUtil.dateCell;
 import static com.fajar.schoolmanagement.util.DateUtil.getCalendarItem;
 import static com.fajar.schoolmanagement.util.DateUtil.getDaysInOneMonth;
 import static com.fajar.schoolmanagement.util.FileUtil.getFile;
@@ -23,9 +23,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.fajar.schoolmanagement.dto.ReportData;
-import com.fajar.schoolmanagement.entity.BaseEntity;
 import com.fajar.schoolmanagement.entity.DonationThursday;
 import com.fajar.schoolmanagement.entity.FinancialEntity;
+import com.fajar.schoolmanagement.report.builder.DateCell;
+import com.fajar.schoolmanagement.report.builder.ExcelReportUtil;
+import com.fajar.schoolmanagement.report.builder.FundAndSpendingFlowReportMonthly;
 import com.fajar.schoolmanagement.service.WebConfigService;
 import com.fajar.schoolmanagement.util.DateUtil;
 
@@ -39,20 +41,13 @@ public class ThrusdayDonationReportService {
 	private WebConfigService webConfigService;
 	
 
-	public File generateThrusdayCashflowReport(ReportData transactionData) {
-		log.info("generateThrusdayCashflowReport");
+	public File generateThrusdayCashflowReport(ReportData reportData) {
+		log.info("generateThrusdayCashflowReport"); 
 		
-		String time = ReportMappingUtil.getReportDateString();
-		String sheetName = "Mutasi_Infaq_Kamis";
-
-		String reportName = webConfigService.getReportPath() + "/" + sheetName + "_" + time + ".xlsx";
-		XSSFWorkbook xwb = new XSSFWorkbook();
-		XSSFSheet xsheet = xwb.createSheet(sheetName);
-
-		CashflowReportMonthlySeparated reportBuilder = new CashflowReportMonthlySeparated(transactionData, xsheet);
-		reportBuilder.writeReport();
-
-		File file = getFile(xwb, reportName);
+		reportData.setReportName("Mutasi_Infaq_Kamis"); 
+		FundAndSpendingFlowReportMonthly reportBuilder = new FundAndSpendingFlowReportMonthly(reportData, webConfigService);
+		File file = reportBuilder.buildReport();
+		
 		log.info("generated ThrusdayCashflowReport");
 		return file;
 	}

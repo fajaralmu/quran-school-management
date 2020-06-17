@@ -1,7 +1,9 @@
-package com.fajar.schoolmanagement.service.report;
+package com.fajar.schoolmanagement.report.builder;
 
+import static com.fajar.schoolmanagement.util.EntityUtil.getDeclaredField;
 import static org.apache.poi.ss.usermodel.BorderStyle.THIN;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -20,13 +22,20 @@ import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.util.StringUtils;
+
+import com.fajar.schoolmanagement.dto.FieldType;
+import com.fajar.schoolmanagement.entity.BaseEntity;
+import com.fajar.schoolmanagement.entity.setting.EntityElement;
+import com.fajar.schoolmanagement.entity.setting.EntityProperty;
+import com.fajar.schoolmanagement.util.DateUtil;
 
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class ExcelReportUtil {
 	
-
+	private static final String DATE_PATTERN = "dd-MM-yyyy' 'hh:mm:ss";
 	/**
 	 * 
 	 * @param row
@@ -80,6 +89,31 @@ public class ExcelReportUtil {
 				// TODO: handle exception
 			}
 		}
+	}
+	
+	/**
+	 * 
+	 * @param sheet
+	 * @param beginningRow zero based
+	 * @param beginningCell zero based
+	 * @param width
+	 * @param height
+	 */
+	public static void setAllBorder(XSSFSheet sheet, int beginningRow, int beginningCell, int width, int height) {
+		for(int i = beginningRow ; i < beginningRow + height; i++) {
+			XSSFRow row = sheet.getRow(i);
+			if(null == row) {
+				row = sheet.createRow(i);
+			}
+			for(int j = beginningCell; j < beginningCell + width; j++) {
+				XSSFCell cell = row.getCell(j);
+				if(null == cell) {
+					cell = row.createCell(j);
+				}
+				setAllBorder(cell.getCellStyle(), BorderStyle.THIN);
+			}
+		}
+		
 	}
 	
 	public static void validateCellRange(XSSFSheet sheet, CellRangeAddress cellRangeAddress) {
@@ -274,6 +308,104 @@ public class ExcelReportUtil {
     	  }
       }
 		
+	}
+
+	public static Object[] getEntitiesTableValues(List<BaseEntity> entities, EntityProperty entityProperty) {
+
+		List<EntityElement> entityElements = entityProperty.getElements();
+		Object[] values = new Object[(entities.size()+1) * (entityElements.size() + 1)];
+		int seqNum = 0;
+		
+		/**
+		 * column header
+		 */
+		values[seqNum] = "No";
+		seqNum++;
+		for (int i = 0; i < entityElements.size(); i++) {
+			values[seqNum] = entityElements.get(i).getLableName();
+			seqNum++;
+		}
+		
+		/**
+		 * table content
+		 */
+		for (int e = 0; e< entities.size(); e++) {  
+			
+			BaseEntity entity = entities.get(e); 
+			values[seqNum] =  e+1 ; //numbering
+			seqNum++;
+			
+			/**
+			 * checking the value type
+			 */
+			elementLoop: for(int i = 0; i< entityElements.size();i++) {
+				
+				Object value = mapEntityValue(entity, entityElements.get(i));
+				values[seqNum] = value;
+				seqNum++;
+				 
+			} 
+		}
+		
+		return values;
+	}
+	
+	private static Object mapEntityValue(BaseEntity entity, EntityElement element ) { 
+		final Field field = getDeclaredField(entity.getClass(), element.getId());
+		final String fieldType = element.getType();
+		Object value;
+		
+		try {
+			value = field.get(entity);
+			
+			if(null != value) {
+				
+				if( objectEquals(fieldType, FieldType.FIELD_TYPE_DYNAMIC_LIST, FieldType.FIELD_TYPE_FIXED_LIST)){
+					
+					String optionItemName = element.getOptionItemName();
+					
+					if(null != optionItemName && StringUtils.isEmpty(optionItemName) == false) {
+						
+						Field converterField = getDeclaredField(field.getType(), optionItemName);
+						Object converterValue = converterField.get(value);
+						value = converterValue;
+						
+					}else {
+						value = value.toString(); 
+					}
+					
+				}else if(objectEquals(fieldType, FieldType.FIELD_TYPE_IMAGE)) {
+				
+					value = value.toString().split("~")[0];
+//					values[seqNum] = ComponentBuilder.imageLabel(UrlConstants.URL_IMAGE+value, 100, 100);
+//					continue elementLoop;
+					
+				}else if(objectEquals(fieldType, FieldType.FIELD_TYPE_DATE)) {
+					
+					value = DateUtil.formatDate((Date)value, DATE_PATTERN);
+					
+				}else if(objectEquals(fieldType, FieldType.FIELD_TYPE_NUMBER)) {
+					
+					value = Double.parseDouble(value.toString()); 
+				}   
+			}  
+			
+			return  value ;
+		} catch ( Exception ex) { 
+			ex.printStackTrace();
+			return null;
+		} 
+	}
+	
+	public static boolean objectEquals(Object object, Object... objects) {
+
+		for (Object object2 : objects) {
+			if (object.equals(object2)) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 	
 	/**

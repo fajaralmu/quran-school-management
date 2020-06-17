@@ -1,4 +1,4 @@
-package com.fajar.schoolmanagement.service.report;
+package com.fajar.schoolmanagement.report.builder;
 
 import java.io.Serializable;
 

@@ -1,7 +1,7 @@
 package com.fajar.schoolmanagement.service.report;
 
-import static com.fajar.schoolmanagement.service.report.ExcelReportUtil.createRow;
-import static com.fajar.schoolmanagement.service.report.ExcelReportUtil.curr;
+import static com.fajar.schoolmanagement.report.builder.ExcelReportUtil.createRow;
+import static com.fajar.schoolmanagement.report.builder.ExcelReportUtil.curr;
 import static com.fajar.schoolmanagement.service.report.ReportMappingUtil.getCashflowItemCount;
 import static com.fajar.schoolmanagement.service.report.ReportMappingUtil.getMonthDays;
 import static com.fajar.schoolmanagement.service.report.ReportMappingUtil.sortFinancialEntityByDayOfMonth;

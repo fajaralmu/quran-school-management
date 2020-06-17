@@ -1,37 +1,54 @@
-package com.fajar.schoolmanagement.service.report;
+package com.fajar.schoolmanagement.report.builder;
 
-import static com.fajar.schoolmanagement.service.report.ExcelReportUtil.createRow;
-import static com.fajar.schoolmanagement.service.report.ExcelReportUtil.curr;
+import static com.fajar.schoolmanagement.report.builder.ExcelReportUtil.createRow;
+import static com.fajar.schoolmanagement.report.builder.ExcelReportUtil.curr;
 import static com.fajar.schoolmanagement.util.DateUtil.MONTH_NAMES;
 import static com.fajar.schoolmanagement.util.DateUtil.getCalendarItem;
+import static com.fajar.schoolmanagement.util.FileUtil.getFile;
 import static java.util.Calendar.DAY_OF_MONTH;
 
+import java.io.File;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import com.fajar.schoolmanagement.dto.ReportData;
-import com.fajar.schoolmanagement.entity.BaseEntity;
 import com.fajar.schoolmanagement.entity.CashBalance;
 import com.fajar.schoolmanagement.entity.FinancialEntity;
+import com.fajar.schoolmanagement.service.WebConfigService;
+import com.fajar.schoolmanagement.service.report.ReportMappingUtil;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * report containing fund flow and spending flow
+ * @author Republic Of Gamers
+ *
+ */
 @Slf4j
-public class CashflowReportMonthlySeparated {
+public class FundAndSpendingFlowReportMonthly extends ReportBuilder{
 
-	final ReportData reportData;
-	final XSSFSheet xsheet;
+	 
 	final Map<Integer, List<FinancialEntity>> mappedFunds;
 	final Map<Integer, List<FinancialEntity>> mappedSpendings;
+	final Object[] HEADER_VALUES = { "Tanggal", "Keterangan", "Debet", "Total", "Tanggal", "Keterangan", "Kredit", "Total" };
 
-	public CashflowReportMonthlySeparated(ReportData reportData, XSSFSheet sheet) {
-		this.reportData = reportData;
-		this.xsheet = sheet;
+	public FundAndSpendingFlowReportMonthly(ReportData reportData, WebConfigService webConfigService) {
+		super(webConfigService, reportData);
 		mappedFunds = ReportMappingUtil.sortFinancialEntityByMonth(reportData.getFunds());
 		mappedSpendings = ReportMappingUtil.sortFinancialEntityByMonth(reportData.getSpendings());
+		init();
+	}
+	
+	private void init() {
+		log.info("will generate: OrphanDonationReport");
+		String time = ReportMappingUtil.getReportDateString();
+		String sheetName = reportData.getReportName(); 
+		reportName = webConfigService.getReportPath() + "/" + sheetName + "_" + time + ".xlsx";
+		xssfWorkbook = new XSSFWorkbook();
+		xsheet = xssfWorkbook.createSheet(sheetName);
 	}
 
 	public void writeReport() {
@@ -44,9 +61,7 @@ public class CashflowReportMonthlySeparated {
 		/**
 		 * build fund table
 		 */
-		Object[] headerValues = { "Tanggal", "Keterangan", "Debet", "Total", "Tanggal", "Keterangan", "Kredit",
-				"Total" };
-		createRow(xsheet, currentRow, columnOffset, headerValues);
+		createHeader(currentRow, columnOffset);
 
 		// initial balance row
 		currentRow++;
@@ -71,6 +86,12 @@ public class CashflowReportMonthlySeparated {
 		log.info("Fund Row: {}", fundRowCount);
 		log.info("grandTotalFund: {}, summarySpending: {}, grandTotalBalance: {}", grandTotalFund, summarySpending,
 				grandTotalBalance);
+		
+		ExcelReportUtil.setAllBorder(xsheet, 1, columnOffset, HEADER_VALUES.length, rowForTotal + 1);
+	}
+
+	private void createHeader(int currentRow, int columnOffset) { 
+		createRow(xsheet, currentRow, columnOffset, HEADER_VALUES);
 	}
 
 	private void writeInitialBalance(int currentRow, int columnOffset) {
@@ -138,6 +159,13 @@ public class CashflowReportMonthlySeparated {
 		Object[] cashflowRowValues = { day + "/" + month, fund.getTransactionName(),
 				curr(fund.getTransactionNominal()), "" };
 		createRow(xsheet, currentCashflowRow, columnOffset, cashflowRowValues);
+	}
+
+	@Override
+	public File buildReport() {
+		writeReport();
+		File file = getFile(xssfWorkbook, reportName);
+		return file;
 	}
 	
 	 
