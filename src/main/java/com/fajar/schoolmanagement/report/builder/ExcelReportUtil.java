@@ -352,7 +352,7 @@ public class ExcelReportUtil {
 	
 	private static Object mapEntityValue(BaseEntity entity, EntityElement element ) { 
 		final Field field = getDeclaredField(entity.getClass(), element.getId());
-		final String fieldType = element.getType();
+		final FieldType fieldType = FieldType.getByValue(element.getType());
 		Object value;
 		
 		try {

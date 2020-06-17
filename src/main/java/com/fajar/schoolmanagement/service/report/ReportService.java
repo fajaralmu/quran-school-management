@@ -75,7 +75,7 @@ public class ReportService {
 //		request.getFilter().setLimit(0);
 		WebResponse response = entityService.filter(request);
 		
-		File file = entityReportService.generateEntityReport(response.getEntities(), response.getEntityClass());
+		File file = entityReportService.getEntityReport(response.getEntities(), response.getEntityClass());
 		return file ;
 	} 
 

@@ -43,12 +43,18 @@ public class FundAndSpendingFlowReportMonthly extends ReportBuilder{
 	}
 	
 	private void init() {
-		log.info("will generate: OrphanDonationReport");
+		log.info("will generate: OrphanDonationReport"); 
+		
+		reportName = getReportName();
+		xssfWorkbook = new XSSFWorkbook();
+		xsheet = xssfWorkbook.createSheet(reportData.getReportName());
+	}
+
+	private String getReportName() {  
 		String time = ReportMappingUtil.getReportDateString();
 		String sheetName = reportData.getReportName(); 
-		reportName = webConfigService.getReportPath() + "/" + sheetName + "_" + time + ".xlsx";
-		xssfWorkbook = new XSSFWorkbook();
-		xsheet = xssfWorkbook.createSheet(sheetName);
+		
+		return webConfigService.getReportPath() + "/" + sheetName + "_" + time + ".xlsx";
 	}
 
 	public void writeReport() {

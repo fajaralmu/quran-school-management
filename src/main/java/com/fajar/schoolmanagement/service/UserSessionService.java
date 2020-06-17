@@ -148,7 +148,7 @@ public class UserSessionService {
 			return true;
 
 		} catch (Exception ex) {
-			log.info("USER DOSE NOT HAVE SESSION");
+			log.info("USER DOES NOT HAVE SESSION");
 			ex.printStackTrace();
 			return false;
 		}
