@@ -40,7 +40,11 @@ public class CollectionUtil {
 	public static <T> List<T>  convertList(List<?> list) {
 		List<T> newList = new ArrayList<T>();
 		for (Object object : list) {
-			newList.add((T) object);
+			try {
+				newList.add((T) object);
+			}catch (Exception e) {
+				 
+			}
 		}
 		return newList;
 	}
@@ -56,15 +60,6 @@ public class CollectionUtil {
 		return array;
 	}
 
-	public static void avoidNullArray(List<DonationMonthly> studentDonations) {
-		// TODO Auto-generated method stub
-		
-	}
-	
-	
-	
 	 
-	
-	
 
 }

@@ -10,13 +10,10 @@ import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.PrePersist;
 
-import org.apache.commons.lang3.NotImplementedException;
-
 import com.fajar.schoolmanagement.annotation.BaseField;
 import com.fajar.schoolmanagement.annotation.Dto;
 import com.fajar.schoolmanagement.annotation.FormField;
 import com.fajar.schoolmanagement.dto.FieldType;
-import com.fajar.schoolmanagement.service.transaction.BalanceJournalInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Dto

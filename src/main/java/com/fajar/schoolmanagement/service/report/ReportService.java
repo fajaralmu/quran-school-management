@@ -12,7 +12,6 @@ import com.fajar.schoolmanagement.config.LogProxyFactory;
 import com.fajar.schoolmanagement.dto.ReportData;
 import com.fajar.schoolmanagement.dto.WebRequest;
 import com.fajar.schoolmanagement.dto.WebResponse;
-import com.fajar.schoolmanagement.entity.BaseEntity;
 import com.fajar.schoolmanagement.entity.Student;
 import com.fajar.schoolmanagement.service.EntityService;
 import com.fajar.schoolmanagement.service.transaction.TransactionService;
