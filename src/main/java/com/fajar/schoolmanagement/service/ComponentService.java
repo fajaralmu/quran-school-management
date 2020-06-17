@@ -169,7 +169,7 @@ public class ComponentService {
 		String[] menuAccess = {};// menu.getPage().split("-");
 		if (menuAccess.length > 1) {
 			String access = menuAccess[1];
-			String[] userAccesses = user.getRole().getAccess().split(",");
+//			String[] userAccesses = user.getRole().getAccess().split(",");
 			boolean hasAccess = hasAccess(user, access);
 			if (!hasAccess) {
 				throw new Exception("Has No Access");

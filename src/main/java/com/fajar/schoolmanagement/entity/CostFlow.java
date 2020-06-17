@@ -29,7 +29,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class CostFlow extends BaseEntity   {
+public class CostFlow extends BaseEntity  implements FinancialEntity {
 
 	/**
 	 * 

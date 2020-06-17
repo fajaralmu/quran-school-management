@@ -23,6 +23,7 @@ import com.fajar.schoolmanagement.dto.Filter;
 import com.fajar.schoolmanagement.dto.ReportData;
 import com.fajar.schoolmanagement.entity.BaseEntity;
 import com.fajar.schoolmanagement.entity.DonationMonthly;
+import com.fajar.schoolmanagement.entity.FinancialEntity;
 import com.fajar.schoolmanagement.entity.Student;
 import com.fajar.schoolmanagement.service.WebConfigService;
 import com.fajar.schoolmanagement.util.DateUtil;
@@ -54,9 +55,9 @@ public class StudentDonationReportService {
 
 	}
 	
-	private Map<Long, List<DonationMonthly>> mapStudentMonthlyDonation(List<BaseEntity> studentDonations){
+	private Map<Long, List<DonationMonthly>> mapStudentMonthlyDonation(List<FinancialEntity> studentDonations){
 		Map<Long, List<DonationMonthly>> mappedFunds = new HashMap<>();
-		for (BaseEntity baseEntity : studentDonations) {
+		for (FinancialEntity baseEntity : studentDonations) {
 			DonationMonthly donation = (DonationMonthly) baseEntity;
 			long studentId = donation.getStudent().getId();
 			
@@ -78,7 +79,7 @@ public class StudentDonationReportService {
 
 	private void writeMonthlyStudentDonationReport(XSSFSheet sheet, ReportData reportData, List<Student> students) {
 
-		List<BaseEntity> funds = reportData.getFunds();
+		List<FinancialEntity> funds = reportData.getFunds();
 		Map<Long, List<DonationMonthly>> mappedFunds = mapStudentMonthlyDonation(funds); 
 		int columnOffset = 1;
 		int currentRow = 1;

@@ -15,6 +15,7 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import com.fajar.schoolmanagement.dto.ReportData;
 import com.fajar.schoolmanagement.entity.BaseEntity;
 import com.fajar.schoolmanagement.entity.CashBalance;
+import com.fajar.schoolmanagement.entity.FinancialEntity;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -23,8 +24,8 @@ public class CashflowReportMonthlySeparated {
 
 	final ReportData reportData;
 	final XSSFSheet xsheet;
-	final Map<Integer, List<BaseEntity>> mappedFunds;
-	final Map<Integer, List<BaseEntity>> mappedSpendings;
+	final Map<Integer, List<FinancialEntity>> mappedFunds;
+	final Map<Integer, List<FinancialEntity>> mappedSpendings;
 
 	public CashflowReportMonthlySeparated(ReportData reportData, XSSFSheet sheet) {
 		this.reportData = reportData;
@@ -79,16 +80,16 @@ public class CashflowReportMonthlySeparated {
 		createRow(xsheet, currentRow, columnOffset, initialBalanceRow);
 	}
 
-	private long getSummary(List<BaseEntity> cashflow) {
+	private long getSummary(List<FinancialEntity> cashflow) {
 		long summary = 0L;
-		for (BaseEntity baseEntity : cashflow) {
+		for (FinancialEntity baseEntity : cashflow) {
 			summary += baseEntity.getTransactionNominal();
 		}
 		return summary;
 	}
 
-	public int writeMonthlyCashflowTable(final int currentRow, Map<Integer, List<BaseEntity>> mappedCashflow,
-			Map<Integer, List<BaseEntity>> comparedCashflow, int columnOffset) {
+	public int writeMonthlyCashflowTable(final int currentRow, Map<Integer, List<FinancialEntity>> mappedCashflow,
+			Map<Integer, List<FinancialEntity>> comparedCashflow, int columnOffset) {
 
 		int currentCashflowRow = currentRow;
 		int totalRow = 0;
@@ -97,8 +98,8 @@ public class CashflowReportMonthlySeparated {
 			currentCashflowRow++;
 			createRow(xsheet, currentCashflowRow, columnOffset, MONTH_NAMES[currentMonth - 1], "", "", "");
 
-			List<BaseEntity> cashflows = mappedCashflow.get(currentMonth);
-			List<BaseEntity> comparedCashflowInCurrentMonth = comparedCashflow.get(currentMonth);
+			List<FinancialEntity> cashflows = mappedCashflow.get(currentMonth);
+			List<FinancialEntity> comparedCashflowInCurrentMonth = comparedCashflow.get(currentMonth);
 
 			int cashflowSize = cashflows.size();
 			int comparedCashflowSize = comparedCashflowInCurrentMonth.size();
@@ -106,7 +107,7 @@ public class CashflowReportMonthlySeparated {
 					: comparedCashflowSize;
 			int rowCounter = 0;
 
-			for (BaseEntity cashflow : cashflows) {
+			for (FinancialEntity cashflow : cashflows) {
  
 				currentCashflowRow++;  
 				writeCashflowRow(cashflow,  currentCashflowRow, columnOffset); 
@@ -129,7 +130,7 @@ public class CashflowReportMonthlySeparated {
 		return totalRow + mappedCashflow.keySet().size();
 	}
 
-	private void writeCashflowRow(BaseEntity fund, int currentCashflowRow, int columnOffset) {
+	private void writeCashflowRow(FinancialEntity fund, int currentCashflowRow, int columnOffset) {
 		
 		int day = getCalendarItem(fund.getTransactionDate(), DAY_OF_MONTH);
 		int month = getCalendarItem(fund.getTransactionDate(), Calendar.MONTH )+1;

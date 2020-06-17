@@ -26,7 +26,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class DonationMonthly extends BaseEntity{
+public class DonationMonthly extends BaseEntity implements FinancialEntity{
 
 	/**
 	 * 

@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 
 import com.fajar.schoolmanagement.dto.WebResponse;
 import com.fajar.schoolmanagement.entity.BaseEntity;
+import com.fajar.schoolmanagement.entity.FinancialEntity;
 import com.fajar.schoolmanagement.repository.EntityRepository;
 import com.fajar.schoolmanagement.service.transaction.CashBalanceService;
 
@@ -28,7 +29,7 @@ public class GeneralFundUpdateService extends BaseEntityUpdateService {
 		theFund = entityRepository.save(fund);
 		validateFundInfo();
 		
-		cashBalanceService.updateCashBalance(theFund);
+		cashBalanceService.updateCashBalance((FinancialEntity)theFund);
 
 		return WebResponse.builder().entity(theFund).build();
 	}

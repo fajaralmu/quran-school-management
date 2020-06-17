@@ -16,6 +16,7 @@ import org.springframework.util.StringUtils;
 import com.fajar.schoolmanagement.dto.FieldType;
 import com.fajar.schoolmanagement.dto.Filter;
 import com.fajar.schoolmanagement.entity.BaseEntity;
+import com.fajar.schoolmanagement.entity.FinancialEntity;
 import com.fajar.schoolmanagement.entity.setting.EntityElement;
 import com.fajar.schoolmanagement.entity.setting.EntityProperty;
 import com.fajar.schoolmanagement.util.DateUtil;
@@ -28,7 +29,7 @@ public class ReportMappingUtil {
 	 * @param mappedCashflow
 	 * @return
 	 */
-	public static int getCashflowItemCount( Map<Integer, List<BaseEntity>> mappedCashflow) {
+	public static int getCashflowItemCount( Map<Integer, List<FinancialEntity>> mappedCashflow) {
 		int count = 0;
 		for(Integer day:mappedCashflow.keySet()) {
 			count += mappedCashflow.get(day).size();
@@ -43,12 +44,12 @@ public class ReportMappingUtil {
 		return monthDays;
 	}
 	
-	public static Map<Integer, List<BaseEntity>> sortFinancialEntityByDayOfMonth(List<BaseEntity> funds,
+	public static Map<Integer, List<FinancialEntity>> sortFinancialEntityByDayOfMonth(List<FinancialEntity> funds,
 			int monthDays) {
-		Map<Integer, List<BaseEntity>> mappedFunds = fillMapKeysWithNumber(monthDays);
+		Map<Integer, List<FinancialEntity>> mappedFunds = fillMapKeysWithNumber(monthDays);
 
 		for (int i = 0; i < funds.size(); i++) {
-			BaseEntity fund = funds.get(i);
+			FinancialEntity fund = funds.get(i);
 
 			int transactionDay = DateUtil.getCalendarItem(fund.getTransactionDate(), Calendar.DAY_OF_MONTH);
 			mappedFunds.get(transactionDay).add(fund);
@@ -57,11 +58,11 @@ public class ReportMappingUtil {
 		return mappedFunds;
 	}
 
-	public static Map<Integer, List<BaseEntity>> sortFinancialEntityByMonth(List<BaseEntity> funds) {
-		Map<Integer, List<BaseEntity>> mappedFunds = fillMapKeysWithNumber(12);
+	public static Map<Integer, List<FinancialEntity>> sortFinancialEntityByMonth(List<FinancialEntity> funds) {
+		Map<Integer, List<FinancialEntity>> mappedFunds = fillMapKeysWithNumber(12);
 
 		for (int i = 0; i < funds.size(); i++) {
-			BaseEntity fund = funds.get(i);
+			FinancialEntity fund = funds.get(i);
 
 			int transactionDay = DateUtil.getCalendarItem(fund.getTransactionDate(), Calendar.MONTH) + 1;
 			mappedFunds.get(transactionDay).add(fund);
@@ -70,8 +71,8 @@ public class ReportMappingUtil {
 		return mappedFunds;
 	}
 
-	public static Map<Integer, List<BaseEntity>> fillMapKeysWithNumber(int dayCount) {
-		Map<Integer, List<BaseEntity>> map = new HashMap<Integer, List<BaseEntity>>();
+	public static Map<Integer, List<FinancialEntity>> fillMapKeysWithNumber(int dayCount) {
+		Map<Integer, List<FinancialEntity>> map = new HashMap<Integer, List<FinancialEntity>>();
 		for (int day = 1; day <= dayCount; day++) {
 			map.put(day, new ArrayList<>());
 		}

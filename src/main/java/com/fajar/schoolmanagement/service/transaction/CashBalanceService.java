@@ -23,7 +23,7 @@ public class CashBalanceService {
 	@Autowired
 	private DonationOrphanRepository donationOrphanRepository;
 	
-	public CashBalance getBalanceByTransactionItem(BaseEntity baseEntity) {
+	public CashBalance getBalanceByTransactionItem(FinancialEntity baseEntity) {
 		
 		log.info("getBalanceByTransactionItem: {} {}", baseEntity.getId(), baseEntity.getClass());
 		
@@ -147,7 +147,7 @@ public class CashBalanceService {
 	 * update balance
 	 * @param baseEntity
 	 */
-	public synchronized void updateCashBalance(BaseEntity baseEntity) {
+	public synchronized void updateCashBalance(FinancialEntity baseEntity) {
 		
 		if(baseEntity == null || baseEntity.getId() == null) {
 			return;

@@ -23,6 +23,7 @@ import com.fajar.schoolmanagement.dto.Filter;
 import com.fajar.schoolmanagement.dto.ReportData;
 import com.fajar.schoolmanagement.entity.BaseEntity;
 import com.fajar.schoolmanagement.entity.CashBalance;
+import com.fajar.schoolmanagement.entity.FinancialEntity;
 import com.fajar.schoolmanagement.service.WebConfigService;
 import com.fajar.schoolmanagement.util.DateUtil;
 
@@ -63,8 +64,8 @@ public class CashflowReportService {
 		Integer monthDays = getMonthDays(filter);
 		int month = filter.getMonth();
 
-		Map<Integer, List<BaseEntity>> mappedFunds = sortFinancialEntityByDayOfMonth(reportData.getFunds(), monthDays);
-		Map<Integer, List<BaseEntity>> mappedSpendings = sortFinancialEntityByDayOfMonth(reportData.getSpendings(),
+		Map<Integer, List<FinancialEntity>> mappedFunds = sortFinancialEntityByDayOfMonth(reportData.getFunds(), monthDays);
+		Map<Integer, List<FinancialEntity>> mappedSpendings = sortFinancialEntityByDayOfMonth(reportData.getSpendings(),
 				monthDays);
 		CashBalance initialBalance = reportData.getInitialBalance();
 
@@ -117,12 +118,12 @@ public class CashflowReportService {
 		createRow(xsheet, currentRow, columnOffset, headerValues);
 	}
 
-	private long writeMonthlyCashflowTable(int currentRow, Map<Integer, List<BaseEntity>> mappedCashflow,
+	private long writeMonthlyCashflowTable(int currentRow, Map<Integer, List<FinancialEntity>> mappedCashflow,
 			XSSFSheet xsheet, int columnOffset) {
 		long summaryCashflow = 0L;
 		for (Integer day : mappedCashflow.keySet()) {
-			List<BaseEntity> funds = mappedCashflow.get(day);
-			for (BaseEntity fund : funds) {
+			List<FinancialEntity> funds = mappedCashflow.get(day);
+			for (FinancialEntity fund : funds) {
 
 				int month = DateUtil.getCalendarItem(fund.getTransactionDate(), Calendar.MONTH) + 1;
 				currentRow++;

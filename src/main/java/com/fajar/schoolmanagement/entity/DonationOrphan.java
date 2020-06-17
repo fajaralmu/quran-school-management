@@ -11,6 +11,7 @@ import javax.persistence.Table;
 import com.fajar.schoolmanagement.annotation.Dto;
 import com.fajar.schoolmanagement.annotation.FormField;
 import com.fajar.schoolmanagement.dto.FieldType;
+import com.fajar.schoolmanagement.service.transaction.BalanceJournalInfo;
 import com.fajar.schoolmanagement.service.transaction.OrphanCashflowType;
 
 import lombok.AllArgsConstructor;
@@ -25,7 +26,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class DonationOrphan extends BaseEntity  {
+public class DonationOrphan extends BaseEntity  implements FinancialEntity{
 
 	/**
 	 * 
@@ -59,6 +60,11 @@ public class DonationOrphan extends BaseEntity  {
 	@Override
 	public long getTransactionNominal() { 
 		return nominal;
+	}
+	@Override
+	public BalanceJournalInfo getBalanceJournalInfo() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

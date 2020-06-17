@@ -10,4 +10,5 @@ public interface FinancialEntity {
 	public String getTransactionName();
 	public long getTransactionNominal();
 	public BalanceJournalInfo getBalanceJournalInfo();
+	public Long getId();
 }

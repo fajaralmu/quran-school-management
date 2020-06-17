@@ -18,6 +18,7 @@ import com.fajar.schoolmanagement.entity.CostFlow;
 import com.fajar.schoolmanagement.entity.DonationMonthly;
 import com.fajar.schoolmanagement.entity.DonationOrphan;
 import com.fajar.schoolmanagement.entity.DonationThursday;
+import com.fajar.schoolmanagement.entity.FinancialEntity;
 import com.fajar.schoolmanagement.repository.CapitalFlowRepository;
 import com.fajar.schoolmanagement.repository.CostFlowRepository;
 import com.fajar.schoolmanagement.repository.DonationMonthlyRepository;
@@ -57,8 +58,8 @@ public class TransactionService {
 
 		CashBalance lastBalance = cashBalanceService.getBalanceBefore(month, year, false);
 		// get flow of funds
-		List<BaseEntity> fundFlows = getFundFlows(month, year);
-		List<BaseEntity> spendings = getFundSpent(month, year);
+		List<FinancialEntity> fundFlows = getFundFlows(month, year);
+		List<FinancialEntity> spendings = getFundSpent(month, year);
 
 		ReportData reportData = new ReportData();
 		reportData.setInitialBalance(lastBalance);
@@ -100,17 +101,17 @@ public class TransactionService {
 		return reportData;
 	}
 
-	private List<BaseEntity> getFundSpent(int month, int year) {
-		List<BaseEntity> spendings = new ArrayList<BaseEntity>();
+	private List<FinancialEntity> getFundSpent(int month, int year) {
+		List<FinancialEntity> spendings = new ArrayList<FinancialEntity>();
 
 		List<CostFlow> cost = costFlowRepository.findByPeriod(month, year);
 		spendings.addAll(cost);
 		return spendings;
 	}
 
-	private List<BaseEntity> getFundFlows(int month, int year) {
+	private List<FinancialEntity> getFundFlows(int month, int year) {
 
-		List<BaseEntity> funds = new ArrayList<BaseEntity>();
+		List<FinancialEntity> funds = new ArrayList<FinancialEntity>();
 
 		List<DonationMonthly> monthlyDonation = donationMonthlyRepository.findByMonthAndYear(month, year);
 		List<DonationThursday> thrusdayDonation = donationThursdayRepository.findByMonthAndYear(month, year);

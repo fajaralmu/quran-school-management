@@ -25,6 +25,7 @@ import org.springframework.stereotype.Service;
 import com.fajar.schoolmanagement.dto.ReportData;
 import com.fajar.schoolmanagement.entity.BaseEntity;
 import com.fajar.schoolmanagement.entity.DonationThursday;
+import com.fajar.schoolmanagement.entity.FinancialEntity;
 import com.fajar.schoolmanagement.service.WebConfigService;
 import com.fajar.schoolmanagement.util.DateUtil;
 
@@ -144,7 +145,7 @@ public class ThrusdayDonationReportService {
 	private Map<Integer, List<DonationThursday>> getThrusdayDonationMappedForEachMonth(ReportData reportData) {
 
 		int year = reportData.getFilter().getYear();
-		final Map<Integer, List<BaseEntity>> mappedFundsByMonth = ReportMappingUtil
+		final Map<Integer, List<FinancialEntity>> mappedFundsByMonth = ReportMappingUtil
 				.sortFinancialEntityByMonth(reportData.getFunds());
 		final Map<Integer, List<DonationThursday>> thursdayDonationMap = new HashMap<>();
 
@@ -152,9 +153,9 @@ public class ThrusdayDonationReportService {
 
 			int monthDays = DateUtil.getMonthsDay(month - 1, year);
 
-			List<BaseEntity> rawDonationThursdays = mappedFundsByMonth.get(month);
+			List<FinancialEntity> rawDonationThursdays = mappedFundsByMonth.get(month);
 			List<DonationThursday> donationThursdays = new ArrayList<>(); // maximum item: 5
-			Map<Integer, List<BaseEntity>> mappedDonationsByDay = ReportMappingUtil
+			Map<Integer, List<FinancialEntity>> mappedDonationsByDay = ReportMappingUtil
 					.sortFinancialEntityByDayOfMonth(rawDonationThursdays, monthDays);
 
 			Date[] thrusdaysInCurrentMonth = getDaysInOneMonth(THURSDAY, month - 1, year);
@@ -168,11 +169,11 @@ public class ThrusdayDonationReportService {
 				long transactionNominal = 0L;
 
 				loop: for (int day = dayOfMonth; day <= currentDayOfMonth; day++) {
-					List<BaseEntity> donationInTheDay = mappedDonationsByDay.get(day);
+					List<FinancialEntity> donationInTheDay = mappedDonationsByDay.get(day);
 					if (null == donationInTheDay) {
 						continue loop;
 					}
-					for (BaseEntity donation : donationInTheDay) {
+					for (FinancialEntity donation : donationInTheDay) {
 						transactionNominal += donation.getTransactionNominal();
 					}
 				}
