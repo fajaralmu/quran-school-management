@@ -22,7 +22,9 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class EntityUtil {
 
-	public static EntityProperty createEntityProperty(Class clazz, HashMap<String, List> listObject) {
+	public static EntityProperty createEntityProperty(Class<? extends BaseEntity> clazz, HashMap<String, List> listObject) {
+		log.info("Will create entity property: {}", clazz);
+		
 		if (clazz == null || getClassAnnotation(clazz, Dto.class) == null) {
 			return null;
 		}
@@ -72,6 +74,7 @@ public class EntityUtil {
 
 			return entityProperty;
 		} catch (Exception e) {
+			log.error("Error creating entity property");
 			e.printStackTrace();
 		}
 		return null;

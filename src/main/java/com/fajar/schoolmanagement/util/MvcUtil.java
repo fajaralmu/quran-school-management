@@ -12,6 +12,9 @@ import org.springframework.ui.Model;
 import com.fajar.schoolmanagement.entity.Menu;
 import com.fajar.schoolmanagement.entity.setting.EntityProperty;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 public class MvcUtil {
 
 	public static String getHost(HttpServletRequest request) {
@@ -28,6 +31,7 @@ public class MvcUtil {
 
 	public static Model constructCommonModel(HttpServletRequest request, EntityProperty entityProperty, Model model,
 			String title, String page, String option) {
+		log.info("Construct common management model for page: {}", page);
 		
 		boolean withOption = false;
 		String optionJson = "null";

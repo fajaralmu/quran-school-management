@@ -82,14 +82,10 @@ public class MvcManagementController extends BaseController {
 			sendRedirectLogin(request, response);
 			return basePage;
 		}
-		try {
-			checkUserAccess(userService.getUserFromSession(request), "/management/profile");
-		} catch (Exception e) {
-			return ERROR_404_PAGE;
-		}
+		
 		EntityProperty entityProperty = EntityUtil.createEntityProperty(Profile.class, null);
 
-		model = constructCommonModel(request, entityProperty, model, "shopProfile", "management");
+		model = constructCommonModel(request, entityProperty, model, Profile.class.getSimpleName().toLowerCase(), "management");
 		// override singleObject
 		model.addAttribute("entityId", webConfigService.getProfile().getId());
 		model.addAttribute("singleRecord", true);
