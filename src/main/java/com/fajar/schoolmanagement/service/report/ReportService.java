@@ -45,33 +45,36 @@ public class ReportService {
 	}
 	
 	public File generateGeneralCashflowMonthlyReport(WebRequest webRequest) {
-		
+		log.info("generateGeneralCashflowMonthlyReport");
 		ReportData transactionData = transactionService.getMonthlyGeneralCashflow(webRequest.getFilter()); 
 		
 		return cashflowReportService.generateMonthlyGeneralCashflow(transactionData);
 	}
 	
 	public File generateThrusdayDonationCashflowReport(WebRequest webRequest) {
+		log.info("generateThrusdayDonationCashflowReport");
 		ReportData transactionData = transactionService.getYearlyThrusdayDonationCashflow(webRequest.getFilter());
 		
 		return thrusdayDonationReportService.generateThrusdayCashflowReport(transactionData);
 	}
 	
 	public File generateYearlyStudentMonthlyDonation(WebRequest webRequest) {
+		log.info("generateYearlyStudentMonthlyDonation");
 		
 		ReportData transactionData = transactionService.getYearlyMonthlyDonationCashflow(webRequest.getFilter());
-		List<BaseEntity> studentList = getAllStudents();
+		List<Student> studentList = getAllStudents();
 		List<Student> convertList = CollectionUtil.convertList(studentList);
-		File result = studentDonationReportService.generateMonthlyStudentDonationReport(transactionData, convertList);
+		File result = studentDonationReportService.generateMonthlyStudentDonationForOneYearReport(transactionData, convertList);
 		return result ;
 	}
  
-	private List<BaseEntity> getAllStudents() {
-		List<BaseEntity> students = entityService.findAll(Student.class);
+	private List<Student> getAllStudents() {
+		 List<Student> students = entityService.findAll(Student.class);
 		return students;
 	}
 
 	public File generateEntityReport(WebRequest request) { 
+		log.info("generateEntityReport");
 //		request.getFilter().setLimit(0);
 		WebResponse response = entityService.filter(request);
 		
@@ -80,12 +83,14 @@ public class ReportService {
 	} 
 
 	public File generateThrusdayDonationFundflowReport(WebRequest webRequest) { 
+		log.info("generateThrusdayDonationFundflowReport");
 		ReportData transactionData = transactionService.getYearlyThrusdayDonationCashflow(webRequest.getFilter());
 		
 		return thrusdayDonationReportService.generateThrusdayDonationReport(transactionData);
 	}
 	
 	public File generateDonationOrphanReport(WebRequest request) {
+		log.info("generateDonationOrphanReport");
 		ReportData transactionData = transactionService.getDonationOrphanReport(request.getFilter());
 		
 		return orphanDonationReportService.generateOrphanDonationReport(transactionData);

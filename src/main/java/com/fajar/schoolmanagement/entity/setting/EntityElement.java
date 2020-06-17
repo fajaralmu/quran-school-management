@@ -64,7 +64,7 @@ public class EntityElement implements Serializable {
 	public final Field field;
 	public final boolean ignoreBaseField;
 	public EntityProperty entityProperty;
-	public Map<String, List> additionalMap; 
+	public Map<String, List<?>> additionalMap; 
 	private FormField formField;
 	private BaseField baseField;
 	private boolean skipBaseField;
@@ -76,7 +76,7 @@ public class EntityElement implements Serializable {
 		this.entityProperty = entityProperty;
 		init();
 	}
-	public EntityElement(Field field, EntityProperty entityProperty, Map<String, List> additionalMap) {
+	public EntityElement(Field field, EntityProperty entityProperty, Map<String, List<?>> additionalMap) {
 		this.field = field;
 		this.ignoreBaseField = entityProperty.isIgnoreBaseField();
 		this.entityProperty = entityProperty;

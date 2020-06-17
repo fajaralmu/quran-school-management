@@ -201,7 +201,7 @@ public class EntityRepository {
 	 * @param baseEntity
 	 * @return
 	 */
-	public <T> T save(BaseEntity baseEntity) {
+	public <T extends BaseEntity> T save(T baseEntity) {
 		log.info("execute method save");
 
 		boolean joinEntityExist = validateJoinColumn(baseEntity);
@@ -221,7 +221,7 @@ public class EntityRepository {
 		}
 	}
 
-	public boolean validateJoinColumn(BaseEntity baseEntity) {
+	public <T extends BaseEntity> boolean validateJoinColumn(T baseEntity) {
 
 		List<Field> joinColumns = getJoinColumn(baseEntity.getClass());
 
@@ -311,10 +311,10 @@ public class EntityRepository {
 	 * @param ID
 	 * @return
 	 */
-	public Object findById(Class<? extends BaseEntity> clazz, Object ID) {
+	public <T extends BaseEntity> T findById(Class<T> clazz, Object ID) {
 		JpaRepository repository = findRepo(clazz);
 
-		Optional result = repository.findById(ID);
+		Optional<T> result = repository.findById(ID);
 		if (result.isPresent()) {
 			return result.get();
 		}
@@ -327,7 +327,7 @@ public class EntityRepository {
 	 * @param clazz
 	 * @return
 	 */
-	public List findAll(Class<? extends BaseEntity> clazz) {
+	public <T extends BaseEntity> List<T> findAll(Class<T> clazz) {
 		JpaRepository repository = findRepo(clazz);
 		if (repository == null) {
 			return new ArrayList<>();
@@ -335,7 +335,7 @@ public class EntityRepository {
 		return repository.findAll();
 	}
 
-	public static <T> T getGenericClassIndexZero(Class clazz) {
+	public static <T> T getGenericClassIndexZero(Class<?> clazz) {
 		Type[] interfaces = clazz.getGenericInterfaces();
 
 		if (interfaces == null) {

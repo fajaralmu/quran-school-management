@@ -104,7 +104,7 @@ public class MvcManagementController extends BaseController {
 		} catch (Exception e) {
 			return ERROR_404_PAGE;
 		}
-		HashMap<String, List> listObject = new HashMap<>();
+		HashMap<String, List<?>> listObject = new HashMap<>();
 		List pages = componentService.getAllPages();
 		log.debug("pages: {}", pages);
 		listObject.put("menuPage", pages );
@@ -125,7 +125,7 @@ public class MvcManagementController extends BaseController {
 		} catch (Exception e) {
 			return ERROR_404_PAGE;
 		}
-		HashMap<String, List> listObject = new HashMap<>();
+		HashMap<String, List<?>> listObject = new HashMap<>();
 		List fundTypes = componentService.getAllFundTypes();
 		log.debug("fundTypes: {}", fundTypes);
 		listObject.put("fundType", fundTypes );
@@ -146,7 +146,7 @@ public class MvcManagementController extends BaseController {
 		} catch (Exception e) {
 			return ERROR_404_PAGE;
 		}
-		HashMap<String, List> listObject = new HashMap<>();
+		HashMap<String, List<?>> listObject = new HashMap<>();
 		List costTypes = componentService.getAllCostTypes();
 		log.debug("costTypes: {}", costTypes);
 		listObject.put("costType", costTypes );
@@ -208,7 +208,7 @@ public class MvcManagementController extends BaseController {
 		} catch (Exception e) {
 			return ERROR_404_PAGE;
 		}
-		HashMap<String, List> listObject = new HashMap<>();
+		HashMap<String, List<?>> listObject = new HashMap<>();
 		listObject.put("userRole", CollectionUtil.convertList(entityService.getAllUserRole()));
 		EntityProperty entityProperty = EntityUtil.createEntityProperty(User.class, listObject);
 		model = constructCommonModel(request, entityProperty, model, "User", "management");

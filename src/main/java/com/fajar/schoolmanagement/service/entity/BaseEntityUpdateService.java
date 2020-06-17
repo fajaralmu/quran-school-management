@@ -29,7 +29,7 @@ public class BaseEntityUpdateService {
 		return EntityUtil.copyFieldElementProperty(source, source.getClass(), !newRecord);
 	}
 
-	protected List removeNullItemFromArray(String[] array) {
+	protected List<?> removeNullItemFromArray(String[] array) {
 		List<Object> result = new ArrayList<>();
 		for (String string : array) {
 			if (string != null) {

@@ -21,7 +21,6 @@ import org.springframework.stereotype.Service;
 
 import com.fajar.schoolmanagement.dto.Filter;
 import com.fajar.schoolmanagement.dto.ReportData;
-import com.fajar.schoolmanagement.entity.BaseEntity;
 import com.fajar.schoolmanagement.entity.CashBalance;
 import com.fajar.schoolmanagement.entity.FinancialEntity;
 import com.fajar.schoolmanagement.service.WebConfigService;

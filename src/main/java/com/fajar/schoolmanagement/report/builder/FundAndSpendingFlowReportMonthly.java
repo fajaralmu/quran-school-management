@@ -38,16 +38,16 @@ public class FundAndSpendingFlowReportMonthly extends ReportBuilder{
 	public FundAndSpendingFlowReportMonthly(ReportData reportData, WebConfigService webConfigService) {
 		super(webConfigService, reportData);
 		mappedFunds = ReportMappingUtil.sortFinancialEntityByMonth(reportData.getFunds());
-		mappedSpendings = ReportMappingUtil.sortFinancialEntityByMonth(reportData.getSpendings());
-		init();
+		mappedSpendings = ReportMappingUtil.sortFinancialEntityByMonth(reportData.getSpendings()); 
 	}
 	
-	private void init() {
+	protected void init() {
 		log.info("will generate: OrphanDonationReport"); 
 		
 		reportName = getReportName();
 		xssfWorkbook = new XSSFWorkbook();
 		xsheet = xssfWorkbook.createSheet(reportData.getReportName());
+		
 	}
 
 	private String getReportName() {  

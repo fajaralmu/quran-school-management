@@ -201,11 +201,11 @@ public class EntityService {
 		int count;
 	}
 	
-	public List<BaseEntity> findAll(Class<? extends BaseEntity> _class){
-		List resultList = entityRepository.findAll(_class);
+	public <T extends BaseEntity> List<T> findAll(Class<T> _class){
+		List<T> resultList = entityRepository.findAll(_class);
 		
 		if(null == resultList) {
-			resultList = new ArrayList<>();
+			resultList = new ArrayList<T>();
 		}
 		
 		return  resultList;

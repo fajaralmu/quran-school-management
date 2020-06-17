@@ -13,7 +13,6 @@ import com.fajar.schoolmanagement.config.LogProxyFactory;
 import com.fajar.schoolmanagement.dto.WebRequest;
 import com.fajar.schoolmanagement.dto.WebResponse;
 import com.fajar.schoolmanagement.entity.User;
-import com.fajar.schoolmanagement.repository.UserRepository;
 
 import lombok.extern.slf4j.Slf4j;
 

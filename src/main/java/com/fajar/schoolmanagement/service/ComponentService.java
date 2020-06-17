@@ -11,6 +11,8 @@ import org.springframework.stereotype.Service;
 
 import com.fajar.schoolmanagement.dto.WebRequest;
 import com.fajar.schoolmanagement.dto.WebResponse;
+import com.fajar.schoolmanagement.entity.Capital;
+import com.fajar.schoolmanagement.entity.Cost;
 import com.fajar.schoolmanagement.entity.Menu;
 import com.fajar.schoolmanagement.entity.Page;
 import com.fajar.schoolmanagement.entity.User;
@@ -178,11 +180,11 @@ public class ComponentService {
 
 	}
 
-	public List getAllCostTypes() {
+	public List<Cost> getAllCostTypes() {
 		return costRepository.findByDeletedFalse();
 	}
 
-	public List getAllFundTypes() {
+	public List<Capital> getAllFundTypes() {
 		return capitalRepository.findByDeletedFalse();
 	}
 

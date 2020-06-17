@@ -22,9 +22,10 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class EntityUtil {
 
-	public static EntityProperty createEntityProperty(Class<? extends BaseEntity> clazz, HashMap<String, List> listObject) {
+	public static EntityProperty createEntityProperty(Class<? extends BaseEntity> clazz,
+			HashMap<String, List<?>> listObject) {
 		log.info("Will create entity property: {}", clazz);
-		
+
 		if (clazz == null || getClassAnnotation(clazz, Dto.class) == null) {
 			return null;
 		}
@@ -32,8 +33,8 @@ public class EntityUtil {
 		Dto dto = (Dto) getClassAnnotation(clazz, Dto.class);
 		final boolean ignoreBaseField = dto.ignoreBaseField();
 
-		EntityProperty entityProperty = EntityProperty.builder().ignoreBaseField(ignoreBaseField).entityName(clazz.getSimpleName().toLowerCase())
-				.build();
+		EntityProperty entityProperty = EntityProperty.builder().ignoreBaseField(ignoreBaseField)
+				.entityName(clazz.getSimpleName().toLowerCase()).build();
 		try {
 
 			List<Field> fieldList = getDeclaredFields(clazz);
@@ -44,19 +45,17 @@ public class EntityUtil {
 			for (Field field : fieldList) {
 
 				final EntityElement entityElement = new EntityElement(field, entityProperty, listObject);
-				 
+
 				if (false == entityElement.build()) {
 					continue;
-				} 
-				if(entityElement.isDetailField()) {
+				}
+				if (entityElement.isDetailField()) {
 					fieldToShowDetail = entityElement.getId();
 				}
-				
-				fieldNames.add(entityElement.getId());  
+
+				fieldNames.add(entityElement.getId());
 				entityElements.add(entityElement);
-				
-				
-				
+
 			}
 
 			entityProperty.setAlias(dto.value().isEmpty() ? clazz.getSimpleName() : dto.value());
@@ -96,7 +95,7 @@ public class EntityUtil {
 		}
 	}
 
-	public static Field getDeclaredField(Class clazz, String fieldName) {
+	public static Field getDeclaredField(Class<?> clazz, String fieldName) {
 		try {
 			Field field = clazz.getDeclaredField(fieldName);
 			if (field == null) {
@@ -132,7 +131,7 @@ public class EntityUtil {
 	 * @param clazz
 	 * @return
 	 */
-	public static List<Field> getDeclaredFields(Class clazz) {
+	public static List<Field> getDeclaredFields(Class<?> clazz) {
 		Field[] baseField = clazz.getDeclaredFields();
 //
 //		List<EntityElement> entityElements = new ArrayList<EntityElement>();
@@ -155,7 +154,7 @@ public class EntityUtil {
 		return fieldList;
 	}
 
-	public static Field getIdFieldOfAnObject(Class clazz) {
+	public static Field getIdFieldOfAnObject(Class<?> clazz) {
 		log.info("Get ID FIELD FROM :" + clazz.getCanonicalName());
 
 		if (getClassAnnotation(clazz, Entity.class) == null) {
@@ -240,7 +239,7 @@ public class EntityUtil {
 		}
 	}
 
-	public static <T extends BaseEntity> T validateDefaultValue(BaseEntity baseEntity) {
+	public static <T extends BaseEntity> T validateDefaultValue(T baseEntity) {
 		List<Field> fields = EntityUtil.getDeclaredFields(baseEntity.getClass());
 
 		for (Field field : fields) {
@@ -308,16 +307,16 @@ public class EntityUtil {
 		return (T) baseEntity;
 	}
 
-	public static <T extends List<BaseEntity>> T validateDefaultValue(List<BaseEntity> entities) {
-		for (BaseEntity baseEntity : entities) {
+	public static <T extends BaseEntity> List<T> validateDefaultValue(List<T> entities) {
+		for (T baseEntity : entities) {
 			baseEntity = validateDefaultValue(baseEntity);
 		}
-		return (T) entities;
+		return  entities;
 	}
 
-	public static <T> T getObjectFromListByFieldName(final String fieldName, final Object value, final List list) {
+	public static <T> T getObjectFromListByFieldName(final String fieldName, final Object value, final List<T> list) {
 
-		for (Object object : list) {
+		for (T object : list) {
 			Field field = EntityUtil.getDeclaredField(object.getClass(), fieldName);
 			field.setAccessible(true);
 			try {
@@ -337,7 +336,7 @@ public class EntityUtil {
 	}
 
 	public static boolean existInList(Object o, List list) {
-		if(null == list) {
+		if (null == list) {
 			log.error("LIST IS NULL");
 			return false;
 		}

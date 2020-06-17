@@ -30,14 +30,14 @@ public class CollectionUtil {
 		return list;
 	}
  
-	public static <T> List listOf(Object o) {
+	public static <T> List<T> listOf(T o) {
 		
-		List list = new ArrayList<>();
+		List<T> list = new ArrayList<T>();
 		list.add(o);
 		return list ;
 	}
 
-	public static <T> List  convertList(List list) {
+	public static <T> List<T>  convertList(List<?> list) {
 		List<T> newList = new ArrayList<T>();
 		for (Object object : list) {
 			newList.add((T) object);
@@ -45,7 +45,7 @@ public class CollectionUtil {
 		return newList;
 	}
 
-	public static String[] toArrayOfString(List validUrls) {
+	public static String[] toArrayOfString(List<?> validUrls) {
 		if(validUrls == null) {
 			return new String[] {};
 		}

@@ -86,8 +86,11 @@ public class DateUtil {
 		};
 	}
 	
-	public static Map map(final Object key, final Object value) {
-		return new HashMap() {
+	public static <K, V> Map<K, V> map(final K key, final V value) {
+		return new HashMap<K, V>() { 
+			
+			private static final long serialVersionUID = -6793780373174341362L;
+
 			{
 				put(key, value);
 			}
@@ -135,7 +138,7 @@ public class DateUtil {
 	 * @return
 	 */
 	public static int getMonthsDay(int month, int year) {
-		// TODO Auto-generated method stub
+		 
 		return getMonthsDay(year)[month ];
 	}
  

@@ -15,7 +15,7 @@ public class MyJsonUtil {
 
 	public static String objectToJson(Object o) {
 		String json = "{";
-		Class clazz = o.getClass();
+		Class<?> clazz = o.getClass();
 		if (clazz.getAnnotation(Dto.class) == null) {
 			if (isNotString(clazz )) {
 				return o.toString();
@@ -28,7 +28,7 @@ public class MyJsonUtil {
 		for (Field field : fields) {
 			String key = "\"" + field.getName() + "\"";
 			String value = null;
-			Class fieldType = field.getType();
+			Class<?> fieldType = field.getType();
 			field.setAccessible(true);
 			try {
 				if (fieldType != List.class && field.get(o) != null && fieldType != Map.class
@@ -86,7 +86,7 @@ public class MyJsonUtil {
 			String value = null;
 			Object mapvalue = o.get(field);
 			if (mapvalue != null) {
-				Class valueClass = mapvalue.getClass();
+				Class<?> valueClass = mapvalue.getClass();
 
 				if (valueClass != List.class && valueClass != Map.class && valueClass.getAnnotation(Dto.class) == null) {
 					if (isNotString(valueClass )) {
@@ -114,7 +114,7 @@ public class MyJsonUtil {
 		return json;
 	}
 
-	public static String listToJson(List list) {
+	public static String listToJson(List<?> list) {
 		String json = "[";
 
 		for (int i = 0; i < list.size(); i++) {

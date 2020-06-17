@@ -23,9 +23,14 @@ public class EntityReportBuilder extends ReportBuilder {
 	}
 
 	@Override
-	public File buildReport() {
+	protected void init() {
 		entities = reportData.getEntities();
 		entityProperty = reportData.getEntityProperty();
+		
+	}
+	
+	@Override
+	public File buildReport() { 
 
 		log.info("Writing entity report of: {}", entityProperty.getEntityName());
 
@@ -52,5 +57,7 @@ public class EntityReportBuilder extends ReportBuilder {
 			e.printStackTrace();
 		}
 	}
+
+	
 
 }

@@ -22,7 +22,10 @@ public abstract class ReportBuilder {
 	public ReportBuilder(WebConfigService configService, ReportData reportData) {
 		this.webConfigService = configService;
 		this.reportData = reportData;
+		init();
 	}
+	
+	protected abstract void init();
 
 	protected String getDateTime() {
 		return DateUtil.formatDate(new Date(), DATE_PATTERN);
