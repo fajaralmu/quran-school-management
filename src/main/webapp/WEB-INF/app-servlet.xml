@@ -15,9 +15,16 @@
 	<mvc:resources location="/resources/" mapping="/res/**"></mvc:resources>
 	<mvc:resources location="file:/D:/Development/Files/Web/"
 		mapping="/WebAsset/**"></mvc:resources>
-	<jpa:repositories base-package="com.fajar.schoolmanagement.repository" />
+	<mvc:interceptors>
+		<bean id="handlerInterceptor"
+			class="com.fajar.schoolmanagement.config.MyHandlerInterceptor" />
+	</mvc:interceptors>
+	 
+	<jpa:repositories
+		base-package="com.fajar.schoolmanagement.repository" />
 
-	<context:component-scan base-package="com.fajar.schoolmanagement" />
+	<context:component-scan
+		base-package="com.fajar.schoolmanagement" />
 
 	<bean
 		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
@@ -48,20 +55,25 @@
 		class="com.fajar.schoolmanagement.service.WebConfigService">
 		<property name="basePage" value="BASE_PAGE"></property>
 		<property name="martCode" value="SHOP996"></property>
-		<property name="uploadedImageRealPath" value="D:/Development/Files/Web/School1/Images"></property>
-		<property name="uploadedImagePath" value="WebAsset/School1/Images"></property>
-		<property name="reportPath" value="D:/Development/Files/Web/School1/Reports"></property>
+		<property name="uploadedImageRealPath"
+			value="D:/Development/Files/Web/School1/Images"></property>
+		<property name="uploadedImagePath"
+			value="WebAsset/School1/Images"></property>
+		<property name="reportPath"
+			value="D:/Development/Files/Web/School1/Reports"></property>
 	</bean>
-	
+
 	<!-- persistance -->
-	<bean id="objectMapper" class="com.fasterxml.jackson.databind.ObjectMapper"/>
-	 
+	<bean id="objectMapper"
+		class="com.fasterxml.jackson.databind.ObjectMapper" />
+
 	<bean id="transactionManager"
 		class="org.springframework.orm.jpa.JpaTransactionManager">
-		<property name="entityManagerFactory" ref="entityManagerFactory"></property>
+		<property name="entityManagerFactory"
+			ref="entityManagerFactory"></property>
 	</bean>
-	
-<!-- 	<bean id="sessionFactory" class="org.hibernate.internal.SessionFactoryImpl"/> -->
+
+	<!-- <bean id="sessionFactory" class="org.hibernate.internal.SessionFactoryImpl"/> -->
 
 	<bean id="dataSource_OFFLINE"
 		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
@@ -72,27 +84,30 @@
 		<property name="username" value="root" />
 		<property name="password" value="" />
 	</bean>
-	 
+
 
 
 	<bean id="entityManagerFactory"
 		class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
-		<property name="packagesToScan" value="com.fajar.schoolmanagement*" />
-		<property name="dataSource" ref="dataSource_OFFLINE" /><!-- 
-		<property name="sessionFactory" ref="sessionFactory"></property> -->
+		<property name="packagesToScan"
+			value="com.fajar.schoolmanagement*" />
+		<property name="dataSource" ref="dataSource_OFFLINE" /><!-- <property 
+			name="sessionFactory" ref="sessionFactory"></property> -->
 		<property name="jpaProperties">
 			<props>
 				<prop key="hibernate.show_sql">false</prop>
 				<prop key="hibernate.hbm2ddl.auto">update</prop>
 				<prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</prop>
-				<prop key="hibernate.current_session_context_class">org.hibernate.context.internal.ThreadLocalSessionContext</prop>
+				<prop key="hibernate.current_session_context_class">org.hibernate.context.internal.ThreadLocalSessionContext
+				</prop>
 			</props>
 		</property>
-		<property name="persistenceProvider" ref="persistenceProvider">
+		<property name="persistenceProvider"
+			ref="persistenceProvider">
 			<!-- <bean class="org.hibernate.jpa.HibernatePersistenceProvider"></bean> -->
 		</property>
 	</bean>
-	
+
 	<bean id="persistenceProvider"
 		class="org.hibernate.jpa.HibernatePersistenceProvider" />
 
