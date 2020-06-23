@@ -2,6 +2,7 @@ package com.fajar.schoolmanagement.controller;
 
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -13,8 +14,10 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
+import com.fajar.schoolmanagement.dto.KeyValue;
 import com.fajar.schoolmanagement.entity.Page;
 import com.fajar.schoolmanagement.entity.Profile;
 import com.fajar.schoolmanagement.entity.User;
@@ -156,6 +159,15 @@ public class BaseController {
 			}
 		}catch(Exception ex) { ex.printStackTrace(); }
 		return null;
+	}
+	
+	protected static void addStylePath(Model model, String...paths) {
+		List<KeyValue> stylePaths = new ArrayList<>();
+		for (String path : paths) {
+			stylePaths.add(KeyValue.builder().value(path).build());
+		}
+		
+		model.addAttribute("additionalStylePaths", stylePaths);
 	}
 	
 	/**

@@ -3,23 +3,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
-<style>
-.content-item {
-	width: 100%;
-	height: 50px;
-	border: solid 2px maroon;
-	padding: 10px;
-}
-
-.content-item:hover {
-	background-color: lime;
-	cursor: pointer;
-}
-
-.selected {
-	background-color: lime;
-}
-</style>
+ 
 <div class="content" style="width: 100%">
 
 	<div id="content-report">
@@ -44,7 +28,7 @@
 	var pages = {};
 
 	function initEvents() {
-		contentItems = document.getElementsByClassName("content-item");
+		contentItems = document.getElementsByClassName("page-item");
 		for (var i = 0; i < contentItems.length; i++) {
 			const contentItem = contentItems[i];
 			contentItem.onclick = function(e) {
@@ -70,9 +54,9 @@
 
 	function createEntityElements(entity) {
 
-		var className = "content-item";
+		var className = "page-item";
 		if (entity.id == selectedId) {
-			className = "content-item selected";
+			className = "page-item page-selected";
 		}
 
 		const div = createHtmlTag( {
@@ -89,14 +73,14 @@
 
 	function contentItemOnClick(contentItem) {
 		refresh();
-		contentItem.setAttribute("class", "content-item selected");
+		contentItem.setAttribute("class", "page-item page-selected");
 		selectedId = contentItem.id;
 	}
 
 	function refresh() {
 		for (var i = 0; i < contentItems.length; i++) {
 			const contentItem = contentItems[i];
-			contentItem.setAttribute("class", "content-item");
+			contentItem.setAttribute("class", "page-item");
 		}
 	}
 

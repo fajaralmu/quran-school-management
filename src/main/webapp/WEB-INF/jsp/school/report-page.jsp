@@ -3,15 +3,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
-<style>
-.report-item {
-	/* width: 100%;
-	height: 250px;
-	border: solid 2px maroon;
-	padding: 10px; */
-	margin: 7px;
-}
-</style>
+ 
 <div class="content" style="width: 100%">
 
 	<div id="content-report">

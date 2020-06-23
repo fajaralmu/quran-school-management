@@ -75,6 +75,7 @@ public class MvcAdminController extends BaseController {
 		model.addAttribute("pageUrl", "school/report-page");
 		model.addAttribute("months", DateUtil.months());
 		model.addAttribute("reportMenus", MvcUtil.getReportMenus()); 
+		addStylePath(model, "reportpage");
 		return basePage; 
 	}
 	
@@ -88,7 +89,7 @@ public class MvcAdminController extends BaseController {
 		model.addAttribute("title", "App::Page Sequence");
 		model.addAttribute("pageUrl", "school/page-sequence"); 
 		model.addAttribute("pages", componentService.getAllPages()); 
-		
+		addStylePath(model, "pagesequence");
 		return basePage;
 		
 	}

@@ -16,6 +16,10 @@
 <link rel="stylesheet" type="text/css"
 	href="<c:url value="/res/css/shop.css?version=1"></c:url>" />
 
+<c:forEach var="stylePath" items="${additionalStylePaths }">
+	<link rel="stylesheet" href="<c:url value="/res/css/pages/${ stylePath.value}.css?version=1"></c:url >" />
+</c:forEach>
+
 <link rel="stylesheet" href="<c:url value="/res/css/bootstrap.min.css" />" />
 <script src="<c:url value="/res/js/jquery-3.3.1.slim.min.js" />" ></script>
 <script src="<c:url value="/res/js/popper.min.js" />" ></script>
@@ -26,6 +30,8 @@
 <script src="<c:url value="/res/js/ajax.js?v=1"></c:url >"></script>
 <script src="<c:url value="/res/js/util.js?v=1"></c:url >"></script> 
 <script src="<c:url value="/res/js/strings.js?v=1"></c:url >"></script> 
+
+
 <style>
 	#layout{
 		display: grid;
