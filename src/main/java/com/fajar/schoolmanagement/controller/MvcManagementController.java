@@ -2,7 +2,6 @@ package com.fajar.schoolmanagement.controller;
 
 import static com.fajar.schoolmanagement.util.MvcUtil.constructCommonModel;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 
@@ -59,7 +58,7 @@ public class MvcManagementController extends BaseController {
 
 	@RequestMapping(value = { "/common/{name}" })
 	public String unit(@PathVariable("name") String name, Model model, HttpServletRequest request,
-			HttpServletResponse response) throws IOException {
+			HttpServletResponse response) throws Exception {
 
 		if (!userService.hasSession(request)) {
 			sendRedirectLogin(request, response);
@@ -76,7 +75,7 @@ public class MvcManagementController extends BaseController {
 	}
 
 	@RequestMapping(value = { "/profile" })
-	public String profile(Model model, HttpServletRequest request, HttpServletResponse response) throws IOException {
+	public String profile(Model model, HttpServletRequest request, HttpServletResponse response) throws Exception {
 
 		if (!userService.hasSession(request)) {
 			sendRedirectLogin(request, response);
@@ -93,7 +92,7 @@ public class MvcManagementController extends BaseController {
 	}
 
 	@RequestMapping(value = { "/menu" })
-	public String menu(Model model, HttpServletRequest request, HttpServletResponse response) throws IOException {
+	public String menu(Model model, HttpServletRequest request, HttpServletResponse response) throws Exception {
 
 		if (!userService.hasSession(request)) {
 			sendRedirectLogin(request, response);
@@ -114,7 +113,7 @@ public class MvcManagementController extends BaseController {
 	}
 	
 	@RequestMapping(value = { "/fundflow" })
-	public String fundflow(Model model, HttpServletRequest request, HttpServletResponse response) throws IOException {
+	public String fundflow(Model model, HttpServletRequest request, HttpServletResponse response) throws Exception {
 
 		if (!userService.hasSession(request)) {
 			sendRedirectLogin(request, response);
@@ -135,7 +134,7 @@ public class MvcManagementController extends BaseController {
 	}
 	
 	@RequestMapping(value = { "/costflow" })
-	public String costflow(Model model, HttpServletRequest request, HttpServletResponse response) throws IOException {
+	public String costflow(Model model, HttpServletRequest request, HttpServletResponse response) throws Exception {
 
 		if (!userService.hasSession(request)) {
 			sendRedirectLogin(request, response);
@@ -159,7 +158,7 @@ public class MvcManagementController extends BaseController {
 
 //	@RequestMapping(value = { "/messages" })
 //	public String messages(Model model, HttpServletRequest request, HttpServletResponse response)
-//			throws IOException {
+//			throws Exception {
 //
 //		if (!userService.hasSession(request)) {
 //			sendRedirectLogin(request, response);
@@ -180,7 +179,7 @@ public class MvcManagementController extends BaseController {
 
 //	@RequestMapping(value = { "/productFlow" })
 //	public String productflow(Model model, HttpServletRequest request, HttpServletResponse response)
-//			throws IOException {
+//			throws Exception {
 //
 //		if (!userService.hasSession(request)) {
 //			sendRedirectLogin(request, response);
@@ -197,7 +196,7 @@ public class MvcManagementController extends BaseController {
 //	}
 
 	@RequestMapping(value = { "/user" })
-	public String user(Model model, HttpServletRequest request, HttpServletResponse response) throws IOException {
+	public String user(Model model, HttpServletRequest request, HttpServletResponse response) throws Exception {
 
 		if (!userService.hasSession(request)) {
 			sendRedirectLogin(request, response);
@@ -216,7 +215,7 @@ public class MvcManagementController extends BaseController {
 	}
 
 //	@RequestMapping(value = { "/menu" })
-//	public String menu(Model model, HttpServletRequest request, HttpServletResponse response) throws IOException {
+//	public String menu(Model model, HttpServletRequest request, HttpServletResponse response) throws Exception {
 //
 //		if (!userService.hasSession(request)) {
 //			sendRedirectLogin(request, response);
@@ -239,7 +238,7 @@ public class MvcManagementController extends BaseController {
 	 */
 
 	@RequestMapping(value = { "/appsession" })
-	public String appsession(Model model, HttpServletRequest request, HttpServletResponse response) throws IOException {
+	public String appsession(Model model, HttpServletRequest request, HttpServletResponse response) throws Exception {
 
 		if (!userService.hasSession(request)) {
 			sendRedirectLogin(request, response);

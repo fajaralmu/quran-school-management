@@ -1,6 +1,9 @@
 package com.fajar.schoolmanagement.util;
 
+import java.io.Serializable;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -10,6 +13,8 @@ import java.util.List;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+
+import org.apache.commons.lang3.SerializationUtils;
 
 import com.fajar.schoolmanagement.annotation.Dto;
 import com.fajar.schoolmanagement.annotation.FormField;
@@ -22,10 +27,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class EntityUtil {
 
-	public static EntityProperty createEntityProperty(Class<? extends BaseEntity> clazz,
-			HashMap<String, List<?>> listObject) {
-		log.info("Will create entity property: {}", clazz);
-
+	public static EntityProperty createEntityProperty(Class<?> clazz, HashMap<String, List<?>> listObject) throws Exception {
 		if (clazz == null || getClassAnnotation(clazz, Dto.class) == null) {
 			return null;
 		}
@@ -55,7 +57,6 @@ public class EntityUtil {
 
 				fieldNames.add(entityElement.getId());
 				entityElements.add(entityElement);
-
 			}
 
 			entityProperty.setAlias(dto.value().isEmpty() ? clazz.getSimpleName() : dto.value());
@@ -73,23 +74,23 @@ public class EntityUtil {
 
 			return entityProperty;
 		} catch (Exception e) {
-			log.error("Error creating entity property");
 			e.printStackTrace();
+			throw e;
 		}
-		return null;
+		 
 	}
 
-	public static <T> T getClassAnnotation(Class<?> entityClass, Class annotation) {
+	public static <T extends Annotation> T getClassAnnotation(Class<?> entityClass, Class<T> annotation) {
 		try {
-			return (T) entityClass.getAnnotation(annotation);
+			return entityClass.getAnnotation(annotation);
 		} catch (Exception e) {
 			return null;
 		}
 	}
 
-	public static <T> T getFieldAnnotation(Field field, Class annotation) {
+	public static <T extends Annotation> T getFieldAnnotation(Field field, Class<T> annotation) {
 		try {
-			return (T) field.getAnnotation(annotation);
+			return field.getAnnotation(annotation);
 		} catch (Exception e) {
 			return null;
 		}
@@ -206,6 +207,9 @@ public class EntityUtil {
 			if (field.getAnnotation(Id.class) != null && !withId) {
 				continue;
 			}
+			if (isStaticField(field)) {
+				continue;
+			}
 
 			Field currentField = getDeclaredField(targetClass, field.getName());
 
@@ -237,6 +241,10 @@ public class EntityUtil {
 		for (int i = 0; i < entities.size(); i++) {
 			validateDefaultValue(entities.get(i));
 		}
+	}
+
+	public static boolean isStaticField(Field field) {
+		return Modifier.isStatic(field.getModifiers());
 	}
 
 	public static <T extends BaseEntity> T validateDefaultValue(T baseEntity) {
@@ -304,14 +312,14 @@ public class EntityUtil {
 				e.printStackTrace();
 			}
 		}
-		return (T) baseEntity;
+		return baseEntity;
 	}
 
 	public static <T extends BaseEntity> List<T> validateDefaultValue(List<T> entities) {
 		for (T baseEntity : entities) {
 			baseEntity = validateDefaultValue(baseEntity);
 		}
-		return  entities;
+		return entities;
 	}
 
 	public static <T> T getObjectFromListByFieldName(final String fieldName, final Object value, final List<T> list) {
@@ -335,17 +343,34 @@ public class EntityUtil {
 		return null;
 	}
 
-	public static boolean existInList(Object o, List list) {
+	public static <T> boolean existInList(T o, List<T> list) {
 		if (null == list) {
 			log.error("LIST IS NULL");
 			return false;
 		}
-		for (Object object : list) {
+		for (T object : list) {
 			if (object.equals(o)) {
 				return true;
 			}
 		}
 		return false;
 	}
+
+	/**
+	 * Clone Serializable Object
+	 * 
+	 * @param <T>
+	 * @param serializable
+	 * @return
+	 */
+	public static <T extends Serializable> T cloneSerializable(T serializable) {
+		try {
+			return SerializationUtils.clone( serializable);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
 
 }

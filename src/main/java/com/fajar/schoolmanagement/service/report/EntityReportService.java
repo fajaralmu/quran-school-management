@@ -22,7 +22,7 @@ public class EntityReportService {
 	@Autowired
 	private WebConfigService webConfigService;
 
-	public File getEntityReport(List<BaseEntity> entities, Class<? extends BaseEntity> entityClass) {
+	public File getEntityReport(List<BaseEntity> entities, Class<? extends BaseEntity> entityClass) throws Exception {
 		log.info("Generate entity report: {}", entityClass);
 		
 		EntityProperty entityProperty = EntityUtil.createEntityProperty(entityClass, null);

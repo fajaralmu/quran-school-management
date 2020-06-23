@@ -75,10 +75,12 @@
 			className = "content-item selected";
 		}
 
-		const div = createHtmlTag("div", {
+		const div = createHtmlTag( {
+			'tagName': "div",
 			"id" : entity.id,
 			"class" : className,
-			"child" : createHtmlTag("h3", {
+			"child" : createHtmlTag({
+				'tagName': "h3", 
 				"innerHTML" : entity.name
 			})
 		});

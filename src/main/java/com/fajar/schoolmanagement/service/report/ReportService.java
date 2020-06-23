@@ -72,7 +72,7 @@ public class ReportService {
 		return students;
 	}
 
-	public File generateEntityReport(WebRequest request) { 
+	public File generateEntityReport(WebRequest request) throws Exception { 
 		log.info("generateEntityReport");
 //		request.getFilter().setLimit(0);
 		WebResponse response = entityService.filter(request);
