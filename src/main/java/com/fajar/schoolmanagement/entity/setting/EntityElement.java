@@ -15,11 +15,11 @@ import com.fajar.schoolmanagement.annotation.Dto;
 import com.fajar.schoolmanagement.annotation.FormField;
 import com.fajar.schoolmanagement.dto.FieldType;
 import com.fajar.schoolmanagement.entity.BaseEntity;
+import com.fajar.schoolmanagement.exception.InvalidValueException;
 import com.fajar.schoolmanagement.util.EntityUtil;
 import com.fajar.schoolmanagement.util.MyJsonUtil;
 import com.fajar.schoolmanagement.util.StringUtil;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.oracle.jrockit.jfr.InvalidValueException;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

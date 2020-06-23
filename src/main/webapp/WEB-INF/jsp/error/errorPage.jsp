@@ -38,6 +38,7 @@ body{
 <div class="container">
 	<h2>Sorry, error happened with code [${errorCode }]</h2>
 	<h4>${errorMessage}</h4>
+	<h3>${errorException }</h3>
 	<p>Working on it!</p>
 	<div style="text-align: center;"><p>${profile.name } ${currentYear }</p></div>
 </div>

@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.fajar.schoolmanagement.util.ThreadUtil;
+
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -51,8 +53,13 @@ public class MvcUtilController extends BaseController{
 		
 		int httpErrorCode = getErrorCode(httpRequest);
 		 errorPage.addObject("errorCode", httpErrorCode);
-		 errorPage.addObject("errorMessage", getAttribute(httpRequest, "javax.servlet.error.exception"));
-		 printHttpRequestAttrs(httpRequest);
+		 errorPage.addObject("errorException", getAttribute(httpRequest, "javax.servlet.error.exception"));
+		 errorPage.addObject("errorMessage", getAttribute(httpRequest, "javax.servlet.error.message") );
+		 
+		 ThreadUtil.run(()->{
+			 printHttpRequestAttrs(httpRequest);
+		 });
+		 
 		return errorPage;
 	}
 	
@@ -63,12 +70,24 @@ public class MvcUtilController extends BaseController{
 		while(attrNames.hasMoreElements()) {
 			String attrName = attrNames.nextElement();
 			Object attributeValue = httpRequest.getAttribute(attrName);
+			
 			log.debug(number+". "+attrName+" : "+attributeValue + " || TYPE: " + ( attributeValue == null ? "" : attributeValue.getClass()));
+			printException(attributeValue);
+			
 			number++;
 		}
 		log.debug("===== ** end ** ====");
 	}
 
+	private void printException(Object ex) {
+		try {
+			Exception e = (Exception) ex;
+			e.printStackTrace();
+		}catch (Exception e) {
+			 
+		}
+	}
+	
 	private int getErrorCode(HttpServletRequest httpRequest) {
 		try {
 			return (Integer) httpRequest.getAttribute("javax.servlet.error.status_code");
