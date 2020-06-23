@@ -29,7 +29,7 @@ public class MyHandlerInterceptor extends HandlerInterceptorAdapter {
 	public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler,
 			ModelAndView modelAndView) throws Exception {
 		 
-		 log.info("[postHandle][" + request + "], viewName: {}", modelAndView.getViewName());
+		 log.info("[postHandle][" + request + "], viewName: {}", (modelAndView == null ?"NULL": modelAndView.getViewName()));
 		super.postHandle(request, response, handler, modelAndView);
 	}
 	@Override
