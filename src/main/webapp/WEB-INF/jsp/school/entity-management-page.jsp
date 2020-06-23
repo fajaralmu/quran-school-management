@@ -483,7 +483,7 @@
 			
 			const fieldName = fieldNames[i];
 			const isDateField = isDate(fieldName);
-			const cell = createCell(fieldName); 
+			const cell = createCell(extractCamelCase(fieldName)); 
 			
 			var filterInputGroup;
 			 
