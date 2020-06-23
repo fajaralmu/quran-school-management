@@ -5,10 +5,11 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <style>
 .report-item {
-	width: 100%;
+	/* width: 100%;
 	height: 250px;
 	border: solid 2px maroon;
-	padding: 10px;
+	padding: 10px; */
+	margin: 7px;
 }
 </style>
 <div class="content" style="width: 100%">
@@ -21,7 +22,7 @@
 
 		<div
 			style="display: grid; grid-template-columns: 30% 30% 30%; grid-column-gap: 10px; grid-row-gap: 10px">
-			<div class="report-item">
+			<div class="rounded-box-shadow report-item">
 				<h3>Filter</h3>
 				<h4>Month</h4>
 				<select id="select-month">
@@ -33,7 +34,7 @@
 				<input id="input-year" type="number" />
 			</div>
 			<c:forEach var="reportMenu" items="${reportMenus }">
-				<div class="report-item">
+				<div class="rounded-box-shadow report-item">
 					<h3>${reportMenu.name }</h3>
 					<p>${reportMenu.description }</p>
 					<button class="btn btn-info report-process" name="${reportMenu.url }">process</button>

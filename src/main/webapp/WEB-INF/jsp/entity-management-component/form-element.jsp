@@ -175,8 +175,7 @@
 					<button id="btn-submit"  
 						class="btn btn-primary">Save Changes</button>
 					<c:if test="${singleRecord == false }">
-						<input  type="reset" id="btn-clear" 
-							value="Clear" />
+						<button class="btn" type="reset" id="btn-clear" onclick="clear()" >Clear</button>
 					</c:if>
 				</c:if>
 				<c:if test="${singleRecord == false }">

@@ -184,6 +184,6 @@
 		}
 	}
 	
-	initPagesLinkEvent();
+	//initPagesLinkEvent();
 	getCurrentPageCode();
 </script>
