@@ -965,6 +965,9 @@
 				submit();
 			}	
 		 
+			_byId("btn-clear").onclick = function(e){
+				clear();
+			}
 		}
 		
 		initEvents();
