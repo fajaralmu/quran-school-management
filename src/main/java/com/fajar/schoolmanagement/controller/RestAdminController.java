@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fajar.schoolmanagement.annotation.Authenticated;
 import com.fajar.schoolmanagement.config.LogProxyFactory;
 import com.fajar.schoolmanagement.dto.WebRequest;
 import com.fajar.schoolmanagement.dto.WebResponse;
@@ -24,12 +25,13 @@ import com.fajar.schoolmanagement.service.MessagingService;
 @CrossOrigin
 @RestController
 @RequestMapping("/api/admin")
+@Authenticated
 public class RestAdminController extends BaseController {
-	Logger log = LoggerFactory.getLogger(RestAdminController.class);  
+	Logger log = LoggerFactory.getLogger(RestAdminController.class);
 	@Autowired
 	private MessagingService messagingService;
 	@Autowired
-	private RestPublicController restPublicController; 
+	private RestPublicController restPublicController;
 
 	public RestAdminController() {
 		log.info("------------------RestAdminController-----------------");
@@ -43,9 +45,7 @@ public class RestAdminController extends BaseController {
 	@PostMapping(value = "/appsessions", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public WebResponse appsessions(@RequestBody WebRequest request, HttpServletRequest httpRequest,
 			HttpServletResponse httpResponse) throws IOException {
-		if (!accountService.validateToken(httpRequest)) {
-			return WebResponse.failedResponse();
-		}
+
 		WebResponse response = userSessionService.generateAppRequest();
 		return response;
 	}
@@ -53,55 +53,49 @@ public class RestAdminController extends BaseController {
 	@PostMapping(value = "/deletesession", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public WebResponse deletesession(@RequestBody WebRequest request, HttpServletRequest httpRequest,
 			HttpServletResponse httpResponse) throws IOException {
-		if (!accountService.validateToken(httpRequest)) {
-			return WebResponse.failedResponse();
-		}
+
 		WebResponse response = userSessionService.deleteSession(request);
 		return response;
 	}
 
-	@PostMapping(value =  "/sendmessage", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping(value = "/sendmessage", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public WebResponse sendMessage(@RequestBody WebRequest request, HttpServletRequest httpRequest,
 			HttpServletResponse httpResponse) throws IOException {
-		 restPublicController.validatePageRequest(httpRequest);
-		WebResponse response = messagingService.sendMessage(request,httpRequest);
+		restPublicController.validatePageRequest(httpRequest);
+		WebResponse response = messagingService.sendMessage(request, httpRequest);
 		return response;
 	}
-	
-	@PostMapping(value =  "/getmessages", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+
+	@PostMapping(value = "/getmessages", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public WebResponse getmessages(@RequestBody WebRequest request, HttpServletRequest httpRequest,
 			HttpServletResponse httpResponse) throws IOException {
-		 restPublicController.validatePageRequest(httpRequest);
+		restPublicController.validatePageRequest(httpRequest);
 		WebResponse response = messagingService.getMessages(httpRequest);
 		return response;
 	}
-	
-	@PostMapping(value =  "/replymessage", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+
+	@PostMapping(value = "/replymessage", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public WebResponse replyMessage(@RequestBody WebRequest request, HttpServletRequest httpRequest,
 			HttpServletResponse httpResponse) throws IOException {
 		if (!accountService.validateToken(httpRequest)) {
 			return WebResponse.failedResponse();
 		}
-		WebResponse response = messagingService.replyMessage(request,httpRequest);
+		WebResponse response = messagingService.replyMessage(request, httpRequest);
 		return response;
 	}
-	
-	@PostMapping(value =  "/clearsession", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+
+	@PostMapping(value = "/clearsession", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public WebResponse clearsessions(@RequestBody WebRequest request, HttpServletRequest httpRequest,
 			HttpServletResponse httpResponse) throws IOException {
-		if (!accountService.validateToken(httpRequest)) {
-			return WebResponse.failedResponse();
-		}
+
 		WebResponse response = userSessionService.clearSessions();
 		return response;
 	}
 
-	@PostMapping(value =  "/savepagesequence", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping(value = "/savepagesequence", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public WebResponse savePageSequence(@RequestBody WebRequest request, HttpServletRequest httpRequest,
 			HttpServletResponse httpResponse) throws IOException {
-		if (!accountService.validateToken(httpRequest)) {
-			return WebResponse.failedResponse();
-		}
+
 		WebResponse response = componentService.savePageSequence(request);
 		return response;
 	}

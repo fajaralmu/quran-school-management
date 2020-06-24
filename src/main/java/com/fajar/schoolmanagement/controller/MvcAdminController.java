@@ -27,9 +27,10 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 @Controller
-@RequestMapping("admin") 
-public class MvcAdminController extends BaseController { 
-	
+@RequestMapping("admin")
+@Authenticated
+public class MvcAdminController extends BaseController {
+
 	@Autowired
 	private ComponentService componentService;
 
@@ -43,50 +44,45 @@ public class MvcAdminController extends BaseController {
 		LogProxyFactory.setLoggers(this);
 	}
 
-	@RequestMapping(value = { "/home" })
-	@Authenticated
+	@RequestMapping(value = { "/home" }) 
 	public String menuDashboard(Model model, HttpServletRequest request, HttpServletResponse response)
 			throws IOException {
 		Calendar cal = Calendar.getInstance();
-		
-		setActivePage(request );
- 
+
+		setActivePage(request);
+
 		model.addAttribute("imagePath", webConfigService.getUploadedImagePath());
 		model.addAttribute("title", "App::Dashboard");
 		model.addAttribute("pageUrl", "school/home-page");
 		model.addAttribute("page", "dashboard");
 		model.addAttribute("currentMonth", cal.get(Calendar.MONTH) + 1);
 		model.addAttribute("currentYear", cal.get(Calendar.YEAR));
-		 
+
 		return basePage;
 	}
 
-	@RequestMapping(value = { "/report" })
-	@Authenticated
+	@RequestMapping(value = { "/report" }) 
 	public String reportDashboard(Model model, HttpServletRequest request, HttpServletResponse response)
 			throws IOException {
-		
+
 		model.addAttribute("title", "App::Report");
 		model.addAttribute("pageUrl", "school/report-page");
 		model.addAttribute("months", DateUtil.months());
-		model.addAttribute("reportMenus", MvcUtil.getReportMenus()); 
+		model.addAttribute("reportMenus", MvcUtil.getReportMenus());
 		addStylePath(model, "reportpage");
-		return basePage; 
+		return basePage;
 	}
-	
-	@RequestMapping(value = { "/pagesequencesetting" })
-	@Authenticated
+
+	@RequestMapping(value = { "/pagesequencesetting" }) 
 	public String pagesequencesetting(Model model, HttpServletRequest request, HttpServletResponse response)
 			throws IOException {
 
 		model.addAttribute("title", "App::Page Sequence");
-		model.addAttribute("pageUrl", "school/page-sequence"); 
-		model.addAttribute("pages", componentService.getAllPages()); 
+		model.addAttribute("pageUrl", "school/page-sequence");
+		model.addAttribute("pages", componentService.getAllPages());
 		addStylePath(model, "pagesequence");
 		return basePage;
-		
+
 	}
-	
-	
- 
+
 }

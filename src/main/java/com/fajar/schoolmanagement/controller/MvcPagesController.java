@@ -11,6 +11,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.fajar.schoolmanagement.annotation.Authenticated;
 import com.fajar.schoolmanagement.config.LogProxyFactory;
 import com.fajar.schoolmanagement.entity.Page;
 
@@ -34,6 +35,7 @@ public class MvcPagesController extends BaseController{
  
 	 
 	@RequestMapping(value = { "/page/{code}" })
+	@Authenticated
 	public String page(@PathVariable(name = "code") String code,  Model model, HttpServletRequest request, HttpServletResponse response) throws IOException, NotFoundException {
 		
 		Page page = componentService.getPage(code, request);

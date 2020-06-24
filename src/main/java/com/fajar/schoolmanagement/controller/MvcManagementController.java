@@ -38,6 +38,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Controller
 @RequestMapping("management")
+@Authenticated
 public class MvcManagementController extends BaseController {
 
 	@Autowired
@@ -57,8 +58,7 @@ public class MvcManagementController extends BaseController {
 		LogProxyFactory.setLoggers(this);
 	}
 
-	@RequestMapping(value = { "/common/{name}" })
-	@Authenticated
+	@RequestMapping(value = { "/common/{name}" }) 
 	public String unit(@PathVariable("name") String name, Model model, HttpServletRequest request,
 			HttpServletResponse response) throws Exception {
 
@@ -72,8 +72,7 @@ public class MvcManagementController extends BaseController {
 		return basePage;
 	}
 
-	@RequestMapping(value = { "/profile" })
-	@Authenticated
+	@RequestMapping(value = { "/profile" }) 
 	public String profile(Model model, HttpServletRequest request, HttpServletResponse response) throws Exception {
 
 		EntityProperty entityProperty = EntityUtil.createEntityProperty(Profile.class, null);
@@ -86,8 +85,7 @@ public class MvcManagementController extends BaseController {
 		return basePage;
 	}
 
-	@RequestMapping(value = { "/menu" })
-	@Authenticated
+	@RequestMapping(value = { "/menu" }) 
 	public String menu(Model model, HttpServletRequest request, HttpServletResponse response) throws Exception {
 
 		try {
@@ -104,8 +102,7 @@ public class MvcManagementController extends BaseController {
 		return basePage;
 	}
 
-	@RequestMapping(value = { "/fundflow" })
-	@Authenticated
+	@RequestMapping(value = { "/fundflow" }) 
 	public String fundflow(Model model, HttpServletRequest request, HttpServletResponse response) throws Exception {
 
 		try {
@@ -122,8 +119,7 @@ public class MvcManagementController extends BaseController {
 		return basePage;
 	}
 
-	@RequestMapping(value = { "/costflow" })
-	@Authenticated
+	@RequestMapping(value = { "/costflow" }) 
 	public String costflow(Model model, HttpServletRequest request, HttpServletResponse response) throws Exception {
 
 		try {
@@ -181,8 +177,7 @@ public class MvcManagementController extends BaseController {
 //		return basePage;
 //	}
 
-	@RequestMapping(value = { "/user" })
-	@Authenticated
+	@RequestMapping(value = { "/user" }) 
 	public String user(Model model, HttpServletRequest request, HttpServletResponse response) throws Exception {
 
 		try {
@@ -220,8 +215,7 @@ public class MvcManagementController extends BaseController {
 	 * 
 	 */
 
-	@RequestMapping(value = { "/appsession" })
-	@Authenticated
+	@RequestMapping(value = { "/appsession" }) 
 	public String appsession(Model model, HttpServletRequest request, HttpServletResponse response) throws Exception {
 
 		try {

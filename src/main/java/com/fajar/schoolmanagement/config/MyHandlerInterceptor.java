@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerExecutionChain;
@@ -17,6 +18,7 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandl
 import com.fajar.schoolmanagement.annotation.Authenticated;
 import com.fajar.schoolmanagement.controller.BaseController;
 import com.fajar.schoolmanagement.dto.WebResponse;
+import com.fajar.schoolmanagement.service.UserAccountService;
 import com.fajar.schoolmanagement.service.UserSessionService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -37,6 +39,8 @@ public class MyHandlerInterceptor extends HandlerInterceptorAdapter {
 	private ObjectMapper objectMapper;
 	@Autowired
     private org.springframework.context.ApplicationContext appContext;
+	@Autowired
+	private UserAccountService userAccountService;
 	
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
@@ -45,8 +49,8 @@ public class MyHandlerInterceptor extends HandlerInterceptorAdapter {
 		log.info("[preHandle][" + request + "]" + "[" + request.getMethod() + "]"); 
 		HandlerMethod handlerMethod = getHandlerMethod(request); 
 		 
-		if(isAPI(handlerMethod)) {
-			return handleAPI(request, response, handlerMethod);
+		if(isApi(handlerMethod)) {
+			return interceptApiRequest(request, response, handlerMethod);
 		}
 		
 		return super.preHandle(request, response, handler);
@@ -58,26 +62,25 @@ public class MyHandlerInterceptor extends HandlerInterceptorAdapter {
 		log.info("--------------------------- BEGIN POST HANDLE {} ----------------------", request.getRequestURI());
 
 		if (modelAndView != null && handler instanceof HandlerMethod) {
-			handleWebPage(request, response, modelAndView, handler);
+			interceptWebPageRequest(request, response, modelAndView, handler);
 		} 
 
 		super.postHandle(request, response, handler, modelAndView);
 		log.info("--------------------------- END POST HANDLE {} ----------------------", request.getRequestURI());
 	}
 
-	private boolean handleAPI(HttpServletRequest request, HttpServletResponse response, Object handler) {
+	private boolean interceptApiRequest(HttpServletRequest request, HttpServletResponse response, Object handler) {
 
 		log.info("intercept api handler: {}", request.getRequestURI());
 		HandlerMethod handlerMethod = (HandlerMethod) handler;
+		
 		boolean authenticationRequired = getAuthenticationAnnotation(handlerMethod) != null;
 		if (authenticationRequired) {
-			if (!hasSession(request)) {
+			if (!tokenIsValidToAccessAPI(request)) {
 				response.setContentType("application/json");
 				try {
 					response.getWriter().write(objectMapper.writeValueAsString(WebResponse.failed("NOT AUTHENTICATED")));
-				} catch (IOException e) { 
-					e.printStackTrace();
-				}
+				} catch (IOException e) { log.error("Error writing JSON Error Response: {}", e); }
 				return false;
 			}
 		}
@@ -85,14 +88,23 @@ public class MyHandlerInterceptor extends HandlerInterceptorAdapter {
 	}
 
 	private Authenticated getAuthenticationAnnotation(HandlerMethod handlerMethod) {
-		return handlerMethod.getMethod().getAnnotation(Authenticated.class);
+		Authenticated authenticated = null;
+		authenticated = handlerMethod.getMethod().getAnnotation(Authenticated.class);
+		if(null == authenticated) {
+			authenticated = handlerMethod.getBeanType().getAnnotation(Authenticated.class);
+		}
+		return authenticated;
 	}
 	
-	private boolean hasSession(HttpServletRequest request) {
+	private boolean tokenIsValidToAccessAPI(HttpServletRequest request) {
+		return userAccountService.validateToken(request);
+	}
+	
+	private boolean hasSessionToAccessWebPage(HttpServletRequest request) {
 		return userSessionService.hasSession(request);
 	}
 
-	private void handleWebPage(HttpServletRequest request, HttpServletResponse response, ModelAndView modelAndView,
+	private void interceptWebPageRequest(HttpServletRequest request, HttpServletResponse response, ModelAndView modelAndView,
 			Object handler) {
 
 		log.info("intercept webpage handler: {}", request.getRequestURI());
@@ -102,7 +114,7 @@ public class MyHandlerInterceptor extends HandlerInterceptorAdapter {
 		log.info("URI: {} requires authentication: {}", request.getRequestURI(), authenticationRequired);
 
 		if (authenticationRequired) {
-			if (!hasSession(request)) {
+			if (!hasSessionToAccessWebPage(request)) {
 				log.info("URI: {} not authenticated, will redirect to login page", request.getRequestURI());
 				BaseController.sendRedirectLogin(request, response);
 			}
@@ -142,8 +154,11 @@ public class MyHandlerInterceptor extends HandlerInterceptorAdapter {
          return null;
 	}
 	
-	private boolean isAPI(HandlerMethod handlerMethod) {
+	private boolean isApi(HandlerMethod handlerMethod) {
 		if(null == handlerMethod) { return false; }
-		return handlerMethod.getBeanType().getAnnotation(RestController.class) != null;
+		boolean hasRestController = handlerMethod.getBeanType().getAnnotation(RestController.class) != null;
+		boolean hasPostMapping = handlerMethod.getMethod().getAnnotation(PostMapping.class) != null;
+		
+		return hasRestController || hasPostMapping;
 	}
 }

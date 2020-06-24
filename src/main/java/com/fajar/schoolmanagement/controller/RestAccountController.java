@@ -59,6 +59,7 @@ public class RestAccountController {
 		return response;
 	}
 	@PostMapping(value = "/logout", produces = MediaType.APPLICATION_JSON_VALUE)
+	@Authenticated
 	public WebResponse logout(  HttpServletRequest httpRequest,
 			HttpServletResponse httpResponse) throws IOException {
 		 
@@ -69,7 +70,7 @@ public class RestAccountController {
 		 
 		return WebResponse.builder().code(success?"00":"01").message("SUCCESS LOGOUT: "+success).build();
 	}
-	@PostMapping(value = "/getprofile", produces = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping(value = "/getprofile", produces = MediaType.APPLICATION_JSON_VALUE) 
 	@Authenticated
 	public WebResponse getprpfile(  HttpServletRequest httpRequest,
 			HttpServletResponse httpResponse) throws IOException {

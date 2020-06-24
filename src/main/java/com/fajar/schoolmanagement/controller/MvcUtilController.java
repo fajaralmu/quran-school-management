@@ -32,7 +32,7 @@ public class MvcUtilController extends BaseController{
 	}
 
 	@GetMapping(value = "notfound")
-	public String halamanNotFound(Model model) throws IOException {
+	public String notFoundPage(Model model) throws IOException {
 		model.addAttribute("pesan", "Halaman tidak ditemukan");
 		return "error/notfound";
 	}
