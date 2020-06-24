@@ -12,6 +12,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.fajar.schoolmanagement.annotation.Authenticated;
 import com.fajar.schoolmanagement.config.LogProxyFactory;
 import com.fajar.schoolmanagement.service.ComponentService;
 import com.fajar.schoolmanagement.util.DateUtil;
@@ -26,7 +27,7 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 @Controller
-@RequestMapping("admin")
+@RequestMapping("admin") 
 public class MvcAdminController extends BaseController { 
 	
 	@Autowired
@@ -43,14 +44,10 @@ public class MvcAdminController extends BaseController {
 	}
 
 	@RequestMapping(value = { "/home" })
+	@Authenticated
 	public String menuDashboard(Model model, HttpServletRequest request, HttpServletResponse response)
 			throws IOException {
 		Calendar cal = Calendar.getInstance();
-		
-		if (!userService.hasSession(request)) {
-			sendRedirectLogin(request, response);
-			return basePage;
-		}
 		
 		setActivePage(request );
  
@@ -65,12 +62,10 @@ public class MvcAdminController extends BaseController {
 	}
 
 	@RequestMapping(value = { "/report" })
+	@Authenticated
 	public String reportDashboard(Model model, HttpServletRequest request, HttpServletResponse response)
 			throws IOException {
-		if (!userService.hasSession(request)) {
-			sendRedirectLogin(request, response);
-			return basePage;
-		}
+		
 		model.addAttribute("title", "App::Report");
 		model.addAttribute("pageUrl", "school/report-page");
 		model.addAttribute("months", DateUtil.months());
@@ -80,12 +75,10 @@ public class MvcAdminController extends BaseController {
 	}
 	
 	@RequestMapping(value = { "/pagesequencesetting" })
+	@Authenticated
 	public String pagesequencesetting(Model model, HttpServletRequest request, HttpServletResponse response)
 			throws IOException {
-		if (!userService.hasSession(request)) {
-			sendRedirectLogin(request, response);
-			return basePage;
-		}
+
 		model.addAttribute("title", "App::Page Sequence");
 		model.addAttribute("pageUrl", "school/page-sequence"); 
 		model.addAttribute("pages", componentService.getAllPages()); 

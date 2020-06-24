@@ -15,6 +15,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.fajar.schoolmanagement.annotation.Authenticated;
 import com.fajar.schoolmanagement.config.LogProxyFactory;
 import com.fajar.schoolmanagement.entity.CapitalFlow;
 import com.fajar.schoolmanagement.entity.CostFlow;
@@ -57,34 +58,28 @@ public class MvcManagementController extends BaseController {
 	}
 
 	@RequestMapping(value = { "/common/{name}" })
+	@Authenticated
 	public String unit(@PathVariable("name") String name, Model model, HttpServletRequest request,
 			HttpServletResponse response) throws Exception {
 
-		if (!userService.hasSession(request)) {
-			sendRedirectLogin(request, response);
-			return basePage;
-		}
 		try {
 			checkUserAccess(userService.getUserFromSession(request), "/management/common/" + name);
 		} catch (Exception e) {
 			return ERROR_404_PAGE;
 		}
 		model = entityManagementPageService.setModel(request, model, name);
-		
+
 		return basePage;
 	}
 
 	@RequestMapping(value = { "/profile" })
+	@Authenticated
 	public String profile(Model model, HttpServletRequest request, HttpServletResponse response) throws Exception {
 
-		if (!userService.hasSession(request)) {
-			sendRedirectLogin(request, response);
-			return basePage;
-		}
-		
 		EntityProperty entityProperty = EntityUtil.createEntityProperty(Profile.class, null);
 
-		model = constructCommonModel(request, entityProperty, model, Profile.class.getSimpleName().toLowerCase(), "management");
+		model = constructCommonModel(request, entityProperty, model, Profile.class.getSimpleName().toLowerCase(),
+				"management");
 		// override singleObject
 		model.addAttribute("entityId", webConfigService.getProfile().getId());
 		model.addAttribute("singleRecord", true);
@@ -92,12 +87,9 @@ public class MvcManagementController extends BaseController {
 	}
 
 	@RequestMapping(value = { "/menu" })
+	@Authenticated
 	public String menu(Model model, HttpServletRequest request, HttpServletResponse response) throws Exception {
 
-		if (!userService.hasSession(request)) {
-			sendRedirectLogin(request, response);
-			return basePage;
-		}
 		try {
 			checkUserAccess(userService.getUserFromSession(request), "/management/menu");
 		} catch (Exception e) {
@@ -106,19 +98,16 @@ public class MvcManagementController extends BaseController {
 		HashMap<String, List<?>> listObject = new HashMap<>();
 		List pages = componentService.getAllPages();
 		log.debug("pages: {}", pages);
-		listObject.put("menuPage", pages );
+		listObject.put("menuPage", pages);
 		EntityProperty entityProperty = EntityUtil.createEntityProperty(Menu.class, listObject);
 		model = constructCommonModel(request, entityProperty, model, "Menu", "management");
 		return basePage;
 	}
-	
+
 	@RequestMapping(value = { "/fundflow" })
+	@Authenticated
 	public String fundflow(Model model, HttpServletRequest request, HttpServletResponse response) throws Exception {
 
-		if (!userService.hasSession(request)) {
-			sendRedirectLogin(request, response);
-			return basePage;
-		}
 		try {
 			checkUserAccess(userService.getUserFromSession(request), "/management/fundflow");
 		} catch (Exception e) {
@@ -127,19 +116,16 @@ public class MvcManagementController extends BaseController {
 		HashMap<String, List<?>> listObject = new HashMap<>();
 		List fundTypes = componentService.getAllFundTypes();
 		log.debug("fundTypes: {}", fundTypes);
-		listObject.put("fundType", fundTypes );
+		listObject.put("fundType", fundTypes);
 		EntityProperty entityProperty = EntityUtil.createEntityProperty(CapitalFlow.class, listObject);
 		model = constructCommonModel(request, entityProperty, model, "Fund Flow", "management");
 		return basePage;
 	}
-	
+
 	@RequestMapping(value = { "/costflow" })
+	@Authenticated
 	public String costflow(Model model, HttpServletRequest request, HttpServletResponse response) throws Exception {
 
-		if (!userService.hasSession(request)) {
-			sendRedirectLogin(request, response);
-			return basePage;
-		}
 		try {
 			checkUserAccess(userService.getUserFromSession(request), "/management/costflow");
 		} catch (Exception e) {
@@ -148,7 +134,7 @@ public class MvcManagementController extends BaseController {
 		HashMap<String, List<?>> listObject = new HashMap<>();
 		List costTypes = componentService.getAllCostTypes();
 		log.debug("costTypes: {}", costTypes);
-		listObject.put("costType", costTypes );
+		listObject.put("costType", costTypes);
 		EntityProperty entityProperty = EntityUtil.createEntityProperty(CostFlow.class, listObject);
 		model = constructCommonModel(request, entityProperty, model, "Cost Flow", "management");
 		return basePage;
@@ -196,12 +182,9 @@ public class MvcManagementController extends BaseController {
 //	}
 
 	@RequestMapping(value = { "/user" })
+	@Authenticated
 	public String user(Model model, HttpServletRequest request, HttpServletResponse response) throws Exception {
 
-		if (!userService.hasSession(request)) {
-			sendRedirectLogin(request, response);
-			return basePage;
-		}
 		try {
 			checkUserAccess(userService.getUserFromSession(request), "/management/user");
 		} catch (Exception e) {
@@ -238,12 +221,9 @@ public class MvcManagementController extends BaseController {
 	 */
 
 	@RequestMapping(value = { "/appsession" })
+	@Authenticated
 	public String appsession(Model model, HttpServletRequest request, HttpServletResponse response) throws Exception {
 
-		if (!userService.hasSession(request)) {
-			sendRedirectLogin(request, response);
-			return basePage;
-		}
 		try {
 			checkUserAccess(userService.getUserFromSession(request), "/management/menu");
 		} catch (Exception e) {
