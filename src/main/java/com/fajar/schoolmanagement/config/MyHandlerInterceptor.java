@@ -38,32 +38,30 @@ public class MyHandlerInterceptor extends HandlerInterceptorAdapter {
 	@Autowired
 	private ObjectMapper objectMapper;
 	@Autowired
-    private org.springframework.context.ApplicationContext appContext;
+	private org.springframework.context.ApplicationContext appContext;
 	@Autowired
 	private UserAccountService userAccountService;
-	
+
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
 			throws Exception {
 
-		log.info("[preHandle][" + request + "]" + "[" + request.getMethod() + "]"); 
-		HandlerMethod handlerMethod = getHandlerMethod(request); 
-		 
-		if(isApi(handlerMethod)) {
+		log.info("[preHandle][" + request + "]" + "[" + request.getMethod() + "]");
+		HandlerMethod handlerMethod = getHandlerMethod(request);
+
+		if (handlerMethod != null && isApi(handlerMethod)) {
 			return interceptApiRequest(request, response, handlerMethod);
+		} else if (handlerMethod != null) {
+			return interceptWebPageRequest(request, response, handlerMethod);
 		}
-		
+
 		return super.preHandle(request, response, handler);
-	} 
+	}
 
 	@Override
 	public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler,
 			ModelAndView modelAndView) throws Exception {
 		log.info("--------------------------- BEGIN POST HANDLE {} ----------------------", request.getRequestURI());
-
-		if (modelAndView != null && handler instanceof HandlerMethod) {
-			interceptWebPageRequest(request, response, modelAndView, handler);
-		} 
 
 		super.postHandle(request, response, handler, modelAndView);
 		log.info("--------------------------- END POST HANDLE {} ----------------------", request.getRequestURI());
@@ -73,14 +71,17 @@ public class MyHandlerInterceptor extends HandlerInterceptorAdapter {
 
 		log.info("intercept api handler: {}", request.getRequestURI());
 		HandlerMethod handlerMethod = (HandlerMethod) handler;
-		
+
 		boolean authenticationRequired = getAuthenticationAnnotation(handlerMethod) != null;
 		if (authenticationRequired) {
 			if (!tokenIsValidToAccessAPI(request)) {
 				response.setContentType("application/json");
 				try {
-					response.getWriter().write(objectMapper.writeValueAsString(WebResponse.failed("NOT AUTHENTICATED")));
-				} catch (IOException e) { log.error("Error writing JSON Error Response: {}", e); }
+					response.getWriter()
+							.write(objectMapper.writeValueAsString(WebResponse.failed("NOT AUTHENTICATED")));
+				} catch (IOException e) {
+					log.error("Error writing JSON Error Response: {}", e);
+				}
 				return false;
 			}
 		}
@@ -90,22 +91,21 @@ public class MyHandlerInterceptor extends HandlerInterceptorAdapter {
 	private Authenticated getAuthenticationAnnotation(HandlerMethod handlerMethod) {
 		Authenticated authenticated = null;
 		authenticated = handlerMethod.getMethod().getAnnotation(Authenticated.class);
-		if(null == authenticated) {
+		if (null == authenticated) {
 			authenticated = handlerMethod.getBeanType().getAnnotation(Authenticated.class);
 		}
 		return authenticated;
 	}
-	
+
 	private boolean tokenIsValidToAccessAPI(HttpServletRequest request) {
 		return userAccountService.validateToken(request);
 	}
-	
+
 	private boolean hasSessionToAccessWebPage(HttpServletRequest request) {
 		return userSessionService.hasSession(request);
 	}
 
-	private void interceptWebPageRequest(HttpServletRequest request, HttpServletResponse response, ModelAndView modelAndView,
-			Object handler) {
+	private boolean interceptWebPageRequest(HttpServletRequest request, HttpServletResponse response, Object handler) {
 
 		log.info("intercept webpage handler: {}", request.getRequestURI());
 		HandlerMethod handlerMethod = (HandlerMethod) handler;
@@ -117,11 +117,11 @@ public class MyHandlerInterceptor extends HandlerInterceptorAdapter {
 			if (!hasSessionToAccessWebPage(request)) {
 				log.info("URI: {} not authenticated, will redirect to login page", request.getRequestURI());
 				BaseController.sendRedirectLogin(request, response);
+				return false;
 			}
 		}
 
-		log.info("[handler Class] {}", handler.getClass());
-		log.info("[postHandle], viewName: {}", modelAndView.getViewName());
+		return true;
 	}
 
 	@Override
@@ -131,34 +131,38 @@ public class MyHandlerInterceptor extends HandlerInterceptorAdapter {
 		super.afterCompletion(request, response, handler, ex);
 	}
 
-	
+	//// https://stackoverflow.com/questions/45595203/how-i-get-the-handlermethod-matchs-a-httpservletrequest-in-a-filter
 	private HandlerMethod getHandlerMethod(HttpServletRequest request) {
-		 HandlerMethod handlerMethod = null;
-		  
-         try {
-             RequestMappingHandlerMapping req2HandlerMapping = (RequestMappingHandlerMapping) appContext.getBean("org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping");
-             // Map<RequestMappingInfo, HandlerMethod> handlerMethods = req2HandlerMapping.getHandlerMethods();
-             HandlerExecutionChain handlerExeChain = req2HandlerMapping.getHandler(request);
-             if (Objects.nonNull(handlerExeChain)) {
-                 handlerMethod = (HandlerMethod) handlerExeChain.getHandler();
-                 
-                 log.info("[handler method] {}", handlerMethod.getClass());
-                 return handlerMethod;
-             }
-         } catch (Exception e) {
-             log.warn("Lookup the handler method ERROR", e);
-         } finally {
-             log.debug("URI = " + request.getRequestURI() + ", handlerMethod = " + handlerMethod);
-         }
-         
-         return null;
+		HandlerMethod handlerMethod = null;
+
+		try {
+			RequestMappingHandlerMapping req2HandlerMapping = (RequestMappingHandlerMapping) appContext
+					.getBean("org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping");
+			// Map<RequestMappingInfo, HandlerMethod> handlerMethods =
+			// req2HandlerMapping.getHandlerMethods();
+			HandlerExecutionChain handlerExeChain = req2HandlerMapping.getHandler(request);
+			if (Objects.nonNull(handlerExeChain)) {
+				handlerMethod = (HandlerMethod) handlerExeChain.getHandler();
+
+				log.info("[handler method] {}", handlerMethod.getClass());
+				return handlerMethod;
+			}
+		} catch (Exception e) {
+			log.warn("Lookup the handler method ERROR", e);
+		} finally {
+			log.debug("URI = " + request.getRequestURI() + ", handlerMethod = " + handlerMethod);
+		}
+
+		return null;
 	}
-	
+
 	private boolean isApi(HandlerMethod handlerMethod) {
-		if(null == handlerMethod) { return false; }
+		if (null == handlerMethod) {
+			return false;
+		}
 		boolean hasRestController = handlerMethod.getBeanType().getAnnotation(RestController.class) != null;
 		boolean hasPostMapping = handlerMethod.getMethod().getAnnotation(PostMapping.class) != null;
-		
+
 		return hasRestController || hasPostMapping;
 	}
 }
