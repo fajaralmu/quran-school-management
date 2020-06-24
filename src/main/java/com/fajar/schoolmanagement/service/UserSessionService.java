@@ -211,7 +211,7 @@ public class UserSessionService {
 		User user = getUserFromSession(request);  
 		 
 		try {
-			if (user == null && request.getHeader(HEADER_LOGIN_KEY)!=null) {
+			if (user == null && request.getHeader(HEADER_LOGIN_KEY) != null) {
 				user = getUserFromRegistry(request); 
 			} 
 			return user;
@@ -233,7 +233,7 @@ public class UserSessionService {
 	 * @return
 	 */
 	public String getToken(HttpServletRequest httpRequest) {
-		User user = getUserFromSession(httpRequest);
+		User user = getLoggedUser(httpRequest);
 		log.info("==loggedUser: "+user);
 		
 		if(user == null)

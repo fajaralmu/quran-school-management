@@ -116,8 +116,10 @@ public class UserAccountService {
 		 */
 		boolean pageRequestValidated = userSessionService.validatePageRequest(httpRequest );
 		if(pageRequestValidated) {
+			log.info("Page request has been validated");
 			return true;
 		}else {
+			log.info("will validate token");
 			return validateToken(requestToken, httpRequest);
 		} 
 	}
