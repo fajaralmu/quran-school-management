@@ -105,7 +105,7 @@ public class UserAccountService {
 	} 
 
 	/**
-	 * validate session token & registry token
+	 * validate session token & registry token, standalone client requires loginKey and requestToken header
 	 * @param httpRequest
 	 * @return
 	 */
@@ -114,7 +114,7 @@ public class UserAccountService {
 		/**
 		 * TESTING
 		 */
-		boolean pageRequestValidated = userSessionService.validatePageRequest(httpRequest );
+		boolean pageRequestValidated = userSessionService.validateWebPageRequest(httpRequest );
 		if(pageRequestValidated) {
 			log.info("Page request has been validated");
 			return true;

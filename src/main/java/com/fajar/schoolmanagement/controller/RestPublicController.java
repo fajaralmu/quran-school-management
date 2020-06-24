@@ -52,7 +52,7 @@ public class RestPublicController extends BaseController{
 	}
 	
 	public void validatePageRequest(HttpServletRequest req) { 
-		boolean validated = userSessionService.validatePageRequest(req );
+		boolean validated = userSessionService.validateWebPageRequest(req );
         if(!validated)  {
         	throw new RuntimeErrorException(null, "Invalid page request");
         }

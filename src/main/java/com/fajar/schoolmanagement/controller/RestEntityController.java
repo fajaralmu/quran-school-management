@@ -21,7 +21,6 @@ import com.fajar.schoolmanagement.config.LogProxyFactory;
 import com.fajar.schoolmanagement.dto.WebRequest;
 import com.fajar.schoolmanagement.dto.WebResponse;
 import com.fajar.schoolmanagement.service.EntityService;
-import com.fajar.schoolmanagement.service.UserAccountService;
 
 @CrossOrigin
 @RestController
@@ -29,8 +28,6 @@ import com.fajar.schoolmanagement.service.UserAccountService;
 @Authenticated
 public class RestEntityController {
 	Logger log = LoggerFactory.getLogger(RestEntityController.class);
-	@Autowired
-	private UserAccountService accountService;
 	@Autowired
 	private EntityService entityService;
 

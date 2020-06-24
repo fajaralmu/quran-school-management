@@ -255,7 +255,7 @@ public class UserSessionService {
 		return token;
 	}
 
-	public boolean validatePageRequest(HttpServletRequest req) {
+	public boolean validateWebPageRequest(HttpServletRequest req) {
 		final String requestId = req.getHeader(RuntimeService.PAGE_REQUEST_ID);
 		log.info("Page request id: " + requestId);
 		
@@ -310,7 +310,7 @@ public class UserSessionService {
 	 */
 
 	public WebResponse requestId(HttpServletRequest servletRequest, HttpServletResponse servletResponse) {
-		if(validatePageRequest(servletRequest)) {
+		if(validateWebPageRequest(servletRequest)) {
 			 String requestId = servletRequest.getHeader(RuntimeService.PAGE_REQUEST_ID);
 			 
 			 if(hasSession(servletRequest)) {
@@ -442,25 +442,25 @@ public class UserSessionService {
 	 */
 	public User getUserByUsernameAndPassword(WebRequest request) {
 		User requestUser = request.getUser();
-		User dbUser = userRepository.findByUsername (requestUser.getUsername());
+		User user = userRepository.findByUsername (requestUser.getUsername());
 		
-		if(dbUser != null) {
-			log.info("username: {} exist", dbUser.getUsername() );
+		if(user != null) {
+			log.info("username: {} exist", user.getUsername() );
 		}else {
 			log.error("username: {} does not exist", requestUser.getUsername());
 		}
 		
-		boolean passwordMatched = comparePassword(dbUser, requestUser.getPassword());
+		boolean passwordMatched = comparePassword(user, requestUser.getPassword());
 		
-		return passwordMatched ? dbUser : null;
+		return passwordMatched ? user : null;
 	}
 	
-	private boolean comparePassword(User dbUser, String password) {
-		if(null == password) {
+	private boolean comparePassword(User user, String password) {
+		if(null == password || null == user) {
 			return false;
 		}
 		
-		boolean match = password.equals(dbUser.getPassword());
+		boolean match = password.equals(user.getPassword());
 		log.info("Password match: {}", match);
 		
 		return match;

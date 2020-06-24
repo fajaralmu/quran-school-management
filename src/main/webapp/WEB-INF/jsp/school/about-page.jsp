@@ -14,27 +14,27 @@
 				<tbody>
 					<tr>
 						<td>Name</td>
-						<td>${shopProfile.name }</td>
+						<td>${profile.name }</td>
 					</tr>
 					<tr>
 						<td>Code</td>
-						<td>${shopProfile.martCode }</td>
+						<td>${profile.martCode }</td>
 					</tr>
 					<tr>
 						<td>About</td>
-						<td>${shopProfile.about }</td>
+						<td>${profile.about }</td>
 					</tr>
 					<tr>
 						<td>Address</td>
-						<td>${shopProfile.address }</td>
+						<td>${profile.address }</td>
 					</tr>
 					<tr>
 						<td>Contact</td>
-						<td>${shopProfile.contact }</td>
+						<td>${profile.contact }</td>
 					</tr>
 					<tr>
 						<td>Website</td>
-						<td>${shopProfile.website }</td>
+						<td>${profile.website }</td>
 					</tr>
 				</tbody>
 			</table>

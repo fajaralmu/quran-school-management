@@ -7,14 +7,12 @@ import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.fajar.schoolmanagement.annotation.Authenticated;
 import com.fajar.schoolmanagement.config.LogProxyFactory;
-import com.fajar.schoolmanagement.service.ComponentService;
 import com.fajar.schoolmanagement.util.DateUtil;
 import com.fajar.schoolmanagement.util.MvcUtil;
 
@@ -30,9 +28,6 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("admin")
 @Authenticated
 public class MvcAdminController extends BaseController {
-
-	@Autowired
-	private ComponentService componentService;
 
 	public MvcAdminController() {
 		log.info("-----------------Mvc Admin Controller------------------");

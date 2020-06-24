@@ -112,7 +112,6 @@ public class MvcManagementController extends BaseController {
 		}
 		HashMap<String, List<?>> listObject = new HashMap<>();
 		List fundTypes = componentService.getAllFundTypes();
-		log.debug("fundTypes: {}", fundTypes);
 		listObject.put("fundType", fundTypes);
 		EntityProperty entityProperty = EntityUtil.createEntityProperty(CapitalFlow.class, listObject);
 		model = constructCommonModel(request, entityProperty, model, "Fund Flow", "management");
@@ -128,8 +127,7 @@ public class MvcManagementController extends BaseController {
 			return ERROR_404_PAGE;
 		}
 		HashMap<String, List<?>> listObject = new HashMap<>();
-		List costTypes = componentService.getAllCostTypes();
-		log.debug("costTypes: {}", costTypes);
+		List costTypes = componentService.getAllCostTypes(); 
 		listObject.put("costType", costTypes);
 		EntityProperty entityProperty = EntityUtil.createEntityProperty(CostFlow.class, listObject);
 		model = constructCommonModel(request, entityProperty, model, "Cost Flow", "management");
@@ -232,9 +230,6 @@ public class MvcManagementController extends BaseController {
 	private void checkUserAccess(User user, String url) throws Exception {
 		componentService.checkAccess(user, url);
 	}
-
-	public static void main(String[] args) throws ClassNotFoundException {
-		Class.forName("com.fajar.entity.costflow");
-	}
+ 
 
 }
