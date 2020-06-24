@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fajar.schoolmanagement.annotation.Authenticated;
 import com.fajar.schoolmanagement.config.LogProxyFactory;
 import com.fajar.schoolmanagement.dto.WebRequest;
 import com.fajar.schoolmanagement.dto.WebResponse;
@@ -69,12 +70,14 @@ public class RestAccountController {
 		return WebResponse.builder().code(success?"00":"01").message("SUCCESS LOGOUT: "+success).build();
 	}
 	@PostMapping(value = "/getprofile", produces = MediaType.APPLICATION_JSON_VALUE)
+	@Authenticated
 	public WebResponse getprpfile(  HttpServletRequest httpRequest,
 			HttpServletResponse httpResponse) throws IOException {
 		 
-		if (!userSessionService.hasSession(httpRequest, false)) {
-			return WebResponse.failedResponse();
-		}
+		/*
+		 * if (!userSessionService.hasSession(httpRequest, false)) { return
+		 * WebResponse.failedResponse(); }
+		 */
 		 
 		return userSessionService.getProfile(httpRequest);
 	}
