@@ -74,11 +74,6 @@ public class InterceptorProcessor {
 
 		return true;
 	}
-	
-	
-	
-	
-	
 
 	private Authenticated getAuthenticationAnnotation(HandlerMethod handlerMethod) {
 		Authenticated authenticated = null;

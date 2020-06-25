@@ -8,9 +8,12 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.fajar.schoolmanagement.annotation.CustomEntity;
+import com.fajar.schoolmanagement.dto.WebResponse;
 import com.fajar.schoolmanagement.querybuilder.QueryHolder;
 
 import lombok.extern.slf4j.Slf4j;
@@ -34,6 +37,7 @@ public class RepositoryCustomImpl<T> implements RepositoryCustom<T> {
 			resultList = new ArrayList<>();
 		}
 		log.info("==============SQL OK: {}", resultList.size());
+		new ResponseEntity<WebResponse>(new WebResponse(), HttpStatus.NOT_FOUND);
 		return resultList;
 
 	}
