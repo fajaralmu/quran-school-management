@@ -31,6 +31,7 @@ public class ReportData implements Serializable {
 	private List<BaseEntity> entities;
 	private EntityProperty entityProperty;
 	
+	private String requestId;
 	private String reportName;
 
 }

@@ -110,7 +110,9 @@ public class RuntimeService {
 		} else {
 
 			model = new UserSessionModel();
-			model.setTokens(new HashMap<String, Object>() {
+			model.setTokens(new HashMap<String, Object>() { 
+				private static final long serialVersionUID = 8139306012579256414L;
+
 				{
 					put(pageRequestId, value);
 				}

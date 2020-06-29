@@ -91,7 +91,8 @@
 					infoDone();
 					var response = (xhr.data);
 					var pageCode = response.code;
-					_byId(pageCode).setAttribute("class", "nav-link pagelink active");
+					if(_byId(pageCode))
+						_byId(pageCode).setAttribute("class", "nav-link pagelink active");
 				}
 		);
 	}

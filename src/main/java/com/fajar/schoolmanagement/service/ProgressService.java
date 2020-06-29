@@ -27,19 +27,19 @@ public class ProgressService {
 	
 	/**
 	 * 
-	 * @param progress    progressPoportion for current tax
-	 * @param maxProgress totalProportion for current tax
-	 * @param percent     tax Proportion for whole request
+	 * @param taskProgress    progressPoportion for current task
+	 * @param maxProgressOfCurrentTask totalProportion for current task
+	 * @param overallProcessProportion     task Proportion for whole request
 	 * @param newProgress
 	 * @param requestId
 	 */
-	public void sendProgress(double progress, double maxProgress, double percent, boolean newProgress, String requestId) {
+	public void sendProgress(double taskProgress, double maxProgressOfCurrentTask, double overallProcessProportion, boolean newProgress, String requestId) {
 		if(newProgress) {
 			currentProgress = 0.0;
 		}
-		currentProgress+=(progress/maxProgress);
-		System.out.println("| | | | |  PROGRESS: "+currentProgress+" adding :"+progress+"/"+maxProgress+", portion: "+percent+" ==> "+ currentProgress*percent);
-		realtimeService.sendProgress(currentProgress*percent, requestId);
+		currentProgress+=(taskProgress/maxProgressOfCurrentTask);
+		System.out.println("| | | | |  PROGRESS: "+currentProgress+" adding :"+taskProgress+"/"+maxProgressOfCurrentTask+", portion: "+overallProcessProportion+" ==> "+ currentProgress*overallProcessProportion);
+		realtimeService.sendProgress(currentProgress*overallProcessProportion, requestId);
 	}
 
 	public void sendComplete(String requestId) {

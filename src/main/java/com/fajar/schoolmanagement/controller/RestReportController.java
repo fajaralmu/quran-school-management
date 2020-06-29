@@ -110,7 +110,7 @@ public class RestReportController {
 //			return ShopApiResponse.failedResponse();
 //		}
 		
-		File result = excelReportService.generateEntityReport(request);
+		File result = excelReportService.generateEntityReport(request, httpRequest);
 		
 		writeFileReponse(httpResponse, result);
 	}

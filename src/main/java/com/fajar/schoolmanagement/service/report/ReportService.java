@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
+import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,8 +15,10 @@ import com.fajar.schoolmanagement.dto.WebRequest;
 import com.fajar.schoolmanagement.dto.WebResponse;
 import com.fajar.schoolmanagement.entity.Student;
 import com.fajar.schoolmanagement.service.EntityService;
+import com.fajar.schoolmanagement.service.ProgressService;
 import com.fajar.schoolmanagement.service.transaction.TransactionService;
 import com.fajar.schoolmanagement.util.CollectionUtil;
+import com.fajar.schoolmanagement.util.SessionUtil;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -37,6 +40,8 @@ public class ReportService {
 	private OrphanDonationReportService orphanDonationReportService;
 	@Autowired
 	private EntityReportService entityReportService;
+	@Autowired
+	private ProgressService progressService;
 	
 	@PostConstruct
 	public void init() {
@@ -72,12 +77,19 @@ public class ReportService {
 		return students;
 	}
 
-	public File generateEntityReport(WebRequest request) throws Exception { 
+	public File generateEntityReport(WebRequest request, HttpServletRequest httpRequest) throws Exception { 
 		log.info("generateEntityReport");
 //		request.getFilter().setLimit(0);
+		String requestId = SessionUtil.getPageRequestId(httpRequest);
+		progressService.init(requestId);
+		
 		WebResponse response = entityService.filter(request);
 		
-		File file = entityReportService.getEntityReport(response.getEntities(), response.getEntityClass());
+		progressService.sendProgress(1, 1, 20, true, requestId);
+		
+		File file = entityReportService.getEntityReport(response.getEntities(), response.getEntityClass(), httpRequest);
+		
+		progressService.sendComplete(requestId);
 		return file ;
 	} 
 

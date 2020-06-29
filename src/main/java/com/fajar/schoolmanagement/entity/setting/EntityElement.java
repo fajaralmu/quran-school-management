@@ -128,7 +128,7 @@ public class EntityElement implements Serializable {
 		checkDetailField();
 		setId(field.getName());
 		setIdentity(idField);
-		setLableName(StringUtil.extractCamelCase(lableName));
+		setLableName(StringUtil.extractCamelCase(lableName, true));
 		setRequired(formField.required());
 		setType(determinedFieldType.value);
 		setMultiple(formField.multiple());
