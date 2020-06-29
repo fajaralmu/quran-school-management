@@ -12,6 +12,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.fajar.schoolmanagement.annotation.Authenticated;
+import com.fajar.schoolmanagement.annotation.ResourcePath;
 import com.fajar.schoolmanagement.config.LogProxyFactory;
 import com.fajar.schoolmanagement.util.DateUtil;
 import com.fajar.schoolmanagement.util.MvcUtil;
@@ -40,15 +41,14 @@ public class MvcAdminController extends BaseController {
 	}
 
 	@RequestMapping(value = { "/home" }) 
+	@ResourcePath(title="Dashboard", pageUrl = "school/home-page")
 	public String menuDashboard(Model model, HttpServletRequest request, HttpServletResponse response)
 			throws IOException {
 		Calendar cal = Calendar.getInstance();
 
 		setActivePage(request);
 
-		model.addAttribute("imagePath", webConfigService.getUploadedImagePath());
-		model.addAttribute("title", "App::Dashboard");
-		model.addAttribute("pageUrl", "school/home-page");
+		model.addAttribute("imagePath", webConfigService.getUploadedImagePath()); 
 		model.addAttribute("page", "dashboard");
 		model.addAttribute("currentMonth", cal.get(Calendar.MONTH) + 1);
 		model.addAttribute("currentYear", cal.get(Calendar.YEAR));
@@ -57,25 +57,22 @@ public class MvcAdminController extends BaseController {
 	}
 
 	@RequestMapping(value = { "/report" }) 
+	@ResourcePath(title="Report", pageUrl = "school/report-page", stylePaths = {"reportpage"})
 	public String reportDashboard(Model model, HttpServletRequest request, HttpServletResponse response)
 			throws IOException {
-
-		model.addAttribute("title", "App::Report");
-		model.addAttribute("pageUrl", "school/report-page");
+ 
 		model.addAttribute("months", DateUtil.months());
 		model.addAttribute("reportMenus", MvcUtil.getReportMenus());
-		addStylePath(model, "reportpage");
+		 
 		return basePage;
 	}
 
 	@RequestMapping(value = { "/pagesequencesetting" }) 
+	@ResourcePath(title = "Menu Sequence", pageUrl = "school/page-sequence", stylePaths = {"pagesequence"})
 	public String pagesequencesetting(Model model, HttpServletRequest request, HttpServletResponse response)
 			throws IOException {
-
-		model.addAttribute("title", "App::Page Sequence");
-		model.addAttribute("pageUrl", "school/page-sequence");
-		model.addAttribute("pages", componentService.getAllPages());
-		addStylePath(model, "pagesequence");
+ 
+		model.addAttribute("pages", componentService.getAllPages()); 
 		return basePage;
 
 	}

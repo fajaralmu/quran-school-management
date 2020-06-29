@@ -14,8 +14,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.servlet.ModelAndView;
 
 import com.fajar.schoolmanagement.dto.KeyValue;
 import com.fajar.schoolmanagement.entity.Page;
@@ -161,13 +161,41 @@ public class BaseController {
 		return null;
 	}
 	
-	protected static void addStylePath(Model model, String...paths) {
-		List<KeyValue> stylePaths = new ArrayList<>();
-		for (String path : paths) {
-			stylePaths.add(KeyValue.builder().value(path).build());
+	private static void addResourcePaths(ModelAndView modelAndView, String resourceName, String... paths) {
+		List<KeyValue> resoucePaths = new ArrayList<>();
+		for (int i = 0; i < paths.length; i++) {
+			resoucePaths.add(KeyValue.builder().value(paths[i]).build());
+			log.info("{}. Add {} to {} , value: {}", i, resourceName, modelAndView.getViewName(), paths[i]);
 		}
+		setModelAttribute(modelAndView, resourceName, resoucePaths);
+	}
+	
+	private static void setModelAttribute(ModelAndView modelAndView, String attrName, Object attrValue) {
+		if(null == attrValue) { return ; }
+		modelAndView.getModel().put(attrName, attrValue);
+	}
+
+	public static void addStylePaths(ModelAndView modelAndView, String... paths) {
+		if(null == paths) {
+			return;
+		}
+		addResourcePaths(modelAndView, "additionalStylePaths", paths);
+	}
+
+	public static void addJavaScriptResourcePaths(ModelAndView modelAndView, String... paths) {
+		if(null == paths) {
+			return;
+		}
+		addResourcePaths(modelAndView, "additionalScriptPaths", paths);
+	}
+
+	public static void addTitle(ModelAndView modelAndView, String title) {
+		setModelAttribute(modelAndView, "title", title);
+	}
+
+	public static void addPageUrl(ModelAndView modelAndView, String pageUrl) {
+		setModelAttribute(modelAndView, "pageUrl", pageUrl);
 		
-		model.addAttribute("additionalStylePaths", stylePaths);
 	}
 	
 	/**

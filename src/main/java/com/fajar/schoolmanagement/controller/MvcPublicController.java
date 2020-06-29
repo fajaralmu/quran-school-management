@@ -11,18 +11,19 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.fajar.schoolmanagement.annotation.ResourcePath;
 import com.fajar.schoolmanagement.config.LogProxyFactory;
 
 import lombok.extern.slf4j.Slf4j;
 
 @Controller
 @Slf4j
-public class MvcPublicController extends BaseController{  
-	
+public class MvcPublicController extends BaseController {
+
 	public MvcPublicController() {
 		log.info("---------------------------Mvc Public Controller------------------------------");
 	}
-	
+
 	@PostConstruct
 	public void init() {
 		basePage = webConfigService.getBasePage();
@@ -30,30 +31,26 @@ public class MvcPublicController extends BaseController{
 	}
 
 	@RequestMapping(value = { "/", "index" })
+	@ResourcePath(title = "School Management", pageUrl = "index")
 	public String index(Model model, HttpServletRequest request, HttpServletResponse response) throws IOException {
 //		String imagebasePath = getFullImagePath(request);
-//		model.addAttribute("menus", componentService.getPublicMenus(request));
-		model.addAttribute("title", "School Application");
-		model.addAttribute("pageUrl", "index"); 
+//		model.addAttribute("menus", componentService.getPublicMenus(request)); 
 		model.addAttribute("imageUrlList", new ArrayList<>());
-		model.addAttribute("page", "main"); 
-		
+		model.addAttribute("page", "main");
+
 		return basePage;
 
 	}
+
 	@RequestMapping(value = { "about" })
+	@ResourcePath(title = "About App", pageUrl = "school/about-page")
 	public String about(Model model, HttpServletRequest request, HttpServletResponse response) throws IOException {
 //		String imagebasePath = getFullImagePath(request);
-//		model.addAttribute("menus", componentService.getPublicMenus(request));
-		model.addAttribute("title", "About App");
-		model.addAttribute("pageUrl", "school/about-page");  
-		model.addAttribute("page", "about"); 
-		
+//		model.addAttribute("menus", componentService.getPublicMenus(request)); 
+		model.addAttribute("page", "about");
+
 		return basePage;
 
 	}
-	
-	 
-	
 
 }
