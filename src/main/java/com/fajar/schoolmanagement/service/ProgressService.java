@@ -27,8 +27,8 @@ public class ProgressService {
 	}
 
 	public void init(String requestId) {
-		progressData.put(requestId, 1d);
-		sendProgress(1, requestId);
+		progressData.put(requestId, 0d);
+		sendProgress(0, requestId);
 	}
 
 	/**
@@ -64,11 +64,13 @@ public class ProgressService {
 	}
 
 	private void updateProgress(String requestId, double newProgress, boolean newRequest) {
-		log.info("adding progress: {} for: {}", newProgress, requestId);
+		
 		checkProgressData(requestId);
 		final double currentProgress = newRequest? 0: progressData.get(requestId);
 		final double overallProgress = currentProgress + newProgress;
 
+		log.info("adding progress: {} for: {}, currentProgress: {} overall: {}", newProgress, requestId, currentProgress, overallProgress);
+		
 		if (overallProgress >= 100) {
 			sendComplete(requestId);
 		} else {
