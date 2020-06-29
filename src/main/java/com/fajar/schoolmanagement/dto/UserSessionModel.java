@@ -1,17 +1,18 @@
 package com.fajar.schoolmanagement.dto;
 
-import java.rmi.RemoteException;
-import java.rmi.server.UnicastRemoteObject;
+import java.io.Serializable;
 import java.util.HashMap;
 
 import com.fajar.schoolmanagement.entity.User;
 
  
-public class RegistryModel extends UnicastRemoteObject   {
-	public RegistryModel() throws RemoteException {
-		
-		super();
-		// TODO Auto-generated constructor stub
+public class UserSessionModel implements Serializable  {
+	public UserSessionModel()   { 
+		super(); 
+	}
+	public UserSessionModel(User dbUser, String generateUserToken) {
+		this.user = dbUser;
+		this.userToken = generateUserToken;
 	}
 	/**
 	 * 

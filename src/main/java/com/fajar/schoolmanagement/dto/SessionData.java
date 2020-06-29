@@ -1,7 +1,6 @@
 package com.fajar.schoolmanagement.dto;
 
 import java.io.Serializable;
-import java.rmi.Remote;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -15,16 +14,15 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class SessionData implements Remote, Serializable{
+public class SessionData implements Serializable{
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -1210492423406561769L;
-	
-	public static final String ATTR_REQUEST_URI = "requestURI";
-	private String code;
 	private Map<String, RegisteredRequest> registeredApps;
+	public static final String ATTR_REQUEST_URI = "requestURI";
+	
 	public void addNewApp(RegisteredRequest registeredRequest) {
 		if(registeredApps == null) {
 			registeredApps = new HashMap<>();
@@ -52,5 +50,13 @@ public class SessionData implements Remote, Serializable{
 		}
 		return registeredApps.get(reqId);
 	}
+
+	public void setActiveSession(String requestId, boolean active) {
+		try { 
+			getRequest(requestId).setActive(active);
+		}catch (Exception e) {
+			// TODO: handle exception
+		}
+	} 
 
 }

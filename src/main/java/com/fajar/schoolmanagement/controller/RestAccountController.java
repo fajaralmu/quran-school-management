@@ -32,12 +32,11 @@ public class RestAccountController {
 	private UserAccountService accountService;
 	@Autowired
 	private UserSessionService userSessionService;
- 
-	
+
 	public RestAccountController() {
 		log.info("------------------RestAccountController-----------------");
 	}
-	
+
 	@PostConstruct
 	public void init() {
 		LogProxyFactory.setLoggers(this);
@@ -50,36 +49,36 @@ public class RestAccountController {
 //		WebResponse response = accountService.registerUser(request);
 //		return response;
 //	}
-	
+
 	@PostMapping(value = "/login", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public WebResponse login(@RequestBody WebRequest request, HttpServletRequest httpRequest,
-			HttpServletResponse httpResponse) throws IOException, IllegalAccessException {
+			HttpServletResponse httpResponse) throws Exception {
 		log.info("login {}", request);
-		WebResponse response = accountService.login(request, httpRequest,httpResponse);
+		WebResponse response = accountService.login(request, httpRequest, httpResponse);
 		return response;
 	}
+
 	@PostMapping(value = "/logout", produces = MediaType.APPLICATION_JSON_VALUE)
 	@Authenticated
-	public WebResponse logout(  HttpServletRequest httpRequest,
-			HttpServletResponse httpResponse) throws IOException {
-		 
+	public WebResponse logout(HttpServletRequest httpRequest, HttpServletResponse httpResponse) throws IOException {
+
 		boolean success = false;
 		if (userSessionService.hasSession(httpRequest, false)) {
 			success = accountService.logout(httpRequest);
 		}
-		 
-		return WebResponse.builder().code(success?"00":"01").message("SUCCESS LOGOUT: "+success).build();
+
+		return WebResponse.builder().code(success ? "00" : "01").message("SUCCESS LOGOUT: " + success).build();
 	}
-	@PostMapping(value = "/getprofile", produces = MediaType.APPLICATION_JSON_VALUE) 
+
+	@PostMapping(value = "/getprofile", produces = MediaType.APPLICATION_JSON_VALUE)
 	@Authenticated
-	public WebResponse getprpfile(  HttpServletRequest httpRequest,
-			HttpServletResponse httpResponse) throws IOException {
-		 
+	public WebResponse getprpfile(HttpServletRequest httpRequest, HttpServletResponse httpResponse) throws IOException {
+
 		/*
 		 * if (!userSessionService.hasSession(httpRequest, false)) { return
 		 * WebResponse.failedResponse(); }
 		 */
-		 
+
 		return userSessionService.getProfile(httpRequest);
 	}
 

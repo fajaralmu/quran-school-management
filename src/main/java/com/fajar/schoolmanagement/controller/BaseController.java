@@ -28,6 +28,7 @@ import com.fajar.schoolmanagement.service.UserSessionService;
 import com.fajar.schoolmanagement.service.WebConfigService;
 import com.fajar.schoolmanagement.util.DateUtil;
 import com.fajar.schoolmanagement.util.MvcUtil;
+import com.fajar.schoolmanagement.util.SessionUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -105,7 +106,7 @@ public class BaseController {
 	
 	@ModelAttribute("requestId")
 	public String requestId(HttpServletRequest request) {
-		Cookie cookie = getCookie(RuntimeService.JSESSSIONID, request.getCookies());
+		Cookie cookie = getCookie(SessionUtil.JSESSSIONID, request.getCookies());
 		String cookieValue = cookie == null ? UUID.randomUUID().toString():cookie.getValue();
 		return	registryService.addPageRequest(  cookieValue);
 		 

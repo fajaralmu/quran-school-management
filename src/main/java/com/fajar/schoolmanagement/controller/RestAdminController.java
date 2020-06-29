@@ -46,7 +46,7 @@ public class RestAdminController extends BaseController {
 	public WebResponse appsessions(@RequestBody WebRequest request, HttpServletRequest httpRequest,
 			HttpServletResponse httpResponse) throws IOException {
 
-		WebResponse response = userSessionService.generateAppRequest();
+		WebResponse response = userSessionService.getAvailableSessions();
 		return response;
 	}
 

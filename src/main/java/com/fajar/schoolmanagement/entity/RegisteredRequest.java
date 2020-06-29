@@ -46,5 +46,7 @@ public class RegisteredRequest extends BaseEntity   {
 	private String ipAddress;
 	@Transient
 	private List<? extends BaseEntity> messages;
-
+	
+	@Transient
+	private boolean active;
 }
