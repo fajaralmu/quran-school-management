@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.fajar.schoolmanagement.annotation.Authenticated;
+import com.fajar.schoolmanagement.annotation.ResourcePath;
 import com.fajar.schoolmanagement.config.LogProxyFactory;
 import com.fajar.schoolmanagement.entity.CapitalFlow;
 import com.fajar.schoolmanagement.entity.CostFlow;
@@ -59,6 +60,7 @@ public class MvcManagementController extends BaseController {
 	}
 
 	@RequestMapping(value = { "/common/{name}" }) 
+	@ResourcePath(stylePaths = "entitymanagement")
 	public String commonPage(@PathVariable("name") String name, Model model, HttpServletRequest request,
 			HttpServletResponse response) throws Exception {
 
@@ -73,6 +75,7 @@ public class MvcManagementController extends BaseController {
 	}
 
 	@RequestMapping(value = { "/profile" }) 
+	@ResourcePath(stylePaths = "entitymanagement")
 	public String profile(Model model, HttpServletRequest request, HttpServletResponse response) throws Exception {
 
 		EntityProperty entityProperty = EntityUtil.createEntityProperty(Profile.class, null);
@@ -86,6 +89,7 @@ public class MvcManagementController extends BaseController {
 	}
 
 	@RequestMapping(value = { "/menu" }) 
+	@ResourcePath(stylePaths = "entitymanagement")
 	public String menu(Model model, HttpServletRequest request, HttpServletResponse response) throws Exception {
 
 		try {
@@ -103,6 +107,7 @@ public class MvcManagementController extends BaseController {
 	}
 
 	@RequestMapping(value = { "/fundflow" }) 
+	@ResourcePath(stylePaths = "entitymanagement")
 	public String fundflow(Model model, HttpServletRequest request, HttpServletResponse response) throws Exception {
 
 		try {
@@ -119,6 +124,7 @@ public class MvcManagementController extends BaseController {
 	}
 
 	@RequestMapping(value = { "/costflow" }) 
+	@ResourcePath(stylePaths = "entitymanagement")
 	public String costflow(Model model, HttpServletRequest request, HttpServletResponse response) throws Exception {
 
 		try {
@@ -176,6 +182,7 @@ public class MvcManagementController extends BaseController {
 //	}
 
 	@RequestMapping(value = { "/user" }) 
+	@ResourcePath(stylePaths = "entitymanagement")
 	public String user(Model model, HttpServletRequest request, HttpServletResponse response) throws Exception {
 
 		try {
@@ -214,6 +221,7 @@ public class MvcManagementController extends BaseController {
 	 */
 
 	@RequestMapping(value = { "/appsession" }) 
+	
 	public String appsession(Model model, HttpServletRequest request, HttpServletResponse response) throws Exception {
 
 		try {

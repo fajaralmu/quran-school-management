@@ -172,7 +172,7 @@ public class BaseController {
 	}
 	
 	private static void setModelAttribute(ModelAndView modelAndView, String attrName, Object attrValue) {
-		if(null == attrValue) { return ; }
+		if(null == attrValue || attrValue.toString().trim().isEmpty()) { return ; }
 		modelAndView.getModel().put(attrName, attrValue);
 	}
 
