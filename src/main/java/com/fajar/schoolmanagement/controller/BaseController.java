@@ -219,7 +219,7 @@ public class BaseController {
 		try {
 			response.sendRedirect(url);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			
 			e.printStackTrace();
 		}
 	}

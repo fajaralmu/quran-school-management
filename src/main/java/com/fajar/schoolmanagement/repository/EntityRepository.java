@@ -36,6 +36,7 @@ import com.fajar.schoolmanagement.entity.StudentParent;
 import com.fajar.schoolmanagement.entity.Teacher;
 import com.fajar.schoolmanagement.entity.User;
 import com.fajar.schoolmanagement.entity.setting.EntityManagementConfig;
+import com.fajar.schoolmanagement.service.WebConfigService;
 import com.fajar.schoolmanagement.service.entity.BaseEntityUpdateService;
 import com.fajar.schoolmanagement.service.entity.CommonUpdateService;
 import com.fajar.schoolmanagement.service.entity.CostFlowUpdateService;
@@ -55,45 +56,11 @@ import lombok.extern.slf4j.Slf4j;
 public class EntityRepository {
 
 	/**
-	 * jpaRepositories
-	 */
-	@Autowired
-	private StudentRepository studentRepository;
-	@Autowired
-	private TeacherRepository teacherRepository;
-	@Autowired
-	private StudentParentRepository studentParentRepository;
-	@Autowired
-	private ProfileRepository shopProfileRepository;
-	@Autowired
-	private RegisteredRequestRepository registeredRequestRepository;
-	@Autowired
-	private MenuRepository menuRepository;
-	@Autowired
-	private UserRepository userRepository;
-	@Autowired
-	private UserRoleRepository userRoleRepository;
-	@Autowired
-	private PageRepository pageRepository;
-	@Autowired
-	private CostRepository costRepository;
-	@Autowired
-	private CostFlowRepository CostFlowRepository;
-	@Autowired
-	private CapitalRepository CapitalRepository;
-	@Autowired
-	private CapitalFlowRepository CapitalFlowRepository;
-	@Autowired
-	private DonationMonthlyRepository DonationMonthlyRepository;
-	@Autowired
-	private DonationThursdayRepository DonationThursdayRepository;
-	@Autowired
-	private DonationOrphanRepository donationOrphanRepository;
-
-	/**
 	 * end jpaRepositories
 	 */
 
+	@Autowired
+	private WebConfigService webConfigService;
 	@Autowired
 	private CommonUpdateService commonUpdateService;
 	@Autowired
@@ -103,7 +70,7 @@ public class EntityRepository {
 	@Autowired
 	private GeneralFundUpdateService fundUpdateService;
 	@Autowired
-	private BaseEntityUpdateService baseEntityUpdateService; 
+	private BaseEntityUpdateService baseEntityUpdateService;
 
 	@PersistenceContext
 	private EntityManager entityManager;
@@ -114,6 +81,7 @@ public class EntityRepository {
 
 	/**
 	 * put configuration to entityConfiguration map
+	 * 
 	 * @param _class
 	 * @param updateService
 	 * @param updateInterceptor
@@ -126,6 +94,7 @@ public class EntityRepository {
 
 	/**
 	 * put configuration to entityConfiguration without entityUpdateInterceptor
+	 * 
 	 * @param class1
 	 * @param commonUpdateService2
 	 */
@@ -165,7 +134,6 @@ public class EntityRepository {
 		putConfig(DonationThursday.class, fundUpdateService);
 		putConfig(DonationMonthly.class, fundUpdateService);
 
-		
 		/**
 		 * unable to update
 		 */
@@ -174,6 +142,7 @@ public class EntityRepository {
 
 	/**
 	 * get entity configuration from map by entity code
+	 * 
 	 * @param key
 	 * @return
 	 */
@@ -183,6 +152,7 @@ public class EntityRepository {
 
 	/**
 	 * construct EntityManagementConfig object
+	 * 
 	 * @param object
 	 * @param class1
 	 * @param commonUpdateService2
@@ -238,8 +208,8 @@ public class EntityRepository {
 					continue;
 				}
 
-				BaseEntity entity = (BaseEntity) value; 
-				JpaRepository repository = findRepo(entity.getClass()); 
+				BaseEntity entity = (BaseEntity) value;
+				JpaRepository repository = findRepo(entity.getClass());
 				Optional result = repository.findById(entity.getId());
 
 				if (result.isPresent() == false) {
@@ -281,23 +251,17 @@ public class EntityRepository {
 		log.info("will find repo by class: {}", entityClass);
 
 		Class<?> clazz = this.getClass();
-		Field[] fields = clazz.getDeclaredFields();
+		List<JpaRepository> jpaRepositories = webConfigService.getJpaRepositories();
 
-		for (Field field : fields) {
+		for (JpaRepository jpaObject : jpaRepositories) {
 
-			if (field.getAnnotation(Autowired.class) == null) {
-				continue;
-			}
-
-			Class<?> fieldClass = field.getType();
-			Class<?> originalEntityClass = getGenericClassIndexZero(fieldClass);
+			Class<?> beanType = jpaObject.getClass();
+			Class<?> originalEntityClass = getGenericClassIndexZero(beanType);
 
 			if (originalEntityClass != null && originalEntityClass.equals(entityClass)) {
-				try {
-					return (JpaRepository) field.get(this);
-				} catch (IllegalArgumentException | IllegalAccessException e) {
-					return null;
-				}
+
+				return jpaObject;
+
 			}
 		}
 
