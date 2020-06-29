@@ -1,5 +1,8 @@
 package com.fajar.schoolmanagement.service;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,47 +10,116 @@ import org.springframework.stereotype.Service;
 
 import com.fajar.schoolmanagement.config.LogProxyFactory;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Service
+@Slf4j
 public class ProgressService {
-	
+
 	@Autowired
 	private RealtimeService2 realtimeService;
-	
-	private double currentProgress=  0.0;
-	
+
+	private final Map<String, Double> progressData = new HashMap<>();
+
 	@PostConstruct
 	public void init() {
 		LogProxyFactory.setLoggers(this);
 	}
-	
+
 	public void init(String requestId) {
-		currentProgress = 0.0;
-		realtimeService.sendProgress(1,requestId);
+		progressData.put(requestId, 1d);
+		sendProgress(1, requestId);
+	}
+
+	/**
+	 * 
+	 * @param taskProgress             progressPoportion for current task
+	 * @param maxProgressOfCurrentTask totalProportion for current task
+	 * @param overallProcessProportion task Proportion for whole request
+	 * @param newRequest
+	 * @param requestId
+	 */
+	public void sendProgress(double taskProgress, double maxProgressOfCurrentTask, double overallProcessProportion,
+			boolean newRequest, String requestId) {
+		if (newRequest) {
+			updateProgress(requestId, 0, newRequest);
+		}
+
+		double taskProportion = taskProgress / maxProgressOfCurrentTask;
+		double overallProportion = taskProportion * overallProcessProportion;
+		updateProgress(requestId, overallProportion, newRequest);
+
 	}
 	
 	/**
 	 * 
-	 * @param taskProgress    progressPoportion for current task
+	 * @param taskProgress             progressPoportion for current task
 	 * @param maxProgressOfCurrentTask totalProportion for current task
-	 * @param overallProcessProportion     task Proportion for whole request
-	 * @param newProgress
+	 * @param overallProcessProportion task Proportion for whole request 
 	 * @param requestId
 	 */
-	public void sendProgress(double taskProgress, double maxProgressOfCurrentTask, double overallProcessProportion, boolean newProgress, String requestId) {
-		if(newProgress) {
-			currentProgress = 0.0;
+	public void sendProgress(double taskProgress, double maxProgressOfCurrentTask, double overallProcessProportion,
+			 String requestId) {
+		sendProgress(taskProgress, maxProgressOfCurrentTask, overallProcessProportion, false, requestId);
+	}
+
+	private void updateProgress(String requestId, double newProgress, boolean newRequest) {
+		log.info("adding progress: {} for: {}", newProgress, requestId);
+		checkProgressData(requestId);
+		final double currentProgress = newRequest? 0: progressData.get(requestId);
+		final double overallProgress = currentProgress + newProgress;
+
+		if (overallProgress >= 100) {
+			sendComplete(requestId);
+		} else {
+			progressData.put(requestId, overallProgress);
+			sendProgress(overallProgress, requestId);
+
 		}
-		currentProgress+=(taskProgress/maxProgressOfCurrentTask);
-		System.out.println("| | | | |  PROGRESS: "+currentProgress+" adding :"+taskProgress+"/"+maxProgressOfCurrentTask+", portion: "+overallProcessProportion+" ==> "+ currentProgress*overallProcessProportion);
-		realtimeService.sendProgress(currentProgress*overallProcessProportion, requestId);
+	}
+
+	private void checkProgressData(String requestId) {
+		if (progressData.get(requestId) == null) {
+			progressData.put(requestId, 0d);
+		}
 	}
 
 	public void sendComplete(String requestId) {
-		System.out.println("________COMPLETE PROGRESS________");
-		realtimeService.sendProgress(98, requestId);
-		realtimeService.sendProgress(99, requestId);
-		realtimeService.sendProgress(100, requestId);
-		
+		log.debug("________COMPLETE PROGRESS FOR {}________", requestId);
+		sendProgress(98, requestId);
+		sendProgress(99, requestId);
+		sendProgress(100, requestId);
+		progressData.remove(requestId);
+
+	}
+
+	private void sendProgress(double progress, String requestId) {
+		log.info("Send Progress: {} to {}", progress, requestId);
+		try {
+			realtimeService.sendProgress(progress, requestId);
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+	}
+	
+	public static void main(String[] ccc) {
+		ProgressService ps = new ProgressService();
+		String requestId = "q03i4934i93";
+		ps.init(requestId);
+		log.info("1");
+		ps.sendProgress(1, 2, 30, false, requestId);
+		log.info("2");
+		ps.sendProgress(1, 2, 30, false, requestId);
+		log.info("3");
+		ps.sendProgress(1, 3, 40, false, requestId);
+		log.info("4");
+		ps.sendProgress(1, 3, 40, false, requestId);
+		log.info("5");
+		ps.sendProgress(1, 3, 40, false, requestId);
+		log.info("6");
+		ps.sendProgress(1, 2, 30, false, requestId);
+		log.info("7");
+		ps.sendProgress(1, 2, 30, false, requestId);
 	}
 
 }
