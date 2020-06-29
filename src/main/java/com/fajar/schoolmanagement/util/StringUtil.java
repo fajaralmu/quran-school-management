@@ -27,7 +27,7 @@ public class StringUtil {
 
 	public static void main(String[] xxx) {
 
-		 System.out.println(extractCamelCase("fajarAmKkkk", true));
+		 System.out.println(extractCamelCase("fajarAmKkkk"));
 	}
 
 	public static String addZeroBefore(Integer number) {
@@ -64,7 +64,7 @@ public class StringUtil {
 		return str.toString().equals(str.toString().toUpperCase());
 	}
 	
-	public static String extractCamelCase(String camelCased, boolean upperCase) {
+	public static String extractCamelCase(String camelCased ) {
 		
 		StringBuilder result = new StringBuilder();
 		
@@ -73,10 +73,13 @@ public class StringUtil {
 			if(isUpperCase(_char)) {
 				result.append(" ");
 			}
-			result.append(_char);
+			if(0 == i) {
+				result.append((""+_char).toUpperCase());
+			}else
+				result.append(_char);
 		}
 		
-		return upperCase ?result.toString().toUpperCase():  result.toString();
+		return  result.toString();
 	}
 
 }

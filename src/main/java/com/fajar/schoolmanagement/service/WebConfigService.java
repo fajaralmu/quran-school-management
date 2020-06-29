@@ -44,7 +44,7 @@ public class WebConfigService {
 	private String reportPath;
 	private String martCode;
 	
-	private List<JpaRepository> jpaRepositories = new ArrayList<>();
+	private List<JpaRepository<?, ?>> jpaRepositories = new ArrayList<>();
 
 	@PreDestroy
 	public void preDestroy() {
@@ -53,15 +53,19 @@ public class WebConfigService {
 	}
 
 	public void getJpaReporitoriesBean() {
-		log.info("//////////////GET JPA REPO BEANS///////////////");
-		this.jpaRepositories.clear();
+		log.info("//////////////GET JPA REPOSITORIES BEANS///////////////");
+		jpaRepositories.clear();
 		String[] beanNames = applicationContext.getBeanNamesForType(JpaRepository.class);
 		if (null == beanNames)
 			return;
-		log.info("JPA REPOSITORIES: " + beanNames.length);
+		
+		log.info("JPA REPOSITORIES COUNT: " + beanNames.length);
 		for (int i = 0; i < beanNames.length; i++) {
 			String beanName = beanNames[i];
-			JpaRepository beanObject = (JpaRepository) applicationContext.getBean(beanName);
+			JpaRepository<?, ?> beanObject = (JpaRepository<?, ?>) applicationContext.getBean(beanName);
+			
+			if(null == beanObject) continue;
+			
 			jpaRepositories.add(beanObject);
 			log.info(i + "." + beanName);
 		}

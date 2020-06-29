@@ -16,11 +16,12 @@ import com.fajar.schoolmanagement.entity.DonationOrphan;
 import com.fajar.schoolmanagement.entity.DonationThursday;
 import com.fajar.schoolmanagement.entity.Menu;
 import com.fajar.schoolmanagement.entity.Page;
+import com.fajar.schoolmanagement.entity.Profile;
 import com.fajar.schoolmanagement.entity.RegisteredRequest;
 import com.fajar.schoolmanagement.entity.Student;
 import com.fajar.schoolmanagement.entity.StudentParent;
+import com.fajar.schoolmanagement.entity.StudentQuistionare;
 import com.fajar.schoolmanagement.entity.Teacher;
-import com.fajar.schoolmanagement.entity.Profile;
 import com.fajar.schoolmanagement.entity.User;
 import com.fajar.schoolmanagement.entity.UserRole;
 
@@ -65,6 +66,7 @@ public class WebRequest implements Serializable {
 	private DonationMonthly donationmonthly;
 	private DonationThursday donationthursday;
 	private DonationOrphan donationorphan;
+	private StudentQuistionare studentquistionare;
 	 
 	/**
 	 * ==========end entity============

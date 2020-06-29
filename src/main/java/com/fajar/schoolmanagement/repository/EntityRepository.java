@@ -17,6 +17,7 @@ import javax.persistence.PersistenceContext;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.repository.Repository;
 import org.springframework.stereotype.Service;
 
 import com.fajar.schoolmanagement.entity.BaseEntity;
@@ -33,6 +34,7 @@ import com.fajar.schoolmanagement.entity.Page;
 import com.fajar.schoolmanagement.entity.Profile;
 import com.fajar.schoolmanagement.entity.Student;
 import com.fajar.schoolmanagement.entity.StudentParent;
+import com.fajar.schoolmanagement.entity.StudentQuistionare;
 import com.fajar.schoolmanagement.entity.Teacher;
 import com.fajar.schoolmanagement.entity.User;
 import com.fajar.schoolmanagement.entity.setting.EntityManagementConfig;
@@ -43,6 +45,8 @@ import com.fajar.schoolmanagement.service.entity.CostFlowUpdateService;
 import com.fajar.schoolmanagement.service.entity.EntityUpdateInterceptor;
 import com.fajar.schoolmanagement.service.entity.GeneralFundUpdateService;
 import com.fajar.schoolmanagement.service.entity.UserUpdateService;
+import com.fajar.schoolmanagement.util.CollectionUtil;
+import com.sun.beans.TypeResolver;
 
 import lombok.AccessLevel;
 import lombok.Data;
@@ -53,11 +57,7 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @Slf4j
 @Data
-public class EntityRepository {
-
-	/**
-	 * end jpaRepositories
-	 */
+public class EntityRepository { 
 
 	@Autowired
 	private WebConfigService webConfigService;
@@ -122,7 +122,7 @@ public class EntityRepository {
 		 * commons
 		 */
 		toCommonUpdateService(Capital.class, Cost.class, Page.class, StudentParent.class, Student.class, Teacher.class,
-				Profile.class, DonationOrphan.class);
+				Profile.class, DonationOrphan.class, StudentQuistionare.class);
 
 		/**
 		 * special
@@ -246,21 +246,21 @@ public class EntityRepository {
 	 * @param entityClass
 	 * @return
 	 */
-	public JpaRepository findRepo(Class<? extends BaseEntity> entityClass) {
+	public < T extends BaseEntity> JpaRepository findRepo(Class<T> entityClass) {
 
-		log.info("will find repo by class: {}", entityClass);
-
-		Class<?> clazz = this.getClass();
-		List<JpaRepository> jpaRepositories = webConfigService.getJpaRepositories();
-
-		for (JpaRepository jpaObject : jpaRepositories) {
-
+		log.info("will find repo by class: {}", entityClass); 
+		
+		List<JpaRepository<?, ?>> jpaRepositories = webConfigService.getJpaRepositories();
+		int index = 0;
+		
+		for (JpaRepository<?, ?> jpaObject : jpaRepositories) {
+			log.info("{}-Repo : {}", index, jpaObject);
 			Class<?> beanType = jpaObject.getClass();
-			Class<?> originalEntityClass = getGenericClassIndexZero(beanType);
+			Type originalEntityClass = getJpaRepositoryFirstTypeArgument(beanType, entityClass);
 
 			if (originalEntityClass != null && originalEntityClass.equals(entityClass)) {
 
-				return jpaObject;
+				return (JpaRepository ) jpaObject;
 
 			}
 		}
@@ -275,8 +275,8 @@ public class EntityRepository {
 	 * @param ID
 	 * @return
 	 */
-	public <T extends BaseEntity> T findById(Class<T> clazz, Object ID) {
-		JpaRepository repository = findRepo(clazz);
+	public <ID, T extends BaseEntity> T findById(Class<T> clazz, ID ID) {
+		JpaRepository<T, ID> repository = findRepo(clazz);
 
 		Optional<T> result = repository.findById(ID);
 		if (result.isPresent()) {
@@ -299,27 +299,35 @@ public class EntityRepository {
 		return repository.findAll();
 	}
 
-	public static <T> T getGenericClassIndexZero(Class<?> clazz) {
+	public static Type getJpaRepositoryFirstTypeArgument(Class<?> clazz, Class<?> entityClass) {
 		Type[] interfaces = clazz.getGenericInterfaces();
 
+		log.debug("Check if {} is the meant repository");
 		if (interfaces == null) {
-			log.info("interfaces is null");
+			log.info("{} interfaces is null", clazz);
 			return null;
 		}
 
-		log.info("interfaces size: {}", interfaces.length);
-
+		log.debug("clazz {} interfaces size: {}", clazz, interfaces.length);
+		CollectionUtil.printArray(interfaces);
+		
 		for (Type type : interfaces) {
 
-			boolean isJpaRepository = type.getTypeName().startsWith(JpaRepository.class.getCanonicalName());
+			boolean isJpaRepository = type.getTypeName().startsWith(Repository.class.getCanonicalName());
 
 			if (isJpaRepository) {
-				ParameterizedType parameterizedType = (ParameterizedType) type;
-
-				if (parameterizedType.getActualTypeArguments() != null
-						&& parameterizedType.getActualTypeArguments().length > 0) {
-					return (T) parameterizedType.getActualTypeArguments()[0];
+				Type _type = TypeResolver.resolve(clazz, entityClass);
+				log.debug("_type: {}", _type);
+				if(_type.equals(entityClass)) {
+					return _type;
 				}
+//				ParameterizedType parameterizedType = (ParameterizedType) type;
+//
+//				if (parameterizedType.getActualTypeArguments() != null
+//						&& parameterizedType.getActualTypeArguments().length > 0) {
+//					return (T) parameterizedType.getActualTypeArguments()[0];
+//				}
+				
 			}
 		}
 
