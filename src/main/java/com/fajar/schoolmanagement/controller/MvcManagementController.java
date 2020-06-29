@@ -59,7 +59,7 @@ public class MvcManagementController extends BaseController {
 	}
 
 	@RequestMapping(value = { "/common/{name}" }) 
-	public String unit(@PathVariable("name") String name, Model model, HttpServletRequest request,
+	public String commonPage(@PathVariable("name") String name, Model model, HttpServletRequest request,
 			HttpServletResponse response) throws Exception {
 
 		try {
