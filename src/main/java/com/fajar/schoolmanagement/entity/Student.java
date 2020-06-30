@@ -70,7 +70,7 @@ public class Student extends BaseEntity {
 	 private int siblingsCount;
 	
 	@Column(name= "child_status")
-	@FormField(type = FieldType.FIELD_TYPE_PLAIN_LIST, availableValues = { "Anak Kandung, Anak Tiri, Anak Adopsi" }, lableName="Status Ananda")
+	@FormField(type = FieldType.FIELD_TYPE_PLAIN_LIST, availableValues = { "Anak Kandung", "Anak Tiri", "Anak Adopsi" }, lableName="Status Ananda")
 	 private String childStatus;
 
 	@Column

@@ -6,14 +6,14 @@ function isUpperCase(_char) {
 
 function extractCamelCase(camelCased) {
 
-	var result = "";
+	var result = camelCased[0].toUpperCase();
 
-	for (let i = 0; i < camelCased.length; i++) {
+	for (let i = 1; i < camelCased.length; i++) {
 		const _char = camelCased[i];
 		if (isUpperCase(_char)) {
 			result += (" ");
 		}
-		result += (_char.toLowerCase());
+		result += (_char);
 	}
 
 	return result;
