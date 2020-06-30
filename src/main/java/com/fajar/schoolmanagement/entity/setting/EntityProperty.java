@@ -87,7 +87,6 @@ public class EntityProperty implements Serializable {
 			return "20% 80%";
 		}
 		return StringUtils.repeat("auto ", formInputColumn);
-
 	}
 
 	public void determineIdField() {

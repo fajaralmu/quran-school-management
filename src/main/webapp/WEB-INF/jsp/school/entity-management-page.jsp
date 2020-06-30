@@ -486,7 +486,8 @@
 			
 			const fieldName = fieldNames[i];
 			const isDateField = isDate(fieldName);
-			const cell = createCell(extractCamelCase(fieldName)); 
+			const cell = createCell('<h5>'+extractCamelCase(fieldName)+'</h5>'); 
+			cell.setAttribute('class', 'nowrap');
 			
 			var filterInputGroup;
 			 

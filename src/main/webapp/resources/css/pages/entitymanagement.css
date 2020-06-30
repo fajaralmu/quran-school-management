@@ -8,3 +8,7 @@
 		*/
 	/*grid-template-columns:  ${"auto ".repeat(entityProperty.formInputColumn)} */
 }
+
+.nowrap{
+	white-space: nowrap
+}
