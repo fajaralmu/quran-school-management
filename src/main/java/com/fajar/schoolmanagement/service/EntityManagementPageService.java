@@ -12,6 +12,7 @@ import com.fajar.schoolmanagement.entity.setting.EntityManagementConfig;
 import com.fajar.schoolmanagement.entity.setting.EntityProperty;
 import com.fajar.schoolmanagement.repository.EntityRepository;
 import com.fajar.schoolmanagement.util.EntityUtil;
+import com.fajar.schoolmanagement.util.StringUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -33,7 +34,10 @@ public class EntityManagementPageService {
 		}
 		
 		EntityProperty entityProperty = EntityUtil.createEntityProperty(entityConfig.getEntityClass(), null); 
-		model = constructCommonModel(request, entityProperty, model, entityConfig.getEntityClass().getSimpleName(), "management");
+		String entityName = entityConfig.getEntityClass().getSimpleName();
+		String title = StringUtil.extractCamelCase(entityName);
+		
+		model = constructCommonModel(request, entityProperty, model, title, "management");
 		try {
 			model.addAttribute("entityPropJson", objectMapper.writeValueAsString(entityProperty));
 		} catch (JsonProcessingException e) {

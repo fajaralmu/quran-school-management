@@ -18,15 +18,17 @@
 			</div>
 			<div class="modal-body" style="height: 400px; overflow: scroll;">
 				<div id="entity-form"
-					 style="grid-template-columns:  ${('auto ').repeat(entityProperty.formInputColumn)}">
+					style="grid-template-columns:  ${entityProperty.getGridTemplateColumns()}">
 					<div></div>
 					<div></div>
+
+					<!-- ///////////////ELEMENTS////////////////// -->
 					<c:forEach var="element" items="${entityProperty.elements}">
 
 						<div>
 							<label>${element.lableName }</label>
 						</div>
-						<div>
+						<div groupName="${element.inputGroupname }">
 							<c:choose>
 								<c:when test="${  element.type == 'fixedlist'}">
 									<select class="input-field form-control" id="${element.id }"
@@ -39,14 +41,16 @@
 									<script>
 										managedEntity["valueField_${element.id}"] = "${element.optionValueName}";
 										managedEntity["itemField_${element.id}"] = "${element.optionItemName}";
-										const options = ${ element.jsonList };
+										const optionJsonString = "${element.getJsonListString()}";
+										const options = JSON.parse(optionJsonString);
 										for (let i = 0; i < options.length; i++) {
 
-											let optionItem = options[i];
-											let option = document
-													.createElement("option");
-											option.value = optionItem["${element.optionValueName}"];
-											option.innerHTML = optionItem["${element.optionItemName}"];
+											const optionItem = options[i];
+											const option = createHtmlTag({
+												tagName : 'option',
+												value : optionItem["${element.optionValueName}"],
+												innerHTML : optionItem["${element.optionItemName}"]
+											});
 
 											_byId("${element.id }").append(
 													option);

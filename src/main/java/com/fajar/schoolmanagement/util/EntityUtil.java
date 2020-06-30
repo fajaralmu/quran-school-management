@@ -10,12 +10,14 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
 import org.apache.commons.lang3.SerializationUtils;
 
+import com.fajar.schoolmanagement.annotation.AdditionalQuestionField;
 import com.fajar.schoolmanagement.annotation.Dto;
 import com.fajar.schoolmanagement.annotation.FormField;
 import com.fajar.schoolmanagement.entity.BaseEntity;
@@ -34,12 +36,16 @@ public class EntityUtil {
 
 		Dto dto = (Dto) getClassAnnotation(clazz, Dto.class);
 		final boolean ignoreBaseField = dto.ignoreBaseField();
+		final boolean isQuestionare = dto.quistionare();
 
 		EntityProperty entityProperty = EntityProperty.builder().ignoreBaseField(ignoreBaseField)
 				.entityName(clazz.getSimpleName().toLowerCase()).build();
 		try {
 
 			List<Field> fieldList = getDeclaredFields(clazz);
+			if(isQuestionare) {
+				sortListByQuestionareSection(fieldList);
+			}
 			List<EntityElement> entityElements = new ArrayList<>();
 			List<String> fieldNames = new ArrayList<>();
 			String fieldToShowDetail = "";
@@ -78,6 +84,27 @@ public class EntityUtil {
 			throw e;
 		}
 		 
+	}
+
+	private static List<Field> sortListByQuestionareSection(List<Field> fieldList) {
+		Map<String, List<Field>> temp = MapUtil.singleMap("0", new ArrayList<>());
+		
+		String key = "0";
+		for (Field field : fieldList) {
+			AdditionalQuestionField additionalQuestionField = getClassAnnotation(field.getType(), AdditionalQuestionField.class);
+			if(null == additionalQuestionField) {
+				key = "0";
+			}else {
+				key = additionalQuestionField.value();
+			}
+			if(temp.get(key)  == null) {
+				temp.put(key, new ArrayList<>());
+			}
+			temp.get(key).add(field);
+		}
+		
+		return CollectionUtil.mapOfListToList(temp);
+		
 	}
 
 	public static <T extends Annotation> T getClassAnnotation(Class<?> entityClass, Class<T> annotation) {

@@ -10,13 +10,14 @@ import com.fajar.schoolmanagement.annotation.AdditionalQuestionField;
 import com.fajar.schoolmanagement.annotation.Dto;
 import com.fajar.schoolmanagement.annotation.FormField;
 import com.fajar.schoolmanagement.dto.FieldType;
+import com.fajar.schoolmanagement.dto.FormInputColumn;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Dto("Kuisioner Siswa")
+@Dto(value = "Kuisioner Siswa",formInputColumn = FormInputColumn.TWO_COLUMN, quistionare = true)
 @Entity
 @Table (name="student_questionare")
 @Data

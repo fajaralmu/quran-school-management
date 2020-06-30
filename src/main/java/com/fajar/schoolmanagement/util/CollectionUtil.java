@@ -23,10 +23,23 @@ public class CollectionUtil {
 
 	}
 
-	public static List<BaseEntity> mapToList(Map<? extends Object, ? extends BaseEntity> map) {
-		List<BaseEntity> list = new ArrayList<>();
-		for (Object key : map.keySet()) {
+	public static <K, T> List<T> mapToList(Map<K, T> map) {
+		List<T> list = new ArrayList<T>();
+		for (K key : map.keySet()) {
 			list.add(map.get(key));
+		}
+
+		return list;
+	}
+
+	public static <K, T> List<T> mapOfListToList(Map<K, List<T>> map) {
+		List<T> list = new ArrayList<T>();
+		for (K key : map.keySet()) {
+			List<T> mapValue = map.get(key);
+			if (null == mapValue)
+				continue;
+			
+			list.addAll(mapValue);
 		}
 
 		return list;
@@ -36,8 +49,7 @@ public class CollectionUtil {
 		if (null == array) {
 			return;
 		}
-		 
-		
+
 		String[] arrayString = toArrayOfString(array);
 		log.info("Print Array: [{}]", String.join(", ", arrayString));
 

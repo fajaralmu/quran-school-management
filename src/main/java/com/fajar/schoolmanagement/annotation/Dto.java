@@ -15,4 +15,5 @@ public @interface Dto {
 	boolean ignoreBaseField() default true;
 	boolean editable() default true;
 	String value() default "";
+	boolean quistionare() default false;
 }
