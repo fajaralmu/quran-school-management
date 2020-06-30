@@ -104,11 +104,18 @@ public class EntityElement implements Serializable {
 		checkIfGroupedInput();
 	}
 	
-	public String getJsonListString() {
+	public String getJsonListString(boolean removeBeginningAndEndIndex) {
 		try {
-		return OBJECT_MAPPER.writeValueAsString(jsonList);
+			String jsonStringified = OBJECT_MAPPER.writeValueAsString(jsonList).trim();
+			if(removeBeginningAndEndIndex) {
+				StringBuilder stringBuilder = new StringBuilder(jsonStringified);
+				stringBuilder.setCharAt(0, ' ');
+				stringBuilder.setCharAt(jsonStringified.length() - 1, ' ');
+				return stringBuilder.toString().trim();
+			}
+			return jsonStringified;
 		}catch (Exception e) {
-			return "\"{}\"}";
+			return "{}";
 		}
 	}
 
