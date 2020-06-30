@@ -17,7 +17,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Dto(value = "Kuisioner Siswa",formInputColumn = FormInputColumn.TWO_COLUMN, quistionare = true)
+@Dto(value = "Kuisioner Siswa",formInputColumn = FormInputColumn.ONE_COLUMN, quistionare = true)
 @Entity
 @Table (name="student_questionare")
 @Data

@@ -132,7 +132,7 @@ public class EntityElement implements Serializable {
 	private void checkIfGroupedInput() {
 		AdditionalQuestionField annotation = field.getAnnotation(AdditionalQuestionField.class);
 		isGrouped = annotation != null;
-		inputGroupname = isGrouped ? annotation.value() : "0";
+		inputGroupname = isGrouped ? annotation.value() : AdditionalQuestionField.DEFAULT_GROUP_NAME;
 	}
 
 	public boolean build() throws Exception {

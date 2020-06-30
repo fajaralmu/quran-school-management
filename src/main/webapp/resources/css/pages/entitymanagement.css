@@ -1,11 +1,10 @@
-
-	#entity-form{
-		layout: fixed;
-		display: grid;
-		grid-row-gap: 1em; 
-		grid-column-gap: 1em; 
-		/*
+.entity-input-form {
+	layout: fixed;
+	display: grid;
+	grid-row-gap: 1em;
+	grid-column-gap: 1em;
+	/*
 			defined in 'form-element.jsp' file
 		*/
-		/*grid-template-columns:  ${"auto ".repeat(entityProperty.formInputColumn)} */
-	}
+	/*grid-template-columns:  ${"auto ".repeat(entityProperty.formInputColumn)} */
+}

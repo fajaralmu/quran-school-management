@@ -17,150 +17,151 @@
 				</c:if>
 			</div>
 			<div class="modal-body" style="height: 400px; overflow: scroll;">
-				<div id="entity-form"
-					style="grid-template-columns:  ${entityProperty.getGridTemplateColumns()}">
-					<div></div>
-					<div></div>
+				<div id="entity-form" >
 
 					<!-- ///////////////ELEMENTS////////////////// -->
 					<c:forEach var="element" items="${entityProperty.elements}">
+					
+						<div groupName="${element.inputGroupname }" class="entity-input-form ${element.inputGroupname != '0' ? 'grouped' : '' }"
+							style="grid-template-columns:  ${entityProperty.getGridTemplateColumns()}">
+							<div class="entity-input-label">
+								<label>${element.lableName }</label>
+							</div>
+							<div class="entity-input-field">
+								<c:choose>
+									<c:when test="${  element.type == 'fixedlist'}">
+										<select class="input-field form-control" id="${element.id }"
+											required="${element.required }"
+											identity="${element.identity }"
+											itemValueField="${element.optionValueName}"
+											itemNameField="${element.optionItemName}">
 
-						<div>
-							<label>${element.lableName }</label>
-						</div>
-						<div groupName="${element.inputGroupname }">
-							<c:choose>
-								<c:when test="${  element.type == 'fixedlist'}">
-									<select class="input-field form-control" id="${element.id }"
-										required="${element.required }"
-										identity="${element.identity }"
-										itemValueField="${element.optionValueName}"
-										itemNameField="${element.optionItemName}">
+										</select>
+										<script>
+											managedEntity["valueField_${element.id}"] = "${element.optionValueName}";
+											managedEntity["itemField_${element.id}"] = "${element.optionItemName}";
+											var optionJsonString = "${element.getJsonListString(true)}";
 
-									</select>
-									<script>
-										managedEntity["valueField_${element.id}"] = "${element.optionValueName}";
-										managedEntity["itemField_${element.id}"] = "${element.optionItemName}";
-										var optionJsonString = "${element.getJsonListString(true)}";
-										 
-										const options = JSON.parse(optionJsonString);
-										for (let i = 0; i < options.length; i++) {
+											const options = JSON
+													.parse(optionJsonString);
+											for (let i = 0; i < options.length; i++) {
 
-											const optionItem = options[i];
-											const option = createHtmlTag({
-												tagName : 'option',
-												value : optionItem["${element.optionValueName}"],
-												innerHTML : optionItem["${element.optionItemName}"]
-											});
+												const optionItem = options[i];
+												const option = createHtmlTag({
+													tagName : 'option',
+													value : optionItem["${element.optionValueName}"],
+													innerHTML : optionItem["${element.optionItemName}"]
+												});
 
-											_byId("${element.id }").append(
-													option);
-										}
-									</script>
-								</c:when>
-								<c:when test="${  element.type == 'dynamiclist'}">
-									<input onkeyup="loadList(this)" name="${element.id }"
-										id="input-${element.id }" class="form-control" type="text" />
-									<br />
-									<select style="width: 200px" class="input-field form-control"
-										id="${element.id }" required="${element.required }"
-										multiple="multiple" identity="${element.identity }"
-										itemValueField="${element.optionValueName}"
-										itemNameField="${element.optionItemName}"
-										name=${element.entityReferenceClass}
+												_byId("${element.id }").append(
+														option);
+											}
+										</script>
+									</c:when>
+									<c:when test="${  element.type == 'dynamiclist'}">
+										<input onkeyup="loadList(this)" name="${element.id }"
+											id="input-${element.id }" class="form-control" type="text" />
+										<br />
+										<select style="width: 200px" class="input-field form-control"
+											id="${element.id }" required="${element.required }"
+											multiple="multiple" identity="${element.identity }"
+											itemValueField="${element.optionValueName}"
+											itemNameField="${element.optionItemName}"
+											name=${element.entityReferenceClass}
 											>
 
-									</select>
-									<script>
-										managedEntity["valueField_${element.id}"] = "${element.optionValueName}";
-										managedEntity["itemField_${element.id}"] = "${element.optionItemName}";
-									</script>
-								</c:when>
-								<c:when test="${  element.type == 'plainlist'}">
-									<select class="input-field form-control" id="${element.id }"
-										required="${element.required }"
-										identity="${element.identity }" plainlist="true">
-										<c:forEach var="val" items="${element.plainListValues }">
-											<option value="${val }">${val }</option>
-										</c:forEach>
+										</select>
+										<script>
+											managedEntity["valueField_${element.id}"] = "${element.optionValueName}";
+											managedEntity["itemField_${element.id}"] = "${element.optionItemName}";
+										</script>
+									</c:when>
+									<c:when test="${  element.type == 'plainlist'}">
+										<select class="input-field form-control" id="${element.id }"
+											required="${element.required }"
+											identity="${element.identity }" plainlist="true">
+											<c:forEach var="val" items="${element.plainListValues }">
+												<option value="${val }">${val }</option>
+											</c:forEach>
 
-									</select>
-								</c:when>
-								<c:when test="${  element.type == 'textarea'}">
-									<textarea class="input-field form-control" id="${element.id }"
-										type="${element.type }" ${element.required?'required':'' }
-										identity="${element.identity }">
+										</select>
+									</c:when>
+									<c:when test="${  element.type == 'textarea'}">
+										<textarea class="input-field form-control" id="${element.id }"
+											type="${element.type }" ${element.required?'required':'' }
+											identity="${element.identity }">
 									</textarea>
-								</c:when>
-								<c:when test="${  element.showDetail}">
-									<input detailfields="${element.detailFields}" showdetail="true"
-										class="input-field" id="${element.id }" type="hidden"
-										name="${element.optionItemName}" disabled="disabled" />
+									</c:when>
+									<c:when test="${  element.showDetail}">
+										<input detailfields="${element.detailFields}"
+											showdetail="true" class="input-field" id="${element.id }"
+											type="hidden" name="${element.optionItemName}"
+											disabled="disabled" />
 
-									<button id="btn-detail-${element.id }" class="btn btn-info"
-										onclick="showDetail('${element.id }','${element.optionItemName}' )">Detail</button>
-								</c:when>
-								<c:when
-									test="${ element.type=='img' && element.multiple == false}">
-									<input class="input-field form-control" id="${element.id }"
-										type="file" ${element.required?'required':'' }
-										identity="${element.identity }" />
+										<button id="btn-detail-${element.id }" class="btn btn-info"
+											onclick="showDetail('${element.id }','${element.optionItemName}' )">Detail</button>
+									</c:when>
+									<c:when
+										test="${ element.type=='img' && element.multiple == false}">
+										<input class="input-field form-control" id="${element.id }"
+											type="file" ${element.required?'required':'' }
+											identity="${element.identity }" />
 
-									<button id="${element.id }-file-ok-btn"
-										class="btn btn-primary btn-sm"
-										onclick="addImagesData('${element.id}')">ok</button>
+										<button id="${element.id }-file-ok-btn"
+											class="btn btn-primary btn-sm"
+											onclick="addImagesData('${element.id}')">ok</button>
 
-									<button id="${element.id }-file-cancel-btn"
-										class="btn btn-warning btn-sm"
-										onclick="cancelImagesData('${element.id}')">cancel</button>
-									<div>
-										<img id="${element.id }-display" width="50" height="50" />
-									</div>
-								</c:when>
-								<c:when
-									test="${ element.type=='img' && element.multiple == true}">
-									<div id="${element.id }" name="input-list" class="input-field">
-										<div id="${element.id }-0-input-item"
-											class="${element.id }-input-item">
+										<button id="${element.id }-file-cancel-btn"
+											class="btn btn-warning btn-sm"
+											onclick="cancelImagesData('${element.id}')">cancel</button>
+										<div>
+											<img id="${element.id }-display" width="50" height="50" />
+										</div>
+									</c:when>
+									<c:when
+										test="${ element.type=='img' && element.multiple == true}">
+										<div id="${element.id }" name="input-list" class="input-field">
+											<div id="${element.id }-0-input-item"
+												class="${element.id }-input-item">
 
-											<input class="input-file" id="${element.id }-0" type="file"
-												${element.required?'required':'' }
-												identity="${element.identity }" />
+												<input class="input-file" id="${element.id }-0" type="file"
+													${element.required?'required':'' }
+													identity="${element.identity }" />
 
-											<button id="${element.id }-0-file-ok-btn "
-												class="btn btn-primary btn-sm"
-												onclick="addImagesData('${element.id}-0')">ok</button>
+												<button id="${element.id }-0-file-ok-btn "
+													class="btn btn-primary btn-sm"
+													onclick="addImagesData('${element.id}-0')">ok</button>
 
-											<button id="${element.id }-0-file-cancel-btn"
-												class="btn btn-warning btn-sm"
-												onclick="cancelImagesData('${element.id}-0')">cancel</button>
+												<button id="${element.id }-0-file-cancel-btn"
+													class="btn btn-warning btn-sm"
+													onclick="cancelImagesData('${element.id}-0')">cancel</button>
 
-											<button id="${element.id }-0-remove-list"
-												class="btn btn-danger btn-sm"
-												onclick="removeImageList('${element.id }-0')">Remove</button>
+												<button id="${element.id }-0-remove-list"
+													class="btn btn-danger btn-sm"
+													onclick="removeImageList('${element.id }-0')">Remove</button>
 
-											<div>
-												<img id="${element.id }-0-display" width="50" height="50" />
+												<div>
+													<img id="${element.id }-0-display" width="50" height="50" />
+												</div>
 											</div>
 										</div>
-									</div>
-									<button id="${element.id }-add-list"
-										onclick="addImageList('${element.id }')">Add</button>
-								</c:when>
-								<c:when test="${ element.identity}">
-									<input class="input-field form-control" disabled="disabled"
-										id="${element.id }" type="text"
-										${element.required?'required':'' }
-										identity="${element.identity }" />
-								</c:when>
-								<c:otherwise>
-									<input class="input-field form-control" id="${element.id }"
-										type="${element.type }" ${element.required?'required':'' }
-										identity="${element.identity }" />
-								</c:otherwise>
-							</c:choose>
+										<button id="${element.id }-add-list"
+											onclick="addImageList('${element.id }')">Add</button>
+									</c:when>
+									<c:when test="${ element.identity}">
+										<input class="input-field form-control" disabled="disabled"
+											id="${element.id }" type="text"
+											${element.required?'required':'' }
+											identity="${element.identity }" />
+									</c:when>
+									<c:otherwise>
+										<input class="input-field form-control" id="${element.id }"
+											type="${element.type }" ${element.required?'required':'' }
+											identity="${element.identity }" />
+									</c:otherwise>
+								</c:choose>
+							</div>
 						</div>
-
 					</c:forEach>
 				</div>
 
@@ -186,3 +187,35 @@
 		</div>
 	</div>
 </div>
+<script>
+	const groupedInputs = document.getElementsByClassName('grouped');
+	const entityForm = _byId('entity-form');
+	
+	function arrangeInputs() {
+		var currentGroupName = groupedInputs[0].getAttribute('groupName');
+		
+		var additionalNodes = 1;
+		entityForm.insertBefore(getGroupName(additionalNodes, currentGroupName), entityForm.childNodes[0]);
+		
+		for (var i = 0; i < groupedInputs.length; i++) {
+			const input = groupedInputs[i];
+			if(input.getAttribute('groupName') != currentGroupName){
+				currentGroupName = input.getAttribute('groupName') ;
+				additionalNodes++;
+				entityForm.insertBefore(getGroupName(additionalNodes, currentGroupName), entityForm.childNodes[i + additionalNodes]);
+			}
+		}
+	}
+	
+	function getGroupName(section, groupName){
+		const h3 = createHtmlTag({
+			tagName: 'h3',
+			innerHTML: section + ' - :' + groupName
+		});
+		return h3;
+	}
+
+	if (groupedInputs) {
+		arrangeInputs();
+	}
+</script>
