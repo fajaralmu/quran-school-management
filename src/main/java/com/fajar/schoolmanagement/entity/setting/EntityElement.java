@@ -75,6 +75,11 @@ public class EntityElement implements Serializable {
 	private BaseField baseField;
 	private boolean skipBaseField;
 	private boolean hasJoinColumn;
+	
+//	public static void main(String[] args) {
+//		String json = "[{\\\"serialVersionUID\\\":\\\"4969863194918869183\\\",\\\"name\\\":\\\"Kebersihan\\\",\\\"description\\\":\\\"1111111\\t\\t\\t\\t\\t\\\",\\\"serialVersionUID\\\":\\\"-8161890497812023383\\\",\\\"id\\\":1,\\\"color\\\":null,\\\"fontColor\\\":null,\\\"createdDate\\\":\\\"2020-05-14 21:06:03.0\\\",\\\"modifiedDate\\\":\\\"2020-05-14 21:06:03.0\\\",\\\"deleted\\\":\\\"false\\\"},{\\\"serialVersionUID\\\":\\\"4969863194918869183\\\",\\\"name\\\":\\\"Mukafaah\\\",\\\"description\\\":\\\"dfdffd\\\",\\\"serialVersionUID\\\":\\\"-8161890497812023383\\\",\\\"id\\\":2,\\\"color\\\":\\\"#000000\\\",\\\"fontColor\\\":\\\"#000000\\\",\\\"createdDate\\\":\\\"2020-05-12 21:16:58.0\\\",\\\"modifiedDate\\\":\\\"2020-05-12 21:16:58.0\\\",\\\"deleted\\\":\\\"false\\\"},{\\\"serialVersionUID\\\":\\\"4969863194918869183\\\",\\\"name\\\":\\\"Alat Tulis\\\",\\\"description\\\":\\\"alat tulis kantor\\t\\t\\t\\t\\t\\t\\\",\\\"serialVersionUID\\\":\\\"-8161890497812023383\\\",\\\"id\\\":3,\\\"color\\\":null,\\\"fontColor\\\":null,\\\"createdDate\\\":\\\"2020-05-12 21:56:36.0\\\",\\\"modifiedDate\\\":\\\"2020-05-12 21:56:36.0\\\",\\\"deleted\\\":\\\"false\\\"}]";
+//		System.out.println(json.replace("\\t", ""));
+//	}
 
 	public EntityElement(Field field, EntityProperty entityProperty) {
 		this.field = field;
@@ -111,8 +116,13 @@ public class EntityElement implements Serializable {
 				StringBuilder stringBuilder = new StringBuilder(jsonStringified);
 				stringBuilder.setCharAt(0, ' ');
 				stringBuilder.setCharAt(jsonStringified.length() - 1, ' ');
-				return stringBuilder.toString().trim();
+				jsonStringified = stringBuilder.toString().trim();
+				log.info("jsonStringified: {}", jsonStringified);
 			}
+			jsonStringified = jsonStringified.replace("\\t", "");
+			jsonStringified = jsonStringified.replace("\\r", "");
+			jsonStringified = jsonStringified.replace("\\n", ""); 
+			log.info("RETURN jsonStringified: {}", jsonStringified);
 			return jsonStringified;
 		}catch (Exception e) {
 			return "{}";
