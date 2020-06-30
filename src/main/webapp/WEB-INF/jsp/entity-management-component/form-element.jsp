@@ -210,7 +210,7 @@
 	function getGroupName(section, groupName){
 		const h3 = createHtmlTag({
 			tagName: 'h3',
-			innerHTML: section + ' - :' + groupName
+			innerHTML: section + ' - ' + groupName
 		});
 		return h3;
 	}

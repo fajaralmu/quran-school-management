@@ -83,6 +83,9 @@ public class EntityProperty implements Serializable {
 	}
 
 	public String getGridTemplateColumns() {
+		if(formInputColumn == 2) {
+			return "20% 80%";
+		}
 		return StringUtils.repeat("auto ", formInputColumn);
 
 	}

@@ -143,12 +143,15 @@
 		doLoadDropDownItems("<spring:url value="/api/entity/get" />", requestObject, function(entities){
 			for (let i = 0; i < entities.length; i++) {
 				const entity = entities[i];
-				const option = document.createElement("option");
-				option.value = entity[valueField];
-				option.innerHTML = entity[itemField];
-				option.onclick = function() {
+				const option = createHtmlTag({
+					tagName: 'option',
+					value: entity[valueField],
+					innerHTML: entity[itemField],
+					onclick:  function() {
 					inputElement.value = option.innerHTML;
-				}
+					}
+				});
+				
 				element.append(option);
 			}
 		});
@@ -440,8 +443,8 @@
 	function createSortingButton(fieldName){
 		//sorting button
 		const btnSortGroup = createDiv("btn-group-sort-"+fieldName,"btn-group btn-group-sm");
-		const ascButton = createButton("sort-asc-" + fieldName, "asc");
-		const descButton = createButton("sort-desc-" + fieldName, "desc");
+		const ascButton = createButton("sort-asc-" + fieldName, "&#8593;");
+		const descButton = createButton("sort-desc-" + fieldName, "&#8595;");
 		
 		ascButton.className = "btn btn-outline-secondary btn-sm";
 		descButton.className = "btn btn-outline-secondary btn-sm";
@@ -475,7 +478,7 @@
 	}
 
 	function createDataTableHeader() {
-		//HEADER
+		/////////HEADER//////////
 		this.entityTableHead.innerHTML = "";
 		const row = document.createElement("tr");
 		row.append(createCell("No"));
@@ -483,7 +486,7 @@
 			
 			const fieldName = fieldNames[i];
 			const isDateField = isDate(fieldName);
-			const cell = createCell(fieldName); 
+			const cell = createCell(extractCamelCase(fieldName)); 
 			
 			var filterInputGroup;
 			 
@@ -502,15 +505,9 @@
 			
 			//checkbox is exacts
 			//let inputGroupExact = createDiv("input-group-exact-"+fieldName,"input-group-text");
-			const checkBoxExact = createExactCheckBox(fieldName);
-			//inputGroupExact.append(checkBoxExact);
-			//let divPrependCheckBox = createDiv("input-group-prepend-"+fieldName, "input-group-prepend");
-			//divPrependCheckBox.append(inputGroupExact);
-			
-			//let inputGroupCheckBox = createDiv("input-group mb-3"+fieldName, "input-group mb-3");
+			const checkBoxExact = createExactCheckBox(fieldName); 
 			cell.append(createBreakLine());
-			cell.append(checkBoxExact);  
-			//cell.append(inputGroupCheckBox);
+			cell.append(checkBoxExact);   
 			
 			row.append(cell);
 		}
