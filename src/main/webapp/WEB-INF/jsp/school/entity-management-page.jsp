@@ -52,7 +52,7 @@
 	<!-- PAGINATION -->
 	<div class="input-group mb-3"  style="width:30%">
 		<input class="form-control" value="Page" disabled="disabled">
-		<input class="form-control" type="number" id="input-page"   />
+		<input class="form-control" type="number" value="1" id="input-page"   />
 		<button class="btn btn-primary" id="btn-filter-ok" onclick="setPage()">Ok</button>
 		<button class="btn btn-primary" id="btn-filter-ok" onclick="printExcel()">Print Excel</button>
 
@@ -177,7 +177,15 @@
 	}
 	
 	function setPage(){
-		this.page = _byId("input-page").value;
+		const selectedPage = _byId("input-page").value - 1;
+		
+		if(selectedPage < 0){
+			alert("Invalid Page : "+selectedPage+"!!");
+			_byId("input-page").value = 1;
+			return;
+		}
+		
+		this.page = selectedPage;
 		loadEntity(this.page);
 	}
 
@@ -185,6 +193,9 @@
 		if (page < 0) {
 			page = this.page;
 		}
+		
+		console.log("Goto Page: ", page);
+		
 		const requestObject = buildRequestObject(page);
 		doLoadEntities("<spring:url value="/api/entity/get" />", requestObject, function(response){
 			

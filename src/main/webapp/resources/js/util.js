@@ -12,22 +12,22 @@ const loadingDiv = createDiv('loading-div','loading_div');
 
 function infoLoading() {
 	 
-	document.body.appendChild(loadingDiv);
-	loadingDiv.innerHTML = "";
-	loadingDiv.appendChild(loadingText);
+	document.body.prepend(loadingDiv);
 	
+	loadingDiv.innerHTML = "";
 	const loadingText = createHtmlTag({
 		tagName:'span',
 		id:'loading-txt',
 		innerHTML:'Loading'
-	});
+	}); 
+	loadingDiv.appendChild(loadingText); 
 	const imagePath = ctxPath+"/res/img/loading-disk.gif";
 	const loadingImg = createHtmlTag({
 		tagName: "img",
 		src: imagePath,
 		style: {height: '70px', width: '70px'},
 		onload: function(){
-			loadingText.parentNode.remove(loadingText);
+			loadingText.innerHTML = "";
 		}
 	}); 
 	
