@@ -12,7 +12,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.fajar.schoolmanagement.annotation.Authenticated;
-import com.fajar.schoolmanagement.annotation.ResourcePath;
+import com.fajar.schoolmanagement.annotation.CustomRequestInfo;
 import com.fajar.schoolmanagement.config.LogProxyFactory;
 import com.fajar.schoolmanagement.util.DateUtil;
 import com.fajar.schoolmanagement.util.MvcUtil;
@@ -41,7 +41,7 @@ public class MvcAdminController extends BaseController {
 	}
 
 	@RequestMapping(value = { "/home" }) 
-	@ResourcePath(title="Dashboard", pageUrl = "school/home-page")
+	@CustomRequestInfo(title="Dashboard", pageUrl = "school/home-page")
 	public String menuDashboard(Model model, HttpServletRequest request, HttpServletResponse response)
 			throws IOException {
 		Calendar cal = Calendar.getInstance();
@@ -57,7 +57,7 @@ public class MvcAdminController extends BaseController {
 	}
 
 	@RequestMapping(value = { "/report" }) 
-	@ResourcePath(title="Report", pageUrl = "school/report-page", stylePaths = {"reportpage"})
+	@CustomRequestInfo(title="Report", pageUrl = "school/report-page", stylePaths = {"reportpage"})
 	public String reportDashboard(Model model, HttpServletRequest request, HttpServletResponse response)
 			throws IOException {
  
@@ -68,7 +68,7 @@ public class MvcAdminController extends BaseController {
 	}
 
 	@RequestMapping(value = { "/pagesequencesetting" }) 
-	@ResourcePath(title = "Menu Sequence", pageUrl = "school/page-sequence", stylePaths = {"pagesequence"})
+	@CustomRequestInfo(title = "Menu Sequence", pageUrl = "school/page-sequence", stylePaths = {"pagesequence"})
 	public String pagesequencesetting(Model model, HttpServletRequest request, HttpServletResponse response)
 			throws IOException {
  

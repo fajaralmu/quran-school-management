@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.fajar.schoolmanagement.annotation.Authenticated;
-import com.fajar.schoolmanagement.annotation.ResourcePath;
+import com.fajar.schoolmanagement.annotation.CustomRequestInfo;
 import com.fajar.schoolmanagement.config.LogProxyFactory;
 import com.fajar.schoolmanagement.entity.Page;
 
@@ -37,7 +37,7 @@ public class MvcPagesController extends BaseController{
 	 
 	@RequestMapping(value = { "/page/{code}" })
 	@Authenticated
-	@ResourcePath(pageUrl = "school/master-common-page")
+	@CustomRequestInfo(pageUrl = "school/master-common-page")
 	public String page(@PathVariable(name = "code") String code,  Model model, HttpServletRequest request, HttpServletResponse response) throws IOException, NotFoundException {
 		
 		Page page = componentService.getPage(code, request);

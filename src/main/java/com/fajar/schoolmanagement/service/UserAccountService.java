@@ -14,6 +14,7 @@ import com.fajar.schoolmanagement.dto.WebRequest;
 import com.fajar.schoolmanagement.dto.WebResponse;
 import com.fajar.schoolmanagement.entity.User;
 import com.fajar.schoolmanagement.entity.UserRole;
+import com.fajar.schoolmanagement.repository.EntityRepository;
 import com.fajar.schoolmanagement.repository.UserRepository;
 import com.fajar.schoolmanagement.repository.UserRoleRepository;
 import com.fajar.schoolmanagement.util.SessionUtil;
@@ -28,7 +29,7 @@ public class UserAccountService {
 	@Autowired
 	private UserSessionService userSessionService;
 	@Autowired
-	private UserRepository userRepository;
+	private EntityRepository entityRepository;
 	@Autowired
 	private UserRoleRepository userRoleRepository;
 
@@ -53,7 +54,7 @@ public class UserAccountService {
 		UserRole regularRole = regularRoleOpt.get();
 
 		User user = populateUser(request, regularRole);
-		User newUser = userRepository.save(user);
+		User newUser = entityRepository.save(user);
 		response.setUser(newUser);
 		return response;
 	}

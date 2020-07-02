@@ -2,7 +2,6 @@ package com.fajar.schoolmanagement.service;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -19,14 +18,15 @@ import com.fajar.schoolmanagement.dto.Filter;
 import com.fajar.schoolmanagement.dto.WebRequest;
 import com.fajar.schoolmanagement.dto.WebResponse;
 import com.fajar.schoolmanagement.entity.BaseEntity;
+import com.fajar.schoolmanagement.entity.Capital;
+import com.fajar.schoolmanagement.entity.Cost;
 import com.fajar.schoolmanagement.entity.UserRole;
 import com.fajar.schoolmanagement.entity.setting.EntityManagementConfig;
-import com.fajar.schoolmanagement.querybuilder.CRUDQueryHolder;
-import com.fajar.schoolmanagement.querybuilder.QueryUtil;
 import com.fajar.schoolmanagement.repository.EntityRepository;
 import com.fajar.schoolmanagement.repository.RepositoryCustomImpl;
 import com.fajar.schoolmanagement.service.entity.BaseEntityUpdateService;
-import com.fajar.schoolmanagement.util.EntityUtil;
+import com.fajar.schoolmanagement.util.CollectionUtil;
+import com.fajar.schoolmanagement.util.EntityUtil; 
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -37,74 +37,74 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @Slf4j
 public class EntityService {
- 
+
 	public static final String ORIGINAL_PREFFIX = "{ORIGINAL>>";
-	  
+
 	@Autowired
-	private RepositoryCustomImpl repositoryCustom;   
+	private RepositoryCustomImpl repositoryCustom;
 	@Autowired
-	private EntityRepository entityRepository; 
-	
+	private EntityRepository entityRepository;
+
 	@PostConstruct
 	public void init() {
-		LogProxyFactory.setLoggers(this); 
+		LogProxyFactory.setLoggers(this);
 	}
-	 
-	
+
 	private EntityManagementConfig getEntityManagementConfig(String key) {
 		return entityRepository.getConfiguration(key);
 	}
 
 	/**
 	 * add & update entity
+	 * 
 	 * @param request
 	 * @param servletRequest
 	 * @param newRecord
 	 * @return
 	 */
-	public WebResponse saveEntity(WebRequest request, HttpServletRequest servletRequest, boolean newRecord) { 
-		
+	public WebResponse saveEntity(WebRequest request, HttpServletRequest servletRequest, boolean newRecord) {
+
 		try {
-			
+
 			final String key = request.getEntity().toLowerCase();
 			EntityManagementConfig entityConfig = getEntityManagementConfig(key);
 			BaseEntityUpdateService updateService = entityConfig.getEntityUpdateService();
 			String fieldName = entityConfig.getFieldName();
 			Object entityValue = null;
-			
+
 			try {
-				Field entityField = EntityUtil.getDeclaredField(WebRequest.class, fieldName); 
+				Field entityField = EntityUtil.getDeclaredField(WebRequest.class, fieldName);
 				entityValue = entityField.get(request);
-				
+
 				log.info("save {}: {}", entityField.getName(), entityValue);
 				log.info("newRecord: {}", newRecord);
-				
-			}catch (Exception e) {
+
+			} catch (Exception e) {
 				e.printStackTrace();
 				return WebResponse.failed();
-			} 
-			
-			if(entityValue != null)
-				return updateService.saveEntity((BaseEntity)entityValue, newRecord, entityConfig.getUpdateInterceptor());
-			
-		}catch (Exception e) { 
+			}
+
+			if (entityValue != null)
+				return updateService.saveEntity((BaseEntity) entityValue, newRecord,
+						entityConfig.getUpdateInterceptor());
+
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
-		 
+
 		return WebResponse.builder().code("01").message("failed").build();
 	}
 
-	 
 	/**
 	 * get list of entities filtered
+	 * 
 	 * @param request
 	 * @return
 	 */
 	public WebResponse filter(WebRequest request) {
 		Class<? extends BaseEntity> entityClass = null;
-		
-		Filter filter = request.getFilter();
+
+		Filter filter = EntityUtil.cloneSerializable(request.getFilter());
 
 		if (filter == null) {
 			filter = new Filter();
@@ -112,87 +112,95 @@ public class EntityService {
 		if (filter.getFieldsFilter() == null) {
 			filter.setFieldsFilter(new HashMap<String, Object>());
 		}
-		 
+
 		try {
-			
+
 			String entityName = request.getEntity().toLowerCase();
-			entityClass = getEntityManagementConfig(entityName).getEntityClass();
-			
-			if(null == entityClass) {
+			EntityManagementConfig config = getEntityManagementConfig(entityName);
+			log.info("entityName: {}, config: {}", entityName, config);
+			entityClass = config.getEntityClass();
+
+			if (null == entityClass) {
 				throw new Exception("Invalid entity");
 			}
-			 
+
 			/**
 			 * Generate query string
 			 */
-			EntityResult entityResult = filterEntities(filter, entityClass); 
-			
-			
-			return WebResponse.builder().
-					entities(EntityUtil.validateDefaultValue(entityResult.entities)).
-					totalData(entityResult.count).
-					filter(filter).entityClass(entityClass).
-					build();
-			
+			EntityResult entityResult = filterEntities(filter, entityClass);
+
+			return WebResponse.builder().entities(EntityUtil.validateDefaultValue(entityResult.entities))
+					.totalData(entityResult.count).filter(request.getFilter()).entityClass(entityClass).build();
+
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			return WebResponse.failed();
 		}
-	}  
-  
-	private EntityResult filterEntities(Filter filter, Class<? extends BaseEntity> entityClass) {
-
-		CRUDQueryHolder generatedQueryString = QueryUtil.generateSqlByFilter(filter, entityClass); 
-
-		List<BaseEntity> entities = repositoryCustom.filterAndSort(generatedQueryString, entityClass);
-
-		Object countResult = repositoryCustom.getSingleResult(generatedQueryString);
-
-		int count = countResult == null? 0: ((BigInteger) countResult).intValue(); 
-		
-		return EntityResult.builder().entities(entities).count(count).build();
 	}
 
+	private <T extends BaseEntity> EntityResult filterEntities(Filter filter, Class<T> entityClass) {
+		final List<T> entities = new ArrayList<>();
+		final Map<String, Long> count = new HashMap<>();
+		try {
+//			Thread thread = ThreadUtil.run(() -> {
+				List<T> resultList = repositoryCustom.filterAndSortv2(entityClass, filter);
+				entities.addAll(resultList);
+//			});
+//			Thread thread2 = ThreadUtil.run(() -> {
+				long resultCount = repositoryCustom.getRowCount(entityClass, filter);
+				count.put("value", resultCount);
+//			});
+//			thread.join();
+//			thread2.join();
+			
+		}catch (Exception e) {
+			log.error("Error filterEntities: {}", e.getCause() );
+			count.put("value", 0L);
+			e.printStackTrace();
+		}
+		return EntityResult.builder().entities(CollectionUtil.convertList(entities)).count(count.get("value").intValue())
+				.build();
+	}
 
 	/**
 	 * delete entity
+	 * 
 	 * @param request
 	 * @return
 	 */
-	public WebResponse delete(WebRequest request) { 
-		
+	public WebResponse delete(WebRequest request) {
+
 		try {
-			Map<String, Object> filter 	= request.getFilter().getFieldsFilter();
-			Long id 					= Long.parseLong(filter.get("id").toString()); 
-			String entityName 			= request.getEntity().toLowerCase();
-			
+			Map<String, Object> filter = request.getFilter().getFieldsFilter();
+			Long id = Long.parseLong(filter.get("id").toString());
+			String entityName = request.getEntity().toLowerCase();
+
 			Class<? extends BaseEntity> entityClass = getEntityManagementConfig(entityName).getEntityClass();
-			
-			if(null == entityClass) {
+
+			if (null == entityClass) {
 				throw new Exception("Invalid entity");
 			}
-			
-			entityRepository.deleteById(id,entityClass); 
-			 
+
+			entityRepository.deleteById(id, entityClass);
+
 			return WebResponse.builder().code("00").message("deleted successfully").build();
-			
+
 		} catch (Exception ex) {
-			
+
 			ex.printStackTrace();
-			return WebResponse.builder().code("01").message("failed: "+ex.getMessage()).build();
+			return WebResponse.builder().code("01").message("failed: " + ex.getMessage()).build();
 		}
 	}
- 
 
 	public List<UserRole> getAllUserRole() {
 		return entityRepository.findAll(UserRole.class);
 	}
-	
+
 	@Data
 	@Builder
 	@AllArgsConstructor
 	@NoArgsConstructor
-	static class EntityResult implements Serializable{
+	static class EntityResult implements Serializable {
 		/**
 		 * 
 		 */
@@ -200,15 +208,25 @@ public class EntityService {
 		List<BaseEntity> entities;
 		int count;
 	}
-	
-	public <T extends BaseEntity> List<T> findAll(Class<T> _class){
+
+//	
+	public List<Cost> getAllCostType() {
+		return findAll(Cost.class);
+	}
+ 
+
+	public List<Capital> getAllCapitalType() {
+		return findAll(Capital.class);
+	}
+
+	public <T extends BaseEntity> List<T> findAll(Class<T> _class) {
 		List<T> resultList = entityRepository.findAll(_class);
-		
-		if(null == resultList) {
+
+		if (null == resultList) {
 			resultList = new ArrayList<T>();
 		}
-		
-		return  resultList;
+
+		return resultList;
 	}
 
 }

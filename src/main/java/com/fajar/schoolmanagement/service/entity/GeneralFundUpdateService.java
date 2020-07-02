@@ -13,10 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
-public class GeneralFundUpdateService extends BaseEntityUpdateService {
-
-	@Autowired
-	protected EntityRepository entityRepository;
+public class GeneralFundUpdateService extends BaseEntityUpdateService { 
 	@Autowired
 	private CashBalanceService cashBalanceService; 
 	
@@ -26,7 +23,7 @@ public class GeneralFundUpdateService extends BaseEntityUpdateService {
 	public WebResponse saveEntity(BaseEntity entity, boolean newRecord, EntityUpdateInterceptor updateInterceptor) {
 		BaseEntity fund = copyNewElement(entity, newRecord);
 
-		theFund = entityRepository.save(fund);
+		theFund = saveObject(fund);
 		validateFundInfo();
 		
 		cashBalanceService.updateCashBalance((FinancialEntity)theFund);
@@ -36,7 +33,7 @@ public class GeneralFundUpdateService extends BaseEntityUpdateService {
 
 	private void validateFundInfo() {
 		try {
-			theFund =   (BaseEntity) entityRepository.findById(theFund.getClass(), theFund.getId());
+			theFund = entityRepository.findById(theFund.getClass(), theFund.getId());
 		
 		}catch (Exception e) {
 			

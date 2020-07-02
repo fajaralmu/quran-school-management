@@ -1,5 +1,6 @@
 package com.fajar.schoolmanagement.util;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -97,6 +98,10 @@ public class CollectionUtil {
 			array[i] = arrays[i].toString();
 		}
 		return array;
+	}
+
+	public static <T> boolean emptyArray(T[] arr) {
+		return arr == null || arr.length == 0;
 	}
 
 }

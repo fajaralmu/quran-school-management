@@ -18,6 +18,7 @@ import com.fajar.schoolmanagement.entity.Page;
 import com.fajar.schoolmanagement.entity.User;
 import com.fajar.schoolmanagement.repository.CapitalRepository;
 import com.fajar.schoolmanagement.repository.CostRepository;
+import com.fajar.schoolmanagement.repository.EntityRepository;
 import com.fajar.schoolmanagement.repository.MenuRepository;
 import com.fajar.schoolmanagement.repository.PageRepository;
 import com.fajar.schoolmanagement.util.CollectionUtil;
@@ -41,6 +42,8 @@ public class ComponentService {
 	private CostRepository costRepository;
 	@Autowired
 	private CapitalRepository capitalRepository;
+	@Autowired
+	private EntityRepository entityRepository;
 
 	public List<Page> getPages(HttpServletRequest request) {
 
@@ -53,7 +56,7 @@ public class ComponentService {
 
 				Page page = defaultSettingPage();
 
-				final Page savedPage = pageRepository.save(page);
+				final Page savedPage = entityRepository.save(page);
 				return CollectionUtil.listOf(savedPage);
 			}
 
@@ -124,7 +127,7 @@ public class ComponentService {
 
 			if (pageCode.equals(SETTING)) {
 				Menu menu = defaultMenu();
-				final Menu savedMenu = menuRepository.save(menu);
+				final Menu savedMenu = entityRepository.save(menu);
 				return new ArrayList<Menu>() {
 					private static final long serialVersionUID = -6867018433722897471L;
 
@@ -222,7 +225,7 @@ public class ComponentService {
 		if (pageDB.isPresent()) {
 			Page page = pageDB.get();
 			page.setSequence(sequence);
-			pageRepository.save(page);
+			entityRepository.save(page);
 		}
 	}
 

@@ -1,7 +1,6 @@
 package com.fajar.schoolmanagement.repository;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
@@ -72,8 +71,8 @@ public class EntityRepository {
 	@Autowired
 	private BaseEntityUpdateService baseEntityUpdateService;
 
-	@PersistenceContext
-	private EntityManager entityManager;
+	@Autowired
+	private RepositoryCustomImpl repositoryCustom;
 
 	@Setter(value = AccessLevel.NONE)
 	@Getter(value = AccessLevel.NONE)
@@ -171,7 +170,7 @@ public class EntityRepository {
 	 * @param baseEntity
 	 * @return
 	 */
-	public <T extends BaseEntity> T save(T baseEntity) {
+	public <T extends BaseEntity, ID> T save(T baseEntity) {
 		log.info("execute method save");
 
 		boolean joinEntityExist = validateJoinColumn(baseEntity);
@@ -180,17 +179,22 @@ public class EntityRepository {
 
 			throw new InvalidParameterException("JOIN COLUMN INVALID");
 		}
-
+		
 		try {
-			JpaRepository repository = findRepo(baseEntity.getClass());
-			log.info("found repo: " + repository);
-			return (T) repository.save(baseEntity);
+			return savev2(baseEntity);
+//			JpaRepository<T, ID> repository = (JpaRepository<T, ID>) findRepo(baseEntity.getClass());
+//			log.info("found repo: " + repository);
+//			return (T) repository.save((T) baseEntity);
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			throw ex;
 		}
 	}
+	
+	public <T extends BaseEntity> T savev2(T entity) {
+		return repositoryCustom.saveObject(entity);
 
+	}
 	public <T extends BaseEntity> boolean validateJoinColumn(T baseEntity) {
 
 		List<Field> joinColumns = getJoinColumn(baseEntity.getClass());

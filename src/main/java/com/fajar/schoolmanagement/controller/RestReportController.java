@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.fajar.schoolmanagement.annotation.Authenticated;
+import com.fajar.schoolmanagement.annotation.CustomRequestInfo;
 import com.fajar.schoolmanagement.config.LogProxyFactory;
 import com.fajar.schoolmanagement.dto.WebRequest;
 import com.fajar.schoolmanagement.service.report.ReportService;
@@ -41,11 +42,7 @@ public class RestReportController {
 	@PostMapping(value = "/monthlygeneralcashflow", consumes = MediaType.APPLICATION_JSON_VALUE )
 	public void monthlygeneralcashflow(@RequestBody WebRequest request, HttpServletRequest httpRequest,
 			HttpServletResponse httpResponse) throws Exception {
-		log.info("daily report {}", request);
-//		if(!userSessionService.hasSession(httpRequest)) {
-//			return ShopApiResponse.failedResponse();
-//		}
-		  
+		log.info("daily report {}", request); 
 		File result = excelReportService.generateGeneralCashflowMonthlyReport(request);
 
 		writeFileReponse(httpResponse, result);
@@ -53,11 +50,7 @@ public class RestReportController {
 	@PostMapping(value = "/thrusdaydonationcashflow", consumes = MediaType.APPLICATION_JSON_VALUE )
 	public void thrusdaydonationcashflow(@RequestBody WebRequest request, HttpServletRequest httpRequest,
 			HttpServletResponse httpResponse) throws Exception {
-		log.info("daily report {}", request);
-//		if(!userSessionService.hasSession(httpRequest)) {
-//			return ShopApiResponse.failedResponse();
-//		}
-		  
+		log.info("daily report {}", request); 
 		File result = excelReportService.generateThrusdayDonationCashflowReport(request);
 
 		writeFileReponse(httpResponse, result);
@@ -66,11 +59,7 @@ public class RestReportController {
 	@PostMapping(value = "/thrusdaydonationfundflow", consumes = MediaType.APPLICATION_JSON_VALUE )
 	public void thrusdaydonationfundflow(@RequestBody WebRequest request, HttpServletRequest httpRequest,
 			HttpServletResponse httpResponse) throws Exception {
-		log.info("daily report {}", request);
-//		if(!userSessionService.hasSession(httpRequest)) {
-//			return ShopApiResponse.failedResponse();
-//		}
-		  
+		log.info("daily report {}", request); 
 		File result = excelReportService.generateThrusdayDonationFundflowReport(request);
 
 		writeFileReponse(httpResponse, result);
@@ -79,10 +68,7 @@ public class RestReportController {
 	@PostMapping(value = "/studentdonationreport", consumes = MediaType.APPLICATION_JSON_VALUE )
 	public void studentdonationreport(@RequestBody WebRequest request, HttpServletRequest httpRequest,
 			HttpServletResponse httpResponse) throws Exception {
-		log.info("studentdonationreport {}", request);
-//		if(!userSessionService.hasSession(httpRequest)) {
-//			return ShopApiResponse.failedResponse();
-//		}
+		log.info("studentdonationreport {}", request); 
 		  
 		File result = excelReportService.generateYearlyStudentMonthlyDonation(request);
 
@@ -92,23 +78,18 @@ public class RestReportController {
 	@PostMapping(value = "/orphandonationreport", consumes = MediaType.APPLICATION_JSON_VALUE )
 	public void orphandonationreport(@RequestBody WebRequest request, HttpServletRequest httpRequest,
 			HttpServletResponse httpResponse) throws Exception {
-		log.info("studentdonationreport {}", request);
-//		if(!userSessionService.hasSession(httpRequest)) {
-//			return ShopApiResponse.failedResponse();
-//		}
-		  
+		log.info("studentdonationreport {}", request); 
+		
 		File result = excelReportService.generateDonationOrphanReport(request);
 
 		writeFileReponse(httpResponse, result);
 	}
 	
 	@PostMapping(value = "/entity", consumes = MediaType.APPLICATION_JSON_VALUE )
+	@CustomRequestInfo(withRealtimeProgress = true)
 	public void entityreport(@RequestBody WebRequest request, HttpServletRequest httpRequest,
 			HttpServletResponse httpResponse) throws Exception {
-		log.info("entityreport {}", request);
-//		if(!userSessionService.hasSession(httpRequest)) {
-//			return ShopApiResponse.failedResponse();
-//		}
+		log.info("entityreport {}", request); 
 		
 		File result = excelReportService.generateEntityReport(request, httpRequest);
 		

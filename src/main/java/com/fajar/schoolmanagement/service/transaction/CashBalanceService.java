@@ -9,6 +9,7 @@ import com.fajar.schoolmanagement.entity.CashBalance;
 import com.fajar.schoolmanagement.entity.FinancialEntity;
 import com.fajar.schoolmanagement.repository.CashBalanceRepository;
 import com.fajar.schoolmanagement.repository.DonationOrphanRepository;
+import com.fajar.schoolmanagement.repository.EntityRepository;
 import com.fajar.schoolmanagement.util.DateUtil;
 
 import lombok.extern.slf4j.Slf4j;
@@ -21,6 +22,8 @@ public class CashBalanceService {
 	private CashBalanceRepository cashBalanceRepository; 
 	@Autowired
 	private DonationOrphanRepository donationOrphanRepository;
+	@Autowired
+	private EntityRepository entityRepository;
 	
 	public CashBalance getBalanceByTransactionItem(FinancialEntity baseEntity) {
 		
@@ -170,7 +173,7 @@ public class CashBalanceService {
 		cashBalance.setModifiedDate(new Date());
 		cashBalance.setType(mappedCashBalanceInfo.getType());
 		
-		cashBalanceRepository.save(cashBalance);
+		entityRepository.save(cashBalance);
 	}
 	
 	public int[] getTransactionYears() {

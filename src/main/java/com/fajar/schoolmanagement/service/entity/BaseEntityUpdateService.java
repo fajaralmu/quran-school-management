@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.fajar.schoolmanagement.dto.WebResponse;
 import com.fajar.schoolmanagement.entity.BaseEntity;
+import com.fajar.schoolmanagement.repository.EntityRepository;
 import com.fajar.schoolmanagement.service.FileService;
 import com.fajar.schoolmanagement.util.EntityUtil;
 
@@ -19,6 +20,8 @@ public class BaseEntityUpdateService {
 
 	@Autowired
 	protected FileService fileService;
+	@Autowired
+	protected EntityRepository entityRepository;
 
 	public WebResponse saveEntity(BaseEntity baseEntity, boolean newRecord, EntityUpdateInterceptor updateInterceptor) {
 		log.error("saveEntity Method not implemented");
@@ -38,5 +41,9 @@ public class BaseEntityUpdateService {
 		}
 		return result;
 
+	}
+
+	protected <T extends BaseEntity> T saveObject(T entity) {
+		return entityRepository.save(entity);
 	}
 }

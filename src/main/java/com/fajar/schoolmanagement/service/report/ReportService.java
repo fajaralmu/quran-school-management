@@ -80,16 +80,14 @@ public class ReportService {
 	public File generateEntityReport(WebRequest request, HttpServletRequest httpRequest) throws Exception { 
 		log.info("generateEntityReport");
 //		request.getFilter().setLimit(0);
-		String requestId = SessionUtil.getPageRequestId(httpRequest);
-		progressService.init(requestId);
+		String requestId = SessionUtil.getPageRequestId(httpRequest); 
 		
 		WebResponse response = entityService.filter(request);
 		
 		progressService.sendProgress(1, 1, 20, true, requestId);
 		
-		File file = entityReportService.getEntityReport(response.getEntities(), response.getEntityClass(), httpRequest);
+		File file = entityReportService.getEntityReport(response.getEntities(), response.getEntityClass(), httpRequest); 
 		
-		progressService.sendComplete(requestId);
 		return file ;
 	} 
 

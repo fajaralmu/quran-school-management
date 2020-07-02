@@ -11,7 +11,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.fajar.schoolmanagement.annotation.ResourcePath;
+import com.fajar.schoolmanagement.annotation.CustomRequestInfo;
 import com.fajar.schoolmanagement.config.LogProxyFactory;
 
 import lombok.extern.slf4j.Slf4j;
@@ -31,7 +31,7 @@ public class MvcPublicController extends BaseController {
 	}
 
 	@RequestMapping(value = { "/", "index" })
-	@ResourcePath(title = "School Management", pageUrl = "index")
+	@CustomRequestInfo(title = "School Management", pageUrl = "index")
 	public String index(Model model, HttpServletRequest request, HttpServletResponse response) throws IOException {
 //		String imagebasePath = getFullImagePath(request);
 //		model.addAttribute("menus", componentService.getPublicMenus(request)); 
@@ -43,7 +43,7 @@ public class MvcPublicController extends BaseController {
 	}
 
 	@RequestMapping(value = { "about" })
-	@ResourcePath(title = "About App", pageUrl = "school/about-page")
+	@CustomRequestInfo(title = "About App", pageUrl = "school/about-page")
 	public String about(Model model, HttpServletRequest request, HttpServletResponse response) throws IOException {
 //		String imagebasePath = getFullImagePath(request);
 //		model.addAttribute("menus", componentService.getPublicMenus(request)); 

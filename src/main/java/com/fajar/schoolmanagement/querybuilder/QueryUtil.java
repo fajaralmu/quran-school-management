@@ -1,9 +1,6 @@
 package com.fajar.schoolmanagement.querybuilder;
 
-import static com.fajar.schoolmanagement.util.EntityUtil.getClassAnnotation;
-import static com.fajar.schoolmanagement.util.EntityUtil.getDeclaredField;
-import static com.fajar.schoolmanagement.util.EntityUtil.getIdFieldOfAnObject;
-import static com.fajar.schoolmanagement.util.StringUtil.buildString;
+import static com.fajar.schoolmanagement.util.EntityUtil.*; 
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -90,7 +87,7 @@ public class QueryUtil {
 		}
  
 		Class<?> fieldClass 	= field.getType();
-		Field idForeignField 	= getIdFieldOfAnObject(fieldClass);
+		Field idForeignField 	= EntityUtil.getIdFieldOfAnObject(fieldClass);
 
 		String joinTableName 	= getTableName(fieldClass);
 		String tableName 		= getTableName(entityClass);
@@ -116,7 +113,7 @@ public class QueryUtil {
 
 		StringBuilder sql = new StringBuilder("");
 
-		CustomEntity customModel = getClassAnnotation(entityClass, CustomEntity.class);
+		CustomEntity customModel = EntityUtil.getClassAnnotation(entityClass, CustomEntity.class);
 
 		List<Field> fields = EntityUtil.getDeclaredFields(entityClass);
 		for (Field field : fields) {
@@ -221,7 +218,7 @@ public class QueryUtil {
 			}
 			
 			String filterColumnName = getColumnName(field); 
-			KeyValue joinColumnResult = checkIfJoinColumn(currentKey, field);
+			KeyValue joinColumnResult = checkIfJoinColumn(currentKey, field, false);
 			
 			if(null != joinColumnResult) {
 				if(joinColumnResult.isValid()) {
@@ -246,9 +243,11 @@ public class QueryUtil {
 	 * return keyValue of tableName and columnName of the referenced entity
 	 * @param currentKey
 	 * @param field
+	 * @param actualColumnName
 	 * @return
 	 */
-	private static KeyValue checkIfJoinColumn(String currentKey, Field field) {
+	public static KeyValue checkIfJoinColumn(String currentKey, Field field, boolean actualColumnName) {
+		
 		String multiKeyColumnName = getMultiKeyColumnName(currentKey);
 		KeyValue keyValue = new KeyValue();
 		boolean isMultiKey 	= null != multiKeyColumnName; 
@@ -257,7 +256,7 @@ public class QueryUtil {
 		if (field.getAnnotation(JoinColumn.class) != null || isMultiKey) { 
 
 			try {
-				Class<?> fieldClass 	= field.getType();
+				Class<?> fieldClass		= field.getType();
 				String joinTableName 	= getTableName(fieldClass); 
 				String referenceFieldName = "";
 
@@ -268,7 +267,7 @@ public class QueryUtil {
 				}
 
 				Field 	referenceEntityField 	= getDeclaredField(fieldClass, referenceFieldName);
-				String 	fieldColumnName 		= getColumnName(referenceEntityField);
+				String 	fieldColumnName 		= actualColumnName ? getColumnName(referenceEntityField)  : referenceFieldName;
 
 				if (fieldColumnName == null || fieldColumnName.equals("")) {
 					validColumn = false;
@@ -291,6 +290,7 @@ public class QueryUtil {
 		} 
 		
 		keyValue.setValid(validColumn);
+		log.info("keyValue: {}", keyValue);
 		return keyValue;
 	}
 
@@ -298,6 +298,8 @@ public class QueryUtil {
 		String[] multiKey 	= currentKey.split(",");
 		boolean isMultiKey 	= multiKey.length == 2;
 		if (isMultiKey) {
+			log.info("Multi Key: {}", currentKey);
+			log.info("key name: {}", multiKey[1]);
 			return  multiKey[1]; 
 		} 
 		else {
@@ -351,7 +353,7 @@ public class QueryUtil {
 	 * @param filter
 	 * @return
 	 */
-	private static QueryFilterItem getDateFilter(String rawKey, String key, List<Field > fields, Map<String, Object> filter) {
+	private static QueryFilterItem getDateFilter(String rawKey, String key, List<Field > fields, Map filter) {
 		boolean dayFilter 	= rawKey.endsWith(DAY_SUFFIX);
 		boolean monthFilter = rawKey.endsWith(MONTH_SUFFIX);
 		boolean yearFilter 	= rawKey.endsWith(YEAR_SUFFIX);
@@ -436,7 +438,7 @@ public class QueryUtil {
 
 		String orderField = doubleQuoteMysql(tableName).concat(".").concat(doubleQuoteMysql(orderColumnName));
 
-		return buildString(SQL_KEYWORD_ORDERBY, orderField, orderType);
+		return StringUtil.buildString(SQL_KEYWORD_ORDERBY, orderField, orderType);
 	}
 
 	public static String getTableName(Class<?> entityClass) {
@@ -474,5 +476,28 @@ public class QueryUtil {
 	static String doubleQuoteMysql(Object str) {
 		return StringUtil.doubleQuoteMysql(str.toString());
 	}  
+	
+	/**
+	 * 
+	 * @param <T>
+	 * @param _class
+	 * @return fields having BaseEntity superClass type and @JoinColumn annotation
+	 */
+	public static  <T extends BaseEntity> List<Field> getJoinColumnFields(Class<T> _class){
+		List<Field> joinColumns = new ArrayList<>();
+		
+		List<Field> fields = EntityUtil.getDeclaredFields(_class);
+		for (int i = 0; i < fields.size(); i++) {
+			final Field field = fields.get(i);
+			
+			JoinColumn joinColumn = field.getAnnotation(JoinColumn.class);
+			if(null != joinColumn && field.getType().getSuperclass().equals(BaseEntity.class)) {
+				field.setAccessible(true);
+				joinColumns.add(field);
+			}
+		}
+		
+		return joinColumns;
+	}
 
 }

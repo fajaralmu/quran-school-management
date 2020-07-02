@@ -19,7 +19,6 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class MyHandlerInterceptor extends HandlerInterceptorAdapter {
 
-	
 	@Autowired
 	private InterceptorProcessor interceptorProcessor;
 
@@ -41,15 +40,15 @@ public class MyHandlerInterceptor extends HandlerInterceptorAdapter {
 
 	@Override
 	public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler,
-			ModelAndView modelAndView) throws Exception { 
-		
-		if(null != modelAndView && handler instanceof HandlerMethod) {
-			interceptorProcessor.addResources(request, response, (HandlerMethod) handler, modelAndView);
+			ModelAndView modelAndView) throws Exception {
+
+		if (handler instanceof HandlerMethod) {
+			interceptorProcessor.postHandle(request, response, (HandlerMethod) handler, modelAndView);
+
 		}
-		
-		super.postHandle(request, response, handler, modelAndView); 
-	} 
-	
+
+		super.postHandle(request, response, handler, modelAndView);
+	}
 
 	@Override
 	public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex)
@@ -58,5 +57,4 @@ public class MyHandlerInterceptor extends HandlerInterceptorAdapter {
 		super.afterCompletion(request, response, handler, ex);
 	}
 
-	
 }

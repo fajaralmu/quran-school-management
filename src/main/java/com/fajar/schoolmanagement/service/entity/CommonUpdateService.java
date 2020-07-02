@@ -4,13 +4,11 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.fajar.schoolmanagement.annotation.FormField;
 import com.fajar.schoolmanagement.dto.WebResponse;
 import com.fajar.schoolmanagement.entity.BaseEntity;
-import com.fajar.schoolmanagement.repository.EntityRepository;
 import com.fajar.schoolmanagement.util.EntityUtil;
 
 import lombok.extern.slf4j.Slf4j;
@@ -18,9 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @Slf4j
 public class CommonUpdateService extends BaseEntityUpdateService{ 
-
-	@Autowired
-	protected EntityRepository entityRepository;
+ 
 	
 	@Override
 	public WebResponse saveEntity(BaseEntity entity, boolean newRecord, EntityUpdateInterceptor updateInterceptor) {
@@ -29,7 +25,7 @@ public class CommonUpdateService extends BaseEntityUpdateService{
 		
 		validateEntityFields(entity, newRecord);  
 		interceptPreUpdate(entity, updateInterceptor); 
-		BaseEntity newEntity = entityRepository.save(entity);
+		BaseEntity newEntity = saveObject(entity);
 		
 		return WebResponse.builder().entity(newEntity).build();
 	}

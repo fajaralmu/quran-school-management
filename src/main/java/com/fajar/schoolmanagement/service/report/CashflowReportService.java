@@ -63,7 +63,8 @@ public class CashflowReportService {
 		Integer monthDays = getMonthDays(filter);
 		int month = filter.getMonth();
 
-		Map<Integer, List<FinancialEntity>> mappedFunds = sortFinancialEntityByDayOfMonth(reportData.getFunds(), monthDays);
+		Map<Integer, List<FinancialEntity>> mappedFunds = sortFinancialEntityByDayOfMonth(reportData.getFunds(),
+				monthDays);
 		Map<Integer, List<FinancialEntity>> mappedSpendings = sortFinancialEntityByDayOfMonth(reportData.getSpendings(),
 				monthDays);
 		CashBalance initialBalance = reportData.getInitialBalance();
@@ -135,7 +136,5 @@ public class CashflowReportService {
 
 		return summaryCashflow;
 	}
- 
-	
 
 }
