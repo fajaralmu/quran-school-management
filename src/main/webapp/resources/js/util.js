@@ -16,9 +16,9 @@ function infoLoading() {
 	
 	loadingDiv.innerHTML = "";
 	const loadingText = createHtmlTag({
-		tagName:'span',
+		tagName:'div',
 		id:'loading-txt',
-		innerHTML:'Loading'
+		innerHTML:'Please Wait'
 	}); 
 	loadingDiv.appendChild(loadingText); 
 	const imagePath = ctxPath+"/res/img/loading-disk.gif";
