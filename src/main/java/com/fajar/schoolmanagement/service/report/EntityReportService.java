@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import com.fajar.schoolmanagement.dto.ReportData;
 import com.fajar.schoolmanagement.entity.BaseEntity;
+import com.fajar.schoolmanagement.entity.User;
 import com.fajar.schoolmanagement.entity.setting.EntityProperty;
 import com.fajar.schoolmanagement.report.builder.EntityReportBuilder;
 import com.fajar.schoolmanagement.service.ProgressService;
@@ -31,7 +32,8 @@ public class EntityReportService {
 	public File getEntityReport(List<BaseEntity> entities, Class<? extends BaseEntity> entityClass,
 			HttpServletRequest httpRequest) throws Exception {
 		log.info("Generate entity report: {}", entityClass); 
-		String requestId = SessionUtil.getPageRequestId(httpRequest);
+		User currentUser = SessionUtil.getUserFromRequest(httpRequest); 
+		String requestId = currentUser.getRequestId();
 		
 		EntityProperty entityProperty = EntityUtil.createEntityProperty(entityClass, null);
 		ReportData reportData = ReportData.builder().entities(entities).entityProperty(entityProperty).requestId(requestId).build(); 
@@ -42,6 +44,9 @@ public class EntityReportService {
 		progressService.sendProgress(1, 1, 10, false, requestId);
 
 		File file = reportBuilder.buildReport();
+		
+		
+		
 		log.info("Entity Report generated");
 
 		return file;

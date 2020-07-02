@@ -98,7 +98,7 @@ public class WebConfigService {
 		
 		JpaRepository result = this.repositoryMap.get(_entityClass);
 		
-		log.info("found repo: {}", result);
+		log.info("found repo object: {}", result);
 		
 		return result;
 	}

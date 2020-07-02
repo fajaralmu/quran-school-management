@@ -8,19 +8,38 @@ function _byId(id){
 	return document.getElementById(id);
 }
 
+const loadingDiv = createDiv('loading-div','loading_div');
+
 function infoLoading() {
-	_byId("loading-div").innerHTML = "";
+	 
+	document.body.appendChild(loadingDiv);
+	loadingDiv.innerHTML = "";
+	loadingDiv.appendChild(loadingText);
+	
+	const loadingText = createHtmlTag({
+		tagName:'span',
+		id:'loading-txt',
+		innerHTML:'Loading'
+	});
 	const imagePath = ctxPath+"/res/img/loading-disk.gif";
 	const loadingImg = createHtmlTag({
 		tagName: "img",
 		src: imagePath,
-		style: {height: '70px', width: '70px'}
+		style: {height: '70px', width: '70px'},
+		onload: function(){
+			loadingText.parentNode.remove(loadingText);
+		}
 	}); 
-	_byId("loading-div").appendChild(loadingImg);
+	
+	loadingDiv.appendChild(loadingImg);
 }
 
 function infoDone() {
-	_byId("loading-div").innerHTML = "";
+	try{
+		loadingDiv.parentNode.removeChild(loadingDiv);
+	}catch(e){
+		
+	}
 }
 
 /** ***************COMPONENT*************** */

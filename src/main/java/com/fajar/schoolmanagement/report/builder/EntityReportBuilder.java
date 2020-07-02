@@ -45,7 +45,7 @@ public class EntityReportBuilder extends ReportBuilder {
 		String time = getDateTime();
 		String sheetName = entityProperty.getEntityName();
 
-		String reportName = webConfigService.getReportPath() + "/" + sheetName + "_" + time + ".xlsx";
+		String reportName = webConfigService.getReportPath() + "/" + sheetName + "_" + time +"_"+ requestId+".xlsx";
 		XSSFWorkbook xwb = new XSSFWorkbook();
 		xsheet = xwb.createSheet(sheetName);
 

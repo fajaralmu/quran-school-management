@@ -250,7 +250,7 @@ public class EntityRepository {
 	 * @return
 	 */
 	public < T extends BaseEntity> JpaRepository findRepo(Class<T> entityClass) {
-
+		
 		 JpaRepository repository = webConfigService.getJpaRepository(entityClass);
 		 
 		 return repository;

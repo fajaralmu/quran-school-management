@@ -68,8 +68,8 @@
 			</div>
 	</div>
 	<input id="token-value" value="${pageToken }" type="hidden" />
-	<input id="request-id" value="${requestId }" type="hidden" />
-	<div id="loading-div"></div>
+	<input id="request-id" value="${requestId }" type="hidden" /><!-- 
+	<div id="loading-div"></div> -->
 	
 	<div class="container">
 		<div class="title-header" style="color:${profile.fontColor}">

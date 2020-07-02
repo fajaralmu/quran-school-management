@@ -52,7 +52,7 @@
 	<!-- PAGINATION -->
 	<div class="input-group mb-3"  style="width:30%">
 		<input class="form-control" value="Page" disabled="disabled">
-		<input class="form-control" type="number" id="input-page" />
+		<input class="form-control" type="number" id="input-page"   />
 		<button class="btn btn-primary" id="btn-filter-ok" onclick="setPage()">Ok</button>
 		<button class="btn btn-primary" id="btn-filter-ok" onclick="printExcel()">Print Excel</button>
 
@@ -202,7 +202,7 @@
 	}
 	
 	function printExcel(){
-		const confirmed = confirm("Do you want to download excel file?");
+		const confirmed = confirm("Do you want to download excel file from row page "+this.page+"?");
 		if(!confirmed){
 			return;
 		}
