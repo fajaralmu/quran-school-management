@@ -487,10 +487,11 @@ public class UserSessionService {
 			log.info("username: {} exist", dbUser.getUsername());
 		} else {
 			log.error("username: {} does not exist", requestUser.getUsername());
+			return null;
 		}
 
 		boolean passwordMatched = comparePassword(dbUser, requestUser.getPassword());
-		log.info("LOgged User Role: {}", dbUser.getRole());
+		log.info("Logged User Role: {}", dbUser.getRole());
 		return passwordMatched ? dbUser : null;
 	}
 

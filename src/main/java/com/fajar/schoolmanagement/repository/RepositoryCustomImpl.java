@@ -293,7 +293,7 @@ public class RepositoryCustomImpl implements RepositoryCustom {
 					log.debug("success update record of {}", entity.getClass());
 				}
 
-				log.info("success save Object: {}", entity.getClass());
+				log.info("success save Object of {} >> savedObject: {}", entity.getClass(), result);
 				return result;
 			}
 		};

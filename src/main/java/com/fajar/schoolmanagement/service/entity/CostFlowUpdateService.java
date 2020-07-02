@@ -28,6 +28,7 @@ public class CostFlowUpdateService extends BaseEntityUpdateService{
 		 
 		theCostFlow = saveObject(costFlow);
 		validateCostInfo();
+		
 		log.info("Cost Type: {}", theCostFlow.getCostType());
 		cashBalanceService.updateCashBalance(theCostFlow);
 		
@@ -35,6 +36,10 @@ public class CostFlowUpdateService extends BaseEntityUpdateService{
 	}
 
 	private void validateCostInfo() { 
-		theCostFlow =  entityRepository.findById(theCostFlow.getClass(), theCostFlow.getId());
+		theCostFlow =  entityRepository.findById(CostFlow.class, theCostFlow.getId());
+		log.info("validated theCostFlow: {}", theCostFlow);
+		if(null == theCostFlow) {
+			throw new RuntimeException("INVALID COST FLOW");
+		}
 	}
 }

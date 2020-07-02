@@ -1,6 +1,7 @@
 package com.fajar.schoolmanagement.repository;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
@@ -10,10 +11,9 @@ import java.util.Map;
 import java.util.Optional;
 
 import javax.annotation.PostConstruct;
-import javax.persistence.EntityManager;
 import javax.persistence.JoinColumn;
-import javax.persistence.PersistenceContext;
 
+import org.apache.poi.ss.formula.functions.T;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.Repository;
@@ -45,7 +45,6 @@ import com.fajar.schoolmanagement.service.entity.EntityUpdateInterceptor;
 import com.fajar.schoolmanagement.service.entity.GeneralFundUpdateService;
 import com.fajar.schoolmanagement.service.entity.UserUpdateService;
 import com.fajar.schoolmanagement.util.CollectionUtil;
-import com.sun.beans.TypeResolver;
 
 import lombok.AccessLevel;
 import lombok.Data;
@@ -252,24 +251,9 @@ public class EntityRepository {
 	 */
 	public < T extends BaseEntity> JpaRepository findRepo(Class<T> entityClass) {
 
-		log.info("will find repo by class: {}", entityClass); 
-		
-		List<JpaRepository<?, ?>> jpaRepositories = webConfigService.getJpaRepositories();
-		int index = 0;
-		
-		for (JpaRepository<?, ?> jpaObject : jpaRepositories) {
-			log.info("{}-Repo : {}", index, jpaObject);
-			Class<?> beanType = jpaObject.getClass();
-			Type originalEntityClass = getJpaRepositoryFirstTypeArgument(beanType, entityClass);
-
-			if (originalEntityClass != null && originalEntityClass.equals(entityClass)) {
-
-				return (JpaRepository ) jpaObject;
-
-			}
-		}
-
-		return null;
+		 JpaRepository repository = webConfigService.getJpaRepository(entityClass);
+		 
+		 return repository;
 	}
 
 	/**
@@ -280,12 +264,16 @@ public class EntityRepository {
 	 * @return
 	 */
 	public <ID, T extends BaseEntity> T findById(Class<T> clazz, ID ID) {
+		log.info("find {} By Id: {}", clazz.getSimpleName(), ID);
 		JpaRepository<T, ID> repository = findRepo(clazz);
 
+		log.info("found repo : {} for {}", repository.getClass(), clazz);
+		
 		Optional<T> result = repository.findById(ID);
 		if (result.isPresent()) {
 			return result.get();
 		}
+		log.debug("{} is NULL", clazz.getSimpleName());
 		return null;
 	}
 
@@ -302,42 +290,7 @@ public class EntityRepository {
 		}
 		return repository.findAll();
 	}
-
-	public static Type getJpaRepositoryFirstTypeArgument(Class<?> clazz, Class<?> entityClass) {
-		Type[] interfaces = clazz.getGenericInterfaces();
-
-		log.debug("Check if {} is the meant repository");
-		if (interfaces == null) {
-			log.info("{} interfaces is null", clazz);
-			return null;
-		}
-
-		log.debug("clazz {} interfaces size: {}", clazz, interfaces.length);
-		CollectionUtil.printArray(interfaces);
-		
-		for (Type type : interfaces) {
-
-			boolean isJpaRepository = type.getTypeName().startsWith(Repository.class.getCanonicalName());
-
-			if (isJpaRepository) {
-				Type _type = TypeResolver.resolve(clazz, entityClass);
-				log.debug("_type: {}", _type);
-				if(_type.equals(entityClass)) {
-					return _type;
-				}
-//				ParameterizedType parameterizedType = (ParameterizedType) type;
-//
-//				if (parameterizedType.getActualTypeArguments() != null
-//						&& parameterizedType.getActualTypeArguments().length > 0) {
-//					return (T) parameterizedType.getActualTypeArguments()[0];
-//				}
-				
-			}
-		}
-
-		return null;
-	}
-
+ 
 	/**
 	 * delete entity by id
 	 * 

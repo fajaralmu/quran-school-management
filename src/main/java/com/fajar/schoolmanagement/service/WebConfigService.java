@@ -6,7 +6,9 @@ import java.io.IOException;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -17,6 +19,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.fajar.schoolmanagement.annotation.Dto;
 import com.fajar.schoolmanagement.config.LogProxyFactory;
+import com.fajar.schoolmanagement.entity.BaseEntity;
 import com.fajar.schoolmanagement.entity.Profile;
 import com.fajar.schoolmanagement.repository.ProfileRepository;
 import com.fajar.schoolmanagement.util.CollectionUtil;
@@ -49,6 +52,7 @@ public class WebConfigService {
 	
 	private List<JpaRepository<?, ?>> jpaRepositories = new ArrayList<>();
 	private List<Type> entityClassess = new ArrayList<>();
+	private Map<Class<? extends BaseEntity>, JpaRepository> repositoryMap = new HashMap<>();
 	
 	@PreDestroy
 	public void preDestroy() {
@@ -59,6 +63,8 @@ public class WebConfigService {
 		log.info("//////////////GET JPA REPOSITORIES BEANS///////////////");
 		jpaRepositories.clear();
 		entityClassess.clear();
+		repositoryMap.clear();
+		
 		String[] beanNames = applicationContext.getBeanNamesForType(JpaRepository.class);
 		if (null == beanNames)
 			return;
@@ -81,12 +87,24 @@ public class WebConfigService {
 			entityClassess.add(type);
 			jpaRepositories.add(beanObject);
 			
+			repositoryMap.put((Class)type, beanObject);
+			
 			log.info(i + "." + beanName + ". entity type: "+ type);
 		}
 	}
 	
+	public <T extends BaseEntity>  JpaRepository getJpaRepository(Class<T> _entityClass) {
+		log.info("get JPA Repository for: {}", _entityClass);
+		
+		JpaRepository result = this.repositoryMap.get(_entityClass);
+		
+		log.info("found repo: {}", result);
+		
+		return result;
+	}
+	
 
-	private ParameterizedType getJpaRepositoryType(Class<?> _class) {
+	public static ParameterizedType getJpaRepositoryType(Class<?> _class) {
 		Type[] genericInterfaces = _class.getGenericInterfaces();
 		if(CollectionUtil.emptyArray(genericInterfaces)) return null;
 		
