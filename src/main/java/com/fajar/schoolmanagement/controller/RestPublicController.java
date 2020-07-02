@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fajar.schoolmanagement.annotation.Authenticated;
 import com.fajar.schoolmanagement.config.LogProxyFactory;
 import com.fajar.schoolmanagement.dto.WebRequest;
 import com.fajar.schoolmanagement.dto.WebResponse;
@@ -41,22 +42,18 @@ public class RestPublicController extends BaseController{
 	}
 	
 	@PostMapping(value = "/pagecode")
+	@Authenticated(loginRequired = false)
 	public WebResponse getCurrentPageCode(HttpServletRequest request, HttpServletResponse response) {
-		validatePageRequest(request);
+		 
 		return WebResponse.builder().code(super.activePage(request)).build();
 	}
 	@PostMapping(value = "/menus/{pageCode}")
+	@Authenticated(loginRequired = false)
 	public WebResponse getMenusByPage(@PathVariable(value = "pageCode") String pageCode, HttpServletRequest request, HttpServletResponse response) {
-		validatePageRequest(request);
+		 
 		return componentService.getMenuByPageCode(pageCode);
 	}
-	
-	public void validatePageRequest(HttpServletRequest req) { 
-		boolean validated = userSessionService.validatePageRequest(req );
-        if(!validated)  {
-        	throw new RuntimeErrorException(null, "Invalid page request");
-        }
-	}
+	 
 	
 	
 	 
