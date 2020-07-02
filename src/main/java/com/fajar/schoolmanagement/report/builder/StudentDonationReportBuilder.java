@@ -20,8 +20,10 @@ import com.fajar.schoolmanagement.dto.ReportData;
 import com.fajar.schoolmanagement.entity.DonationMonthly;
 import com.fajar.schoolmanagement.entity.FinancialEntity;
 import com.fajar.schoolmanagement.entity.Student;
+import com.fajar.schoolmanagement.service.ProgressService;
 import com.fajar.schoolmanagement.service.WebConfigService;
 import com.fajar.schoolmanagement.service.report.ReportMappingUtil;
+import com.fajar.schoolmanagement.util.CollectionUtil;
 import com.fajar.schoolmanagement.util.DateUtil;
 import com.fajar.schoolmanagement.util.MyFileUtil;
 
@@ -31,12 +33,13 @@ import lombok.extern.slf4j.Slf4j;
 public class StudentDonationReportBuilder extends ReportBuilder {
 
 	private static final String DATE_PATTERN_STD = "dd-MM-yyyy";
-	final List<Student> students;
+	final List<Student> students; 
 
-	public StudentDonationReportBuilder(WebConfigService configService, ReportData reportData, List<Student> students) {
+	public StudentDonationReportBuilder(WebConfigService configService, ReportData reportData,  ProgressService progressService) {
 		super(configService, reportData);
 		
-		this.students = students;
+		this.students =	CollectionUtil.convertList(reportData.getEntities());
+		this.progressService = progressService;
 	}
 
 	@Override
@@ -47,7 +50,9 @@ public class StudentDonationReportBuilder extends ReportBuilder {
 
 		File file = MyFileUtil.getFile(xssfWorkbook, reportName);
 		log.info("generated: MonthlyStudentDonationReport");
-
+		
+		sendProgress(1, 1, 10);
+		
 		return file;
 	}
 
@@ -74,7 +79,7 @@ public class StudentDonationReportBuilder extends ReportBuilder {
 			mappedFunds.get(studentId).add(donation);
 
 		}
-
+		sendProgress(1, 1, 10);
 		return mappedFunds;
 	}
 
@@ -104,6 +109,8 @@ public class StudentDonationReportBuilder extends ReportBuilder {
 
 			createRow(xsheet, currentRow, columnOffset, studentRowData);
 			currentRow++;
+			
+			sendProgress(1, students.size(), 60);
 		}
 
 	}

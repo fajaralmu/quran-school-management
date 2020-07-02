@@ -13,6 +13,7 @@ import com.fajar.schoolmanagement.config.LogProxyFactory;
 import com.fajar.schoolmanagement.dto.ReportData;
 import com.fajar.schoolmanagement.dto.WebRequest;
 import com.fajar.schoolmanagement.dto.WebResponse;
+import com.fajar.schoolmanagement.entity.BaseEntity;
 import com.fajar.schoolmanagement.entity.Student;
 import com.fajar.schoolmanagement.service.EntityService;
 import com.fajar.schoolmanagement.service.ProgressService;
@@ -48,9 +49,13 @@ public class ReportService {
 		LogProxyFactory.setLoggers(this);
 	}
 	
-	public File generateGeneralCashflowMonthlyReport(WebRequest webRequest) {
+	public File generateGeneralCashflowMonthlyReport(WebRequest webRequest, HttpServletRequest httpRequest) {
 		log.info("generateGeneralCashflowMonthlyReport");
+		
+		String requestId = SessionUtil.getPageRequestId(httpRequest);
 		ReportData transactionData = transactionService.getMonthlyGeneralCashflow(webRequest.getFilter()); 
+		transactionData.setRequestId(requestId);
+		progressService.sendProgress(1, 1, 20, requestId);
 		
 		return cashflowReportService.generateMonthlyGeneralCashflow(transactionData);
 	}
@@ -62,13 +67,21 @@ public class ReportService {
 		return thrusdayDonationReportService.generateThrusdayCashflowReport(transactionData);
 	}
 	
-	public File generateYearlyStudentMonthlyDonation(WebRequest webRequest) {
+	public File generateYearlyStudentMonthlyDonation(WebRequest webRequest, HttpServletRequest httpRequest) {
 		log.info("generateYearlyStudentMonthlyDonation");
+		String requestId = SessionUtil.getPageRequestId(httpRequest);
 		
 		ReportData transactionData = transactionService.getYearlyMonthlyDonationCashflow(webRequest.getFilter());
+		transactionData.setRequestId(requestId);
+		progressService.sendProgress(1, 1, 10, requestId);
+		
 		List<Student> studentList = getAllStudents();
-		List<Student> convertList = CollectionUtil.convertList(studentList);
-		File result = studentDonationReportService.generateMonthlyStudentDonationForOneYearReport(transactionData, convertList);
+		List<BaseEntity> convertedList = CollectionUtil.convertList(studentList);
+		transactionData.setEntities(convertedList);
+		progressService.sendProgress(1, 1, 10, requestId); 
+		
+		
+		File result = studentDonationReportService.generateMonthlyStudentDonationForOneYearReport(transactionData);
 		return result ;
 	}
  

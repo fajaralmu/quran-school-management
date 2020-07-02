@@ -18,17 +18,13 @@ import lombok.extern.slf4j.Slf4j;
 public class EntityReportBuilder extends ReportBuilder {
 	private List<BaseEntity> entities;
 	private EntityProperty entityProperty;
-	private ProgressService progressService;
 	private final String requestId;
 
 	public EntityReportBuilder(WebConfigService webConfigService, ReportData reportData) {
 		super(webConfigService, reportData);
 		this.requestId = reportData.getRequestId();
 	}
-
-	public void setProgressService(ProgressService progressService) {
-		this.progressService = progressService;
-	}
+ 
 	
 	@Override
 	protected void init() {
@@ -51,10 +47,10 @@ public class EntityReportBuilder extends ReportBuilder {
 
 		createEntityTable();
 
-		progressService.sendProgress(1, 1, 10, false, requestId);
+		sendProgress(1, 1, 10 );
 		
 		File file = MyFileUtil.getFile(xwb, reportName);
-		progressService.sendProgress(1, 1, 10, false, requestId);
+		sendProgress(1, 1, 10 );
 		return file;
 	}
 
@@ -69,6 +65,6 @@ public class EntityReportBuilder extends ReportBuilder {
 		}
 	}
 
-	
+ 
 
 }

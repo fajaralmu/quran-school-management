@@ -7,9 +7,11 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import com.fajar.schoolmanagement.dto.ReportData;
+import com.fajar.schoolmanagement.service.ProgressService;
 import com.fajar.schoolmanagement.service.WebConfigService;
 import com.fajar.schoolmanagement.util.DateUtil;
 
+ 
 public abstract class ReportBuilder {
 	protected final WebConfigService webConfigService;
 	protected XSSFSheet xsheet;
@@ -19,16 +21,26 @@ public abstract class ReportBuilder {
 	protected final ReportData reportData;
 	protected String reportName;
 	
+	//optional
+	protected ProgressService progressService;
+	
 	public ReportBuilder(WebConfigService configService, ReportData reportData) {
 		this.webConfigService = configService;
 		this.reportData = reportData;
 		init();
 	}
-	
+	public void setProgressService(ProgressService progressService) {
+		 
+		this.progressService = progressService;
+	}
 	protected abstract void init();
 
 	protected String getDateTime() {
 		return DateUtil.formatDate(new Date(), DATE_PATTERN);
+	}
+	
+	protected void sendProgress(double taskProportion, double taskSize, double totalTaskProportion) {
+		progressService.sendProgress(taskProportion, taskSize, totalTaskProportion, false, reportData.getRequestId());
 	}
 	
 	public abstract File buildReport( );

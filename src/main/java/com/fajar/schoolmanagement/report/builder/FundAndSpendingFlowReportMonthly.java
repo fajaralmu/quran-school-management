@@ -50,7 +50,7 @@ public class FundAndSpendingFlowReportMonthly extends ReportBuilder{
 		
 	}
 
-	private String getReportName() {  
+	public String getReportName() {  
 		String time = ReportMappingUtil.getReportDateString();
 		String sheetName = reportData.getReportName(); 
 		

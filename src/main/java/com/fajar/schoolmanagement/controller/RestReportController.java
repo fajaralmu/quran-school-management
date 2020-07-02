@@ -40,10 +40,11 @@ public class RestReportController {
 	}
 	
 	@PostMapping(value = "/monthlygeneralcashflow", consumes = MediaType.APPLICATION_JSON_VALUE )
+	@CustomRequestInfo(withRealtimeProgress = true)
 	public void monthlygeneralcashflow(@RequestBody WebRequest request, HttpServletRequest httpRequest,
 			HttpServletResponse httpResponse) throws Exception {
 		log.info("daily report {}", request); 
-		File result = excelReportService.generateGeneralCashflowMonthlyReport(request);
+		File result = excelReportService.generateGeneralCashflowMonthlyReport(request, httpRequest);
 
 		writeFileReponse(httpResponse, result);
 	}
@@ -66,11 +67,12 @@ public class RestReportController {
 	}
 	
 	@PostMapping(value = "/studentdonationreport", consumes = MediaType.APPLICATION_JSON_VALUE )
+	@CustomRequestInfo(withRealtimeProgress = true)
 	public void studentdonationreport(@RequestBody WebRequest request, HttpServletRequest httpRequest,
 			HttpServletResponse httpResponse) throws Exception {
 		log.info("studentdonationreport {}", request); 
 		  
-		File result = excelReportService.generateYearlyStudentMonthlyDonation(request);
+		File result = excelReportService.generateYearlyStudentMonthlyDonation(request, httpRequest);
 
 		writeFileReponse(httpResponse, result);
 	}

@@ -23,6 +23,7 @@ import com.fajar.schoolmanagement.dto.Filter;
 import com.fajar.schoolmanagement.dto.ReportData;
 import com.fajar.schoolmanagement.entity.CashBalance;
 import com.fajar.schoolmanagement.entity.FinancialEntity;
+import com.fajar.schoolmanagement.service.ProgressService;
 import com.fajar.schoolmanagement.service.WebConfigService;
 import com.fajar.schoolmanagement.util.DateUtil;
 
@@ -34,6 +35,8 @@ public class CashflowReportService {
 
 	@Autowired
 	private WebConfigService webConfigService;
+	@Autowired
+	private ProgressService progressService;
 
 	private String reportPath;
 
@@ -69,6 +72,8 @@ public class CashflowReportService {
 				monthDays);
 		CashBalance initialBalance = reportData.getInitialBalance();
 
+		progressService.sendProgress(1, 1, 20, reportData.getRequestId());
+		
 		int currentRow = 1;
 		int columnOffset = 1;
 

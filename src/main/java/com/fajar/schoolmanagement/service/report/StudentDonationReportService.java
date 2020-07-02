@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import com.fajar.schoolmanagement.dto.ReportData;
 import com.fajar.schoolmanagement.entity.Student;
 import com.fajar.schoolmanagement.report.builder.StudentDonationReportBuilder;
+import com.fajar.schoolmanagement.service.ProgressService;
 import com.fajar.schoolmanagement.service.WebConfigService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -19,9 +20,11 @@ public class StudentDonationReportService {
 
 	@Autowired
 	private WebConfigService webConfigService;
+	@Autowired
+	private ProgressService progressService;
 
-	public File generateMonthlyStudentDonationForOneYearReport(ReportData reportData, List<Student> students) {
-		StudentDonationReportBuilder reportBuilder = new StudentDonationReportBuilder(webConfigService, reportData, students); 
+	public File generateMonthlyStudentDonationForOneYearReport(ReportData reportData ) {
+		StudentDonationReportBuilder reportBuilder = new StudentDonationReportBuilder(webConfigService, reportData, progressService); 
 		
 		File file = reportBuilder.buildReport();
 		log.info("generateMonthlyStudentDonationReport success..");
