@@ -29,9 +29,7 @@ import com.fajar.schoolmanagement.service.MessagingService;
 public class RestAdminController extends BaseController {
 	Logger log = LoggerFactory.getLogger(RestAdminController.class);
 	@Autowired
-	private MessagingService messagingService;
-	@Autowired
-	private RestPublicController restPublicController;
+	private MessagingService messagingService; 
 
 	public RestAdminController() {
 		log.info("------------------RestAdminController-----------------");
@@ -61,7 +59,7 @@ public class RestAdminController extends BaseController {
 	@PostMapping(value = "/sendmessage", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public WebResponse sendMessage(@RequestBody WebRequest request, HttpServletRequest httpRequest,
 			HttpServletResponse httpResponse) throws IOException {
-		restPublicController.validatePageRequest(httpRequest);
+		 
 		WebResponse response = messagingService.sendMessage(request, httpRequest);
 		return response;
 	}
@@ -69,7 +67,7 @@ public class RestAdminController extends BaseController {
 	@PostMapping(value = "/getmessages", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public WebResponse getmessages(@RequestBody WebRequest request, HttpServletRequest httpRequest,
 			HttpServletResponse httpResponse) throws IOException {
-		restPublicController.validatePageRequest(httpRequest);
+		 
 		WebResponse response = messagingService.getMessages(httpRequest);
 		return response;
 	}

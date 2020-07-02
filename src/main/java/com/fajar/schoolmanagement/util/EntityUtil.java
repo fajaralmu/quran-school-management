@@ -21,6 +21,7 @@ import com.fajar.schoolmanagement.annotation.AdditionalQuestionField;
 import com.fajar.schoolmanagement.annotation.Dto;
 import com.fajar.schoolmanagement.annotation.FormField;
 import com.fajar.schoolmanagement.entity.BaseEntity;
+import com.fajar.schoolmanagement.entity.StudentParent;
 import com.fajar.schoolmanagement.entity.setting.EntityElement;
 import com.fajar.schoolmanagement.entity.setting.EntityProperty;
 
@@ -85,15 +86,26 @@ public class EntityUtil {
 		}
 		 
 	}
+	
+	public static void main(String[] args) {
+		List<Field> fields = getDeclaredFields(StudentParent.class);
+		fields = sortListByQuestionareSection(fields);
+		Object[] arrayOfFields = fields.toArray();
+	}
 
 	private static List<Field> sortListByQuestionareSection(List<Field> fieldList) {
 		Map<String, List<Field>> temp = MapUtil.singleMap("0", new ArrayList<>());
 		
 		String key = "0";
 		for (Field field : fieldList) {
-			AdditionalQuestionField additionalQuestionField = getClassAnnotation(field.getType(), AdditionalQuestionField.class);
+			FormField formField = field.getAnnotation(FormField.class);
+			if(null == formField) {
+				continue;
+			}
+			AdditionalQuestionField additionalQuestionField =  field.getAnnotation(AdditionalQuestionField.class);
 			if(null == additionalQuestionField) {
 				key = "0";
+				log.debug("{} has no additionalQuestionareField", field.getName());
 			}else {
 				key = additionalQuestionField.value();
 			}
@@ -102,7 +114,7 @@ public class EntityUtil {
 			}
 			temp.get(key).add(field);
 		}
-		
+		log.debug("QUestionare Map: {}", temp);
 		return CollectionUtil.mapOfListToList(temp);
 		
 	}
