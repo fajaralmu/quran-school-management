@@ -17,6 +17,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import com.fajar.schoolmanagement.dto.ReportData;
 import com.fajar.schoolmanagement.entity.CashBalance;
 import com.fajar.schoolmanagement.entity.FinancialEntity;
+import com.fajar.schoolmanagement.service.ProgressService;
 import com.fajar.schoolmanagement.service.WebConfigService;
 import com.fajar.schoolmanagement.service.report.ReportMappingUtil;
 
@@ -29,16 +30,16 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 public class FundAndSpendingFlowReportMonthly extends ReportBuilder{
-
-	 
+ 
 	final Map<Integer, List<FinancialEntity>> mappedFunds;
 	final Map<Integer, List<FinancialEntity>> mappedSpendings;
 	final Object[] HEADER_VALUES = { "Tanggal", "Keterangan", "Debet", "Total", "Tanggal", "Keterangan", "Kredit", "Total" };
 
-	public FundAndSpendingFlowReportMonthly(ReportData reportData, WebConfigService webConfigService) {
+	public FundAndSpendingFlowReportMonthly(ReportData reportData, WebConfigService webConfigService, ProgressService progressService) {
 		super(webConfigService, reportData);
 		mappedFunds = ReportMappingUtil.sortFinancialEntityByMonth(reportData.getFunds());
 		mappedSpendings = ReportMappingUtil.sortFinancialEntityByMonth(reportData.getSpendings()); 
+		this.progressService = progressService;
 	}
 	
 	protected void init() {
@@ -152,6 +153,7 @@ public class FundAndSpendingFlowReportMonthly extends ReportBuilder{
 				}
 			}
 			totalRow += rowCounter;
+			sendProgress(1, mappedCashflow.keySet().size(), 40);
 		}
 
 		return totalRow + mappedCashflow.keySet().size();

@@ -37,6 +37,8 @@ public class CashflowReportService {
 	private WebConfigService webConfigService;
 	@Autowired
 	private ProgressService progressService;
+	
+	private ReportData reportData;
 
 	private String reportPath;
 
@@ -48,6 +50,7 @@ public class CashflowReportService {
 	public File generateMonthlyGeneralCashflow(ReportData reportData) {
 
 		Filter filter = reportData.getFilter();
+		this.reportData = reportData;
 		String time = ReportMappingUtil.getReportDateString();
 		String sheetName = "Laporan_Bulanan-" + filter.getMonth() + "-" + filter.getYear();
 
@@ -136,6 +139,8 @@ public class CashflowReportService {
 						curr(fund.getTransactionNominal()), "" };
 				createRow(xsheet, currentRow, columnOffset, fundRowValues);
 				summaryCashflow += fund.getTransactionNominal();
+				
+				progressService.sendProgress(1,  mappedCashflow.keySet().size(), 30, reportData.getRequestId());
 			}
 		}
 

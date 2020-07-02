@@ -60,9 +60,13 @@ public class ReportService {
 		return cashflowReportService.generateMonthlyGeneralCashflow(transactionData);
 	}
 	
-	public File generateThrusdayDonationCashflowReport(WebRequest webRequest) {
+	public File generateThrusdayDonationCashflowReport(WebRequest webRequest, HttpServletRequest httpRequest) {
 		log.info("generateThrusdayDonationCashflowReport");
+		
+		String requestId = SessionUtil.getPageRequestId(httpRequest);
 		ReportData transactionData = transactionService.getYearlyThrusdayDonationCashflow(webRequest.getFilter());
+		transactionData.setRequestId(requestId);
+		progressService.sendProgress(1, 1, 20, requestId);
 		
 		return thrusdayDonationReportService.generateThrusdayCashflowReport(transactionData);
 	}
@@ -104,16 +108,26 @@ public class ReportService {
 		return file ;
 	} 
 
-	public File generateThrusdayDonationFundflowReport(WebRequest webRequest) { 
+	public File generateThrusdayDonationFundflowReport(WebRequest webRequest, HttpServletRequest httpRequest) { 
 		log.info("generateThrusdayDonationFundflowReport");
+		
+		String requestId = SessionUtil.getPageRequestId(httpRequest);
 		ReportData transactionData = transactionService.getYearlyThrusdayDonationCashflow(webRequest.getFilter());
+		transactionData.setRequestId(requestId);
+		
+		progressService.sendProgress(1, 1, 20, true, requestId);
 		
 		return thrusdayDonationReportService.generateThrusdayDonationReport(transactionData);
 	}
 	
-	public File generateDonationOrphanReport(WebRequest request) {
+	public File generateDonationOrphanReport(WebRequest request, HttpServletRequest httpRequest) {
 		log.info("generateDonationOrphanReport");
+		
+		String requestId = SessionUtil.getPageRequestId(httpRequest);
 		ReportData transactionData = transactionService.getDonationOrphanReport(request.getFilter());
+		transactionData.setRequestId(requestId);
+		
+		progressService.sendProgress(1, 1, 20, true, requestId);
 		
 		return orphanDonationReportService.generateOrphanDonationReport(transactionData);
 	}

@@ -52,7 +52,7 @@ public class RestReportController {
 	public void thrusdaydonationcashflow(@RequestBody WebRequest request, HttpServletRequest httpRequest,
 			HttpServletResponse httpResponse) throws Exception {
 		log.info("daily report {}", request); 
-		File result = excelReportService.generateThrusdayDonationCashflowReport(request);
+		File result = excelReportService.generateThrusdayDonationCashflowReport(request, httpRequest);
 
 		writeFileReponse(httpResponse, result);
 	}
@@ -61,7 +61,7 @@ public class RestReportController {
 	public void thrusdaydonationfundflow(@RequestBody WebRequest request, HttpServletRequest httpRequest,
 			HttpServletResponse httpResponse) throws Exception {
 		log.info("daily report {}", request); 
-		File result = excelReportService.generateThrusdayDonationFundflowReport(request);
+		File result = excelReportService.generateThrusdayDonationFundflowReport(request, httpRequest);
 
 		writeFileReponse(httpResponse, result);
 	}
@@ -82,7 +82,7 @@ public class RestReportController {
 			HttpServletResponse httpResponse) throws Exception {
 		log.info("studentdonationreport {}", request); 
 		
-		File result = excelReportService.generateDonationOrphanReport(request);
+		File result = excelReportService.generateDonationOrphanReport(request, httpRequest);
 
 		writeFileReponse(httpResponse, result);
 	}

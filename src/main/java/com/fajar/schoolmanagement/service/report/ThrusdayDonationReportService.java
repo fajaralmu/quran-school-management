@@ -28,6 +28,7 @@ import com.fajar.schoolmanagement.entity.FinancialEntity;
 import com.fajar.schoolmanagement.report.builder.DateCell;
 import com.fajar.schoolmanagement.report.builder.ExcelReportUtil;
 import com.fajar.schoolmanagement.report.builder.FundAndSpendingFlowReportMonthly;
+import com.fajar.schoolmanagement.service.ProgressService;
 import com.fajar.schoolmanagement.service.WebConfigService;
 import com.fajar.schoolmanagement.util.DateUtil;
 
@@ -39,13 +40,15 @@ public class ThrusdayDonationReportService {
 
 	@Autowired
 	private WebConfigService webConfigService;
-	
+	@Autowired
+	private ProgressService progressService;
 
+	/////////////////////// DONATION FUND AND SPEND /////////////////////
 	public File generateThrusdayCashflowReport(ReportData reportData) {
 		log.info("generateThrusdayCashflowReport"); 
 		
 		reportData.setReportName("Mutasi_Infaq_Kamis"); 
-		FundAndSpendingFlowReportMonthly reportBuilder = new FundAndSpendingFlowReportMonthly(reportData, webConfigService);
+		FundAndSpendingFlowReportMonthly reportBuilder = new FundAndSpendingFlowReportMonthly(reportData, webConfigService, progressService);
 		File file = reportBuilder.buildReport();
 		
 		log.info("generated ThrusdayCashflowReport");
@@ -55,7 +58,7 @@ public class ThrusdayDonationReportService {
 	
 
 
-	// ================================================ FUNDS FLOW ONLY
+	/////////////// DONATION FUNDS FLOW ONLY ///////////////////////
 
 	public File generateThrusdayDonationReport(ReportData transactionData) {
 		log.info("generateThrusdayDonationReport");
@@ -102,6 +105,7 @@ public class ThrusdayDonationReportService {
 			createRow(xsheet, dataRow, dataColumn, curr(summary), "");
 
 			dataRow = currentRow;
+			progressService.sendProgress(1, 12, 50, reportData.getRequestId());
 		}
 		
 		ExcelReportUtil.autosizeColumn(xsheet, new CellRangeAddress(1, 6, columnOffset, columnOffset + 25));
@@ -179,7 +183,8 @@ public class ThrusdayDonationReportService {
 
 			}
 			thursdayDonationMap.put(month, donationThursdays);
-
+			
+			progressService.sendProgress(1, mappedFundsByMonth.keySet().size(), 30, reportData.getRequestId());
 		}
 
 		return thursdayDonationMap;
