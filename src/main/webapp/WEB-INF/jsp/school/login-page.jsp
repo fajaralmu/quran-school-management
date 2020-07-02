@@ -44,7 +44,7 @@
 </script>
 <div class="content">
 	<p id="info" align="center"></p>
-	<div class="card" style="max-width: 200px; margin: auto">
+	<div class="card" style="max-width: 400px; margin: auto">
 		<div class="card-header">Please Login</div>
 		<div class="card-body">
 			<div class="login-form">
