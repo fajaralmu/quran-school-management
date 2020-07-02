@@ -45,8 +45,7 @@ public class MvcPagesController extends BaseController{
 		if(null == page) {
 			sendRedirect(response, request.getContextPath() + "/account/login");
 			return basePage;
-		}
-		setActivePage(request); 
+		} 
 		model.addAttribute("page", page); 
 		return basePage;
 

@@ -21,6 +21,7 @@ import com.fajar.schoolmanagement.annotation.CustomRequestInfo;
 import com.fajar.schoolmanagement.controller.BaseController;
 import com.fajar.schoolmanagement.dto.WebResponse;
 import com.fajar.schoolmanagement.entity.User;
+import com.fajar.schoolmanagement.service.ComponentService;
 import com.fajar.schoolmanagement.service.ProgressService;
 import com.fajar.schoolmanagement.service.UserAccountService;
 import com.fajar.schoolmanagement.service.UserSessionService;
@@ -43,6 +44,12 @@ public class InterceptorProcessor {
 	private UserAccountService userAccountService;
 	@Autowired
 	private ProgressService progressService;
+	@Autowired
+	private ComponentService componentService;
+	
+	public InterceptorProcessor() {
+		log.info(" //////////// InterceptorProcessor ///////////// ");
+	}
 
 	public boolean interceptApiRequest(HttpServletRequest request, HttpServletResponse response,
 			HandlerMethod handlerMethod) {
@@ -216,6 +223,9 @@ public class InterceptorProcessor {
 			BaseController.addStylePaths(modelAndView, resourcePath.stylePaths());
 			BaseController.addTitle(modelAndView, resourcePath.title());
 			BaseController.addPageUrl(modelAndView, resourcePath.pageUrl());
+			
+			String pageCode = componentService.getPageCode(request);
+			userSessionService.setActivePage(request, pageCode);
 		}
 		
 		if(null != resourcePath && resourcePath.withRealtimeProgress()) {

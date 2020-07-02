@@ -138,10 +138,10 @@ public class CashflowReportService {
 				Object[] fundRowValues = { day + "/" + month, fund.getTransactionName(),
 						curr(fund.getTransactionNominal()), "" };
 				createRow(xsheet, currentRow, columnOffset, fundRowValues);
-				summaryCashflow += fund.getTransactionNominal();
+				summaryCashflow += fund.getTransactionNominal(); 
 				
-				progressService.sendProgress(1,  mappedCashflow.keySet().size(), 30, reportData.getRequestId());
 			}
+			progressService.sendProgress(1,  mappedCashflow.keySet().size(), 30, reportData.getRequestId());
 		}
 
 		return summaryCashflow;

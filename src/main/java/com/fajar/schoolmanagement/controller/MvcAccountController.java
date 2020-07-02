@@ -12,6 +12,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.fajar.schoolmanagement.annotation.Authenticated;
+import com.fajar.schoolmanagement.annotation.CustomRequestInfo;
 import com.fajar.schoolmanagement.config.LogProxyFactory;
 
 import lombok.extern.slf4j.Slf4j;
@@ -34,12 +35,11 @@ public class MvcAccountController extends BaseController {
 	}
 
 	@RequestMapping(value = { "/login" })
+	@CustomRequestInfo(stylePaths = "loginpage")
 	public String login(Model model, HttpServletRequest request, HttpServletResponse response) throws IOException {
 		if (userSessionService.hasSession(request, false)) {
 			response.sendRedirect(request.getContextPath() + "/admin/home");
-		}
-		
-		setActivePage(request );
+		} 
 		
 		model.addAttribute("pageUrl", "school/login-page");
 		model.addAttribute("title", "Login");

@@ -40,15 +40,13 @@ public class MvcAdminController extends BaseController {
 		LogProxyFactory.setLoggers(this);
 	}
 
-	@RequestMapping(value = { "/home" }) 
-	@CustomRequestInfo(title="Dashboard", pageUrl = "school/home-page")
+	@RequestMapping(value = { "/home" })
+	@CustomRequestInfo(title = "Dashboard", pageUrl = "school/home-page")
 	public String menuDashboard(Model model, HttpServletRequest request, HttpServletResponse response)
 			throws IOException {
 		Calendar cal = Calendar.getInstance();
 
-		setActivePage(request);
-
-		model.addAttribute("imagePath", webConfigService.getUploadedImagePath()); 
+		model.addAttribute("imagePath", webConfigService.getUploadedImagePath());
 		model.addAttribute("page", "dashboard");
 		model.addAttribute("currentMonth", cal.get(Calendar.MONTH) + 1);
 		model.addAttribute("currentYear", cal.get(Calendar.YEAR));
@@ -56,23 +54,24 @@ public class MvcAdminController extends BaseController {
 		return basePage;
 	}
 
-	@RequestMapping(value = { "/report" }) 
-	@CustomRequestInfo(title="Report", pageUrl = "school/report-page", stylePaths = {"reportpage"})
+	@RequestMapping(value = { "/report" })
+	@CustomRequestInfo(title = "Report", pageUrl = "school/report-page", stylePaths = { "reportpage" })
 	public String reportDashboard(Model model, HttpServletRequest request, HttpServletResponse response)
 			throws IOException {
- 
+
 		model.addAttribute("months", DateUtil.months());
 		model.addAttribute("reportMenus", MvcUtil.getReportMenus());
-		 
+
 		return basePage;
 	}
 
-	@RequestMapping(value = { "/pagesequencesetting" }) 
-	@CustomRequestInfo(title = "Menu Sequence", pageUrl = "school/page-sequence", stylePaths = {"pagesequence"})
-	public String pagesequencesetting(Model model, HttpServletRequest request, HttpServletResponse response)
+	@RequestMapping(value = { "/pagesequencesetting" })
+	@CustomRequestInfo(title = "Menu Sequence", pageUrl = "school/page-sequence", stylePaths = { "pagesequence" })
+	public String pageSequenceSetting(Model model, HttpServletRequest request, HttpServletResponse response)
 			throws IOException {
- 
-		model.addAttribute("pages", componentService.getAllPages()); 
+
+		model.addAttribute("pages", componentService.getAllPages());
+
 		return basePage;
 
 	}
