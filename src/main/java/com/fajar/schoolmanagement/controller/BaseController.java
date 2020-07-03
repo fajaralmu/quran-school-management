@@ -191,10 +191,16 @@ public class BaseController {
 	}
 
 	public static void addTitle(ModelAndView modelAndView, String title) {
+		if(null == title || title.isEmpty()) {
+			return;
+		}
 		setModelAttribute(modelAndView, "title", title);
 	}
 
 	public static void addPageUrl(ModelAndView modelAndView, String pageUrl) {
+		if(null == pageUrl || pageUrl.isEmpty()) {
+			return;
+		}
 		setModelAttribute(modelAndView, "pageUrl", pageUrl);
 		
 	}
