@@ -45,6 +45,7 @@ public class CollectionUtil {
 
 		return list;
 	}
+	 
 
 	public static <T> void printArray(T[] array) {
 		if (null == array) {

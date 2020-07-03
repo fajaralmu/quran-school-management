@@ -53,6 +53,8 @@ public class EntityProperty implements Serializable {
 	private List<String> fieldNameList;
 
 	private boolean ignoreBaseField; 
+	private boolean isQuestionare;
+	private String groupNames;
 
 	public void setElementJsonList() {
 

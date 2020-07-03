@@ -11,6 +11,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -30,7 +31,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class EntityUtil {
 
-	public static EntityProperty createEntityProperty(Class<?> clazz, HashMap<String, List<?>> listObject) throws Exception {
+	public static EntityProperty createEntityProperty(Class<?> clazz, HashMap<String, List<?>> additionalObjectList) throws Exception {
 		if (clazz == null || getClassAnnotation(clazz, Dto.class) == null) {
 			return null;
 		}
@@ -40,12 +41,16 @@ public class EntityUtil {
 		final boolean isQuestionare = dto.quistionare();
 
 		EntityProperty entityProperty = EntityProperty.builder().ignoreBaseField(ignoreBaseField)
-				.entityName(clazz.getSimpleName().toLowerCase()).build();
+				.entityName(clazz.getSimpleName().toLowerCase()).isQuestionare(isQuestionare).build();
 		try {
 
 			List<Field> fieldList = getDeclaredFields(clazz);
 			if(isQuestionare) {
-				sortListByQuestionareSection(fieldList);
+				Map<String, List<Field>> groupedFields = sortListByQuestionareSection(fieldList);
+				fieldList = CollectionUtil.mapOfListToList(groupedFields);
+				Set<String> groupKeys = groupedFields.keySet();
+				String[] keyNames = CollectionUtil.toArrayOfString(groupKeys.toArray());
+				entityProperty.setGroupNames(String .join(",", keyNames));
 			}
 			List<EntityElement> entityElements = new ArrayList<>();
 			List<String> fieldNames = new ArrayList<>();
@@ -53,7 +58,7 @@ public class EntityUtil {
 
 			for (Field field : fieldList) {
 
-				final EntityElement entityElement = new EntityElement(field, entityProperty, listObject);
+				final EntityElement entityElement = new EntityElement(field, entityProperty, additionalObjectList);
 
 				if (false == entityElement.build()) {
 					continue;
@@ -76,6 +81,7 @@ public class EntityUtil {
 			entityProperty.setFieldNameList(fieldNames);
 			entityProperty.setFormInputColumn(dto.formInputColumn().value);
 			entityProperty.determineIdField();
+			
 
 			log.info("============ENTITY PROPERTY: {} ", entityProperty);
 
@@ -88,23 +94,34 @@ public class EntityUtil {
 	}
 	
 	public static void main(String[] args) {
-		List<Field> fields = getDeclaredFields(StudentParent.class);
-		fields = sortListByQuestionareSection(fields);
-		Object[] arrayOfFields = fields.toArray();
+//		List<Field> fields = getDeclaredFields(StudentParent.class);
+//		fields = sortListByQuestionareSection(fields);
+//		
+//		for (Field field : fields) {
+//			log.debug("{}", field.getName());
+//		}
+//		
+//		Object[] arrayOfFields = fields.toArray();
+	}
+	
+	static boolean isIdField(Field field) {
+		return field.getAnnotation(Id.class) != null;
 	}
 
-	private static List<Field> sortListByQuestionareSection(List<Field> fieldList) {
-		Map<String, List<Field>> temp = MapUtil.singleMap("0", new ArrayList<>());
+	private static Map<String,List<Field>> sortListByQuestionareSection(List<Field> fieldList) {
+		Map<String, List<Field>> temp = MapUtil.singleMap("OTHER", new ArrayList<>());
 		
-		String key = "0";
+		String key = "OTHER";
 		for (Field field : fieldList) {
 			FormField formField = field.getAnnotation(FormField.class);
+			boolean isIDField = isIdField(field);
+			
 			if(null == formField) {
 				continue;
 			}
 			AdditionalQuestionField additionalQuestionField =  field.getAnnotation(AdditionalQuestionField.class);
-			if(null == additionalQuestionField) {
-				key = "0";
+			if(null == additionalQuestionField || isIDField) {
+				key = "OTHER";
 				log.debug("{} has no additionalQuestionareField", field.getName());
 			}else {
 				key = additionalQuestionField.value();
@@ -113,9 +130,10 @@ public class EntityUtil {
 				temp.put(key, new ArrayList<>());
 			}
 			temp.get(key).add(field);
+			log.debug("{}: {}", key, field.getName());
 		}
 		log.debug("QUestionare Map: {}", temp);
-		return CollectionUtil.mapOfListToList(temp);
+		return (temp);
 		
 	}
 

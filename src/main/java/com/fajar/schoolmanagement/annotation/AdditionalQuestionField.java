@@ -8,6 +8,6 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD})
 public @interface AdditionalQuestionField {
-	public static final String DEFAULT_GROUP_NAME = "0";
+	public static final String DEFAULT_GROUP_NAME = "OTHER";
 	public String value() default DEFAULT_GROUP_NAME;
 }

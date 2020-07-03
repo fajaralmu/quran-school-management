@@ -5,6 +5,9 @@ const monthNames = ["January", "February", "March", "April", "May", "June",
 	];
 
 function _byId(id){
+	if(id==null || id == ""){
+		console.warn("ID IS EMPTY");
+	}
 	return document.getElementById(id);
 }
 
@@ -43,11 +46,25 @@ function infoDone() {
 }
 
 /** ***************COMPONENT*************** */
+
+function htmlToElement(html) {
+    var template = document.createElement('template');
+    html = html.trim(); // Never return a text node of whitespace as the result
+    template.innerHTML = html;
+    return template.content.firstChild;
+}
+
+
 function createAnchor(id, html, url){ 
 	return createHtmlTag({tagName:"a", innerHTML: html, id: id, href: url}); 
 }
 
 function appendElements(parent, ...childs){
+	for (var i = 0; i < childs.length; i++) {
+		parent.appendChild(childs[i]);
+	}
+}
+function appendElementsArray(parent, childs){
 	for (var i = 0; i < childs.length; i++) {
 		parent.appendChild(childs[i]);
 	}
@@ -258,9 +275,15 @@ function createHtmlTag(object){
 		const isObject = isNotNull && typeof(value) ==  "object";
 		const isHtmlElement = isNotNull && value instanceof HTMLElement;
 		const isFunction = isNotNull && typeof(value) ==  "function";
+		const isArray = isNotNull && Array.isArray(value);
 		
 		if(isHtmlElement){
 			tag.appendChild(value);
+//		}else if(isArray){
+//			for (var i = 0; i < value.length; i++) {
+//				const htmlTag = createHtmlTag(value[i]);
+//				tag.appendChild(htmlTag);
+//			}
 		}else if(isObject && !isFunction){
 			if(isStyle){
 				tag.setAttribute(key, stringifyStyleObject(value));
