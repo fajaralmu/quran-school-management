@@ -12,6 +12,7 @@ import java.util.Optional;
 import javax.annotation.PostConstruct;
 import javax.persistence.JoinColumn;
 
+import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -80,7 +81,9 @@ public class EntityRepository {
 					continue;
 				}
 				Class<? extends BaseEntityUpdateService> updateServiceClass = dtoInfo.updateService();
-				BaseEntityUpdateService updateServiceBean = (BaseEntityUpdateService) applicationContext.getBean(StringUtil.lowerCaseFirstChar(updateServiceClass.getSimpleName()));
+				String beanName = StringUtil.lowerCaseFirstChar(updateServiceClass.getSimpleName());
+				
+				BaseEntityUpdateService updateServiceBean = (BaseEntityUpdateService) applicationContext.getBean(beanName );
 				EntityUpdateInterceptor updateInterceptor = ((BaseEntity) entityClass.newInstance())
 						.updateInterceptor();
 
@@ -253,15 +256,36 @@ public class EntityRepository {
 	 * @param class1
 	 * @return
 	 */
-	public boolean deleteById(Long id, Class<? extends BaseEntity> class1) {
+	public <T  extends BaseEntity> boolean deleteById(Long id, Class<T> class1) {
 		log.info("Will delete entity: {}, id: {}", class1.getClass(), id);
+		 
+		
+		PersistenceOperation<Boolean> deleteOperation = new PersistenceOperation<Boolean>() {
 
+			@Override
+			public Boolean doPersist(Session hibernateSession) {
+				try {
+					Object existingObject = hibernateSession.load(class1, id);
+					if(null == existingObject) {
+						log.info("existingObject of {} with id: {} does not exist!!", class1, id);
+						return false;
+					}
+					hibernateSession.delete(existingObject);
+					log.debug("Deleted Successfully");
+					return true;
+				}catch (Exception e) {
+					log.error("Error deleting object!");
+					e.printStackTrace();
+					return false;
+				}
+			}
+		};
+		
 		try {
 
-			JpaRepository repository = findRepo(class1);
-			repository.deleteById(id);
-
-			return true;
+//			JpaRepository repository = findRepo(class1);
+//			repository.deleteById(id); 
+			return repositoryCustom.pesistOperation(deleteOperation);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return false;

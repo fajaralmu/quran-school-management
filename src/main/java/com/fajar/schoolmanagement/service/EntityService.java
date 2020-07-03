@@ -181,9 +181,9 @@ public class EntityService {
 				throw new Exception("Invalid entity");
 			}
 
-			entityRepository.deleteById(id, entityClass);
+			boolean result = entityRepository.deleteById(id, entityClass);
 
-			return WebResponse.builder().code("00").message("deleted successfully").build();
+			return WebResponse.builder().code("00").message("deleted :"+result).build();
 
 		} catch (Exception ex) {
 

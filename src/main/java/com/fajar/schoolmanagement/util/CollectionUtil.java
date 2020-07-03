@@ -1,11 +1,8 @@
 package com.fajar.schoolmanagement.util;
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
-import com.fajar.schoolmanagement.entity.BaseEntity;
 
 import lombok.extern.slf4j.Slf4j;
 

@@ -53,15 +53,11 @@ public class StringUtil {
 		return " `".concat(str).concat("` ");
 	}
 
-	public static Object beautifyNominal(Long valueOf) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 	static boolean isUpperCase(char _char) {
-		StringBuilder str = new StringBuilder();
-		str.append(_char);
-		return str.toString().equals(str.toString().toUpperCase());
+//		StringBuilder str = new StringBuilder();
+//		str.append(_char);
+		String str = String.valueOf(_char);
+		return str.equals(str.toUpperCase());
 	}
 
 	public static String extractCamelCase(String camelCased) {
@@ -90,7 +86,7 @@ public class StringUtil {
 
 			return stringBuilder.toString();
 		} catch (Exception e) {
-			// TODO: handle exception
+
 			return string;
 		}
 	}
