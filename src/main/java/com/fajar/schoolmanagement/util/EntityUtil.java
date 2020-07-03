@@ -22,7 +22,6 @@ import com.fajar.schoolmanagement.annotation.AdditionalQuestionField;
 import com.fajar.schoolmanagement.annotation.Dto;
 import com.fajar.schoolmanagement.annotation.FormField;
 import com.fajar.schoolmanagement.entity.BaseEntity;
-import com.fajar.schoolmanagement.entity.StudentParent;
 import com.fajar.schoolmanagement.entity.setting.EntityElement;
 import com.fajar.schoolmanagement.entity.setting.EntityProperty;
 
@@ -31,7 +30,8 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class EntityUtil {
 
-	public static EntityProperty createEntityProperty(Class<?> clazz, HashMap<String, List<?>> additionalObjectList) throws Exception {
+	public static EntityProperty createEntityProperty(Class<?> clazz, HashMap<String, List<?>> additionalObjectList)
+			throws Exception {
 		if (clazz == null || getClassAnnotation(clazz, Dto.class) == null) {
 			return null;
 		}
@@ -45,12 +45,13 @@ public class EntityUtil {
 		try {
 
 			List<Field> fieldList = getDeclaredFields(clazz);
-			if(isQuestionare) {
+			if (isQuestionare) {
 				Map<String, List<Field>> groupedFields = sortListByQuestionareSection(fieldList);
 				fieldList = CollectionUtil.mapOfListToList(groupedFields);
 				Set<String> groupKeys = groupedFields.keySet();
 				String[] keyNames = CollectionUtil.toArrayOfString(groupKeys.toArray());
-				entityProperty.setGroupNames(String .join(",", keyNames));
+
+				entityProperty.setGroupNames(keyNames);
 			}
 			List<EntityElement> entityElements = new ArrayList<>();
 			List<String> fieldNames = new ArrayList<>();
@@ -81,7 +82,6 @@ public class EntityUtil {
 			entityProperty.setFieldNameList(fieldNames);
 			entityProperty.setFormInputColumn(dto.formInputColumn().value);
 			entityProperty.determineIdField();
-			
 
 			log.info("============ENTITY PROPERTY: {} ", entityProperty);
 
@@ -90,9 +90,9 @@ public class EntityUtil {
 			e.printStackTrace();
 			throw e;
 		}
-		 
+
 	}
-	
+
 	public static void main(String[] args) {
 //		List<Field> fields = getDeclaredFields(StudentParent.class);
 //		fields = sortListByQuestionareSection(fields);
@@ -103,30 +103,31 @@ public class EntityUtil {
 //		
 //		Object[] arrayOfFields = fields.toArray();
 	}
-	
+
 	static boolean isIdField(Field field) {
 		return field.getAnnotation(Id.class) != null;
 	}
 
-	private static Map<String,List<Field>> sortListByQuestionareSection(List<Field> fieldList) {
-		Map<String, List<Field>> temp = MapUtil.singleMap("OTHER", new ArrayList<>());
-		
-		String key = "OTHER";
+	private static Map<String, List<Field>> sortListByQuestionareSection(List<Field> fieldList) {
+		Map<String, List<Field>> temp = MapUtil.singleMap(AdditionalQuestionField.DEFAULT_GROUP_NAME,
+				new ArrayList<>());
+
+		String key = AdditionalQuestionField.DEFAULT_GROUP_NAME;
 		for (Field field : fieldList) {
 			FormField formField = field.getAnnotation(FormField.class);
 			boolean isIDField = isIdField(field);
-			
-			if(null == formField) {
+
+			if (null == formField) {
 				continue;
 			}
-			AdditionalQuestionField additionalQuestionField =  field.getAnnotation(AdditionalQuestionField.class);
-			if(null == additionalQuestionField || isIDField) {
+			AdditionalQuestionField additionalQuestionField = field.getAnnotation(AdditionalQuestionField.class);
+			if (null == additionalQuestionField || isIDField) {
 				key = "OTHER";
 				log.debug("{} has no additionalQuestionareField", field.getName());
-			}else {
+			} else {
 				key = additionalQuestionField.value();
 			}
-			if(temp.get(key)  == null) {
+			if (temp.get(key) == null) {
 				temp.put(key, new ArrayList<>());
 			}
 			temp.get(key).add(field);
@@ -134,7 +135,7 @@ public class EntityUtil {
 		}
 		log.debug("QUestionare Map: {}", temp);
 		return (temp);
-		
+
 	}
 
 	public static <T extends Annotation> T getClassAnnotation(Class<?> entityClass, Class<T> annotation) {
@@ -422,12 +423,11 @@ public class EntityUtil {
 	 */
 	public static <T extends Serializable> T cloneSerializable(T serializable) {
 		try {
-			return SerializationUtils.clone( serializable);
+			return SerializationUtils.clone(serializable);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
 		}
 	}
-
 
 }

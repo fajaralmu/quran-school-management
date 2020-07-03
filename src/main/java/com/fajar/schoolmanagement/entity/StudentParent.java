@@ -31,7 +31,7 @@ public class StudentParent extends BaseEntity {
 	private static final long serialVersionUID = -5455451366947342120L;
 	static final String DATA_AYAH = "Identitas Ayah";
 	static final String DATA_IBU = "Identitas Ibu";
-	static final String DATA_ALL = "Lain-lain";
+	static final String DATA_ALL = "Lain-lain"; 
 
 	@FormField
 	@Column(name = "father_name")
@@ -48,7 +48,7 @@ public class StudentParent extends BaseEntity {
 	@AdditionalQuestionField(DATA_AYAH)
 	private Date fatherDateOfBirth;
 
-	@FormField
+	@FormField(type = FieldType.FIELD_TYPE_PLAIN_LIST, availableValues = {"-", "SD", "SMP", "SMA", "D1", "D2", "D3", "D4", "S1", "S2", "S3"	})
 	@Column(name = "father_education")
 	@AdditionalQuestionField(DATA_AYAH)
 	private String fatherEducation;
@@ -73,7 +73,7 @@ public class StudentParent extends BaseEntity {
 	@AdditionalQuestionField(DATA_IBU)
 	private Date motherDateOfBirth;
 
-	@FormField
+	@FormField(type = FieldType.FIELD_TYPE_PLAIN_LIST, availableValues = {"-", "SD", "SMP", "SMA", "D1", "D2", "D3", "D4", "S1", "S2", "S3"	})
 	@Column(name = "mother_education")
 	@AdditionalQuestionField(DATA_IBU)
 	private String motherEducation;

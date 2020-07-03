@@ -244,35 +244,14 @@
 		const inputs = document.getElementsByClassName('grouped');
 		const result = new Array();
 		if(null == inputs || inputs.length == 0){ return null; }
+		
 		for (var i = 0; i < inputs.length; i++) {
 			const cloned = inputs[i].cloneNode();
 			cloned.innerHTML = inputs[i].innerHTML;
 			result.push(cloned);
 		}
 		return result;
-	}
-	
-	function cloneChildNodes(element){
-		const result = element.cloneNode();
-		result.innerHTML = element.innerHTML;
-		for (var i = 0; i < element.childNodes.length; i++) {
-			let child = element.childNodes[i];
-			let finalChild;
-			
-			if(child.childElementCount > 0){
-				finalChild = cloneChildNodes(element.childNodes[i]);
-				console.debug(child.tagName, child.className, "child.childElementCount: ", child.childElementCount);
-			}else{
-				console.debug(child.tagName, "child.childElementCount: ", child.childElementCount);
-				finalChild = child;
-			}
-			console.debug("FINAL ELement: ", child.tagName, child.className);
-			result.appendChild(finalChild.cloneNode());
-		}
-		console.debug("result: ", result);
-		return result;
-		
-	}
+	} 
 	
 	function getSectionBordersCount(){
 		try{

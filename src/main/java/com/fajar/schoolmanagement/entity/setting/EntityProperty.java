@@ -4,15 +4,19 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import com.fajar.schoolmanagement.annotation.AdditionalQuestionField;
 import com.fajar.schoolmanagement.annotation.Dto;
 import com.fajar.schoolmanagement.util.MyJsonUtil;
 
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 @Data
@@ -54,6 +58,7 @@ public class EntityProperty implements Serializable {
 
 	private boolean ignoreBaseField; 
 	private boolean isQuestionare;
+	@Setter(value = AccessLevel.NONE)
 	private String groupNames;
 
 	public void setElementJsonList() {
@@ -82,6 +87,18 @@ public class EntityProperty implements Serializable {
 			}
 		}
 		this.fieldNames = MyJsonUtil.listToJson(fieldNameList);
+	}
+	
+	public void setGroupNames(String[] groupNamesArray) {
+		int removedIndex = 0;
+		for (int i = 0; i < groupNamesArray.length; i++) {
+			if(groupNamesArray[i] == AdditionalQuestionField.DEFAULT_GROUP_NAME) {
+				removedIndex = i;
+			}
+		}
+		ArrayUtils.remove(groupNamesArray, removedIndex);
+		this.groupNames = String.join(",", groupNamesArray);
+		groupNames+=","+AdditionalQuestionField.DEFAULT_GROUP_NAME;
 	}
 
 	public String getGridTemplateColumns() {
