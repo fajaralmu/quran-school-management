@@ -24,6 +24,7 @@ import com.fajar.schoolmanagement.service.WebConfigService;
 import com.fajar.schoolmanagement.service.entity.BaseEntityUpdateService;
 import com.fajar.schoolmanagement.service.entity.EntityUpdateInterceptor;
 import com.fajar.schoolmanagement.util.EntityUtil;
+import com.fajar.schoolmanagement.util.StringUtil;
 
 import lombok.AccessLevel;
 import lombok.Data;
@@ -63,35 +64,13 @@ public class EntityRepository {
  
 
 	@PostConstruct
-	public void init() throws Exception {
-		entityConfiguration.clear();
-
-//		/**
-//		 * commons
-//		 */
-//		toCommonUpdateService(Capital.class, Cost.class, Page.class, StudentParent.class, Student.class, Teacher.class,
-//				Profile.class, DonationOrphan.class, StudentQuistionare.class);
-//
-//		/**
-//		 * special
-//		 */
-//		putConfig(User.class, userUpdateService);
-//		putConfig(Menu.class, commonUpdateService);//, EntityUpdateInterceptor.menuInterceptor());
-//		putConfig(CostFlow.class, costFlowUpdateService);
-//		putConfig(CapitalFlow.class, fundUpdateService);
-//		putConfig(DonationThursday.class, fundUpdateService);
-//		putConfig(DonationMonthly.class, fundUpdateService);
-//
-//		/**
-//		 * unable to update
-//		 */
-//		putConfig(CashBalance.class, baseEntityUpdateService);
-
+	public void init() throws Exception { 
 		putEntitiesConfig();
 	}
 
 	private void putEntitiesConfig() throws Exception {
-
+		entityConfiguration.clear();
+		
 		List<Type> persistenceClasses = webConfigService.getEntityClassess();
 		for (Type type : persistenceClasses) {
 			try {
@@ -101,15 +80,15 @@ public class EntityRepository {
 					continue;
 				}
 				Class<? extends BaseEntityUpdateService> updateServiceClass = dtoInfo.updateService();
-				BaseEntityUpdateService updateServiceBean = applicationContext.getBean(updateServiceClass);
+				BaseEntityUpdateService updateServiceBean = (BaseEntityUpdateService) applicationContext.getBean(StringUtil.lowerCaseFirstChar(updateServiceClass.getSimpleName()));
 				EntityUpdateInterceptor updateInterceptor = ((BaseEntity) entityClass.newInstance())
 						.updateInterceptor();
 
-				log.info("Registering entity config: {}, updateServiceBean: {}", entityClass, updateServiceBean);
+				log.info("Registering entity config: {}, updateServiceBean: {}", entityClass.getSimpleName(), updateServiceBean);
 
 				putConfig(entityClass, updateServiceBean, updateInterceptor);
 			} catch (Exception e) {
-				log.error("Error registering entity: {}", type);
+				log.error("Error registering entity: {}", type.getTypeName());
 				e.printStackTrace();
 			}
 
@@ -159,9 +138,6 @@ public class EntityRepository {
 
 		try {
 			return savev2(baseEntity);
-//			JpaRepository<T, ID> repository = (JpaRepository<T, ID>) findRepo(baseEntity.getClass());
-//			log.info("found repo: " + repository);
-//			return (T) repository.save((T) baseEntity);
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			throw ex;
