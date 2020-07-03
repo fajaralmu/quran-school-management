@@ -358,5 +358,33 @@ public class RepositoryCustomImpl implements RepositoryCustom {
 		}
 		return null;
 	}
+	
+	public boolean deleteObjectById(Class<? extends BaseEntity> _class, Long id) {
+		PersistenceOperation<Boolean> deleteOperation = new PersistenceOperation<Boolean>() {
+
+			@Override
+			public Boolean doPersist(Session hibernateSession) {
+				try {
+					Object existingObject = hibernateSession.load(_class, id);
+					if(null == existingObject) {
+						log.info("existingObject of {} with id: {} does not exist!!", _class, id);
+						return false;
+					}
+					hibernateSession.delete(existingObject);
+					log.debug("Deleted Successfully");
+					return true;
+				}catch (Exception e) {
+					log.error("Error deleting object!");
+					e.printStackTrace();
+					return false;
+				}
+			}
+		};
+		try {
+			return this.pesistOperation(deleteOperation);
+		}catch (Exception e) { 
+			return false;
+		}
+	}
 
 }

@@ -12,7 +12,6 @@ import java.util.Optional;
 import javax.annotation.PostConstruct;
 import javax.persistence.JoinColumn;
 
-import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -62,16 +61,15 @@ public class EntityRepository {
 		String key = _class.getSimpleName().toLowerCase();
 		entityConfiguration.put(key, config(key, _class, updateService, updateInterceptor));
 	}
- 
 
 	@PostConstruct
-	public void init() throws Exception { 
+	public void init() throws Exception {
 		putEntitiesConfig();
 	}
 
 	private void putEntitiesConfig() throws Exception {
 		entityConfiguration.clear();
-		
+
 		List<Type> persistenceClasses = webConfigService.getEntityClassess();
 		for (Type type : persistenceClasses) {
 			try {
@@ -82,12 +80,14 @@ public class EntityRepository {
 				}
 				Class<? extends BaseEntityUpdateService> updateServiceClass = dtoInfo.updateService();
 				String beanName = StringUtil.lowerCaseFirstChar(updateServiceClass.getSimpleName());
-				
-				BaseEntityUpdateService updateServiceBean = (BaseEntityUpdateService) applicationContext.getBean(beanName );
+
+				BaseEntityUpdateService updateServiceBean = (BaseEntityUpdateService) applicationContext
+						.getBean(beanName);
 				EntityUpdateInterceptor updateInterceptor = ((BaseEntity) entityClass.newInstance())
 						.updateInterceptor();
 
-				log.info("Registering entity config: {}, updateServiceBean: {}", entityClass.getSimpleName(), updateServiceBean);
+				log.info("Registering entity config: {}, updateServiceBean: {}", entityClass.getSimpleName(),
+						updateServiceBean);
 
 				putConfig(entityClass, updateServiceBean, updateInterceptor);
 			} catch (Exception e) {
@@ -96,6 +96,7 @@ public class EntityRepository {
 			}
 
 		}
+		log.info("///////////// END PUT ENTITY CONFIGS //////////////");
 	}
 
 	/**
@@ -169,11 +170,10 @@ public class EntityRepository {
 					continue;
 				}
 
-				BaseEntity entity = (BaseEntity) value;
-				JpaRepository repository = findRepo(entity.getClass());
-				Optional result = repository.findById(entity.getId());
+				BaseEntity entity = (BaseEntity) value; 
+				BaseEntity result = findById(entity.getClass(), entity.getId());
 
-				if (result.isPresent() == false) {
+				if (result == null) {
 					return false;
 				}
 
@@ -256,40 +256,10 @@ public class EntityRepository {
 	 * @param class1
 	 * @return
 	 */
-	public <T  extends BaseEntity> boolean deleteById(Long id, Class<T> class1) {
+	public <T extends BaseEntity> boolean deleteById(Long id, Class<T> class1) {
 		log.info("Will delete entity: {}, id: {}", class1.getClass(), id);
-		 
-		
-		PersistenceOperation<Boolean> deleteOperation = new PersistenceOperation<Boolean>() {
+		return repositoryCustom.deleteObjectById(class1, id);
 
-			@Override
-			public Boolean doPersist(Session hibernateSession) {
-				try {
-					Object existingObject = hibernateSession.load(class1, id);
-					if(null == existingObject) {
-						log.info("existingObject of {} with id: {} does not exist!!", class1, id);
-						return false;
-					}
-					hibernateSession.delete(existingObject);
-					log.debug("Deleted Successfully");
-					return true;
-				}catch (Exception e) {
-					log.error("Error deleting object!");
-					e.printStackTrace();
-					return false;
-				}
-			}
-		};
-		
-		try {
-
-//			JpaRepository repository = findRepo(class1);
-//			repository.deleteById(id); 
-			return repositoryCustom.pesistOperation(deleteOperation);
-		} catch (Exception e) {
-			e.printStackTrace();
-			return false;
-		}
 	}
 
 	public EntityManagementConfig getConfiguration(String key) {
