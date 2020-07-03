@@ -12,3 +12,8 @@
 .nowrap{
 	white-space: nowrap
 }
+
+.form-section{
+	border: solid 1px gray;
+	border-radius: 15px;
+}

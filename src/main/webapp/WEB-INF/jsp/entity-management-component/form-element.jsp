@@ -209,11 +209,11 @@
 			const sectionContent = createHtmlTag({
 				tagName:'div',
 				id: 'section-'+groupName,
+				class : 'form-section',
 				ch1: groupHeader, 
 				style: {
 					padding: '5px',
-					margin: '5px',
-					'background-color': 'yellow'
+					margin: '5px', 
 				}
 			})
 			
