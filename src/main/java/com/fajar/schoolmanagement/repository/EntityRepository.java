@@ -1,7 +1,6 @@
 package com.fajar.schoolmanagement.repository;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
@@ -13,38 +12,18 @@ import java.util.Optional;
 import javax.annotation.PostConstruct;
 import javax.persistence.JoinColumn;
 
-import org.apache.poi.ss.formula.functions.T;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.repository.Repository;
 import org.springframework.stereotype.Service;
 
+import com.fajar.schoolmanagement.annotation.Dto;
 import com.fajar.schoolmanagement.entity.BaseEntity;
-import com.fajar.schoolmanagement.entity.Capital;
-import com.fajar.schoolmanagement.entity.CapitalFlow;
-import com.fajar.schoolmanagement.entity.CashBalance;
-import com.fajar.schoolmanagement.entity.Cost;
-import com.fajar.schoolmanagement.entity.CostFlow;
-import com.fajar.schoolmanagement.entity.DonationMonthly;
-import com.fajar.schoolmanagement.entity.DonationOrphan;
-import com.fajar.schoolmanagement.entity.DonationThursday;
-import com.fajar.schoolmanagement.entity.Menu;
-import com.fajar.schoolmanagement.entity.Page;
-import com.fajar.schoolmanagement.entity.Profile;
-import com.fajar.schoolmanagement.entity.Student;
-import com.fajar.schoolmanagement.entity.StudentParent;
-import com.fajar.schoolmanagement.entity.StudentQuistionare;
-import com.fajar.schoolmanagement.entity.Teacher;
-import com.fajar.schoolmanagement.entity.User;
 import com.fajar.schoolmanagement.entity.setting.EntityManagementConfig;
 import com.fajar.schoolmanagement.service.WebConfigService;
 import com.fajar.schoolmanagement.service.entity.BaseEntityUpdateService;
-import com.fajar.schoolmanagement.service.entity.CommonUpdateService;
-import com.fajar.schoolmanagement.service.entity.CostFlowUpdateService;
 import com.fajar.schoolmanagement.service.entity.EntityUpdateInterceptor;
-import com.fajar.schoolmanagement.service.entity.GeneralFundUpdateService;
-import com.fajar.schoolmanagement.service.entity.UserUpdateService;
-import com.fajar.schoolmanagement.util.CollectionUtil;
+import com.fajar.schoolmanagement.util.EntityUtil;
 
 import lombok.AccessLevel;
 import lombok.Data;
@@ -55,23 +34,15 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @Slf4j
 @Data
-public class EntityRepository { 
+public class EntityRepository {
 
 	@Autowired
 	private WebConfigService webConfigService;
-	@Autowired
-	private CommonUpdateService commonUpdateService;
-	@Autowired
-	private UserUpdateService userUpdateService;
-	@Autowired
-	private CostFlowUpdateService costFlowUpdateService;
-	@Autowired
-	private GeneralFundUpdateService fundUpdateService;
-	@Autowired
-	private BaseEntityUpdateService baseEntityUpdateService;
 
 	@Autowired
 	private RepositoryCustomImpl repositoryCustom;
+	@Autowired
+	private ApplicationContext applicationContext;
 
 	@Setter(value = AccessLevel.NONE)
 	@Getter(value = AccessLevel.NONE)
@@ -89,53 +60,60 @@ public class EntityRepository {
 		String key = _class.getSimpleName().toLowerCase();
 		entityConfiguration.put(key, config(key, _class, updateService, updateInterceptor));
 	}
-
-	/**
-	 * put configuration to entityConfiguration without entityUpdateInterceptor
-	 * 
-	 * @param class1
-	 * @param commonUpdateService2
-	 */
-	private void putConfig(Class<? extends BaseEntity> class1, BaseEntityUpdateService commonUpdateService2) {
-		putConfig(class1, commonUpdateService2, null);
-
-	}
-
-	/**
-	 * set update service to commonUpdateService and NO update interceptor
-	 * 
-	 * @param classes
-	 */
-	private void toCommonUpdateService(Class<? extends BaseEntity>... classes) {
-		for (int i = 0; i < classes.length; i++) {
-			putConfig(classes[i], commonUpdateService);
-		}
-	}
+ 
 
 	@PostConstruct
-	public void init() {
+	public void init() throws Exception {
 		entityConfiguration.clear();
 
-		/**
-		 * commons
-		 */
-		toCommonUpdateService(Capital.class, Cost.class, Page.class, StudentParent.class, Student.class, Teacher.class,
-				Profile.class, DonationOrphan.class, StudentQuistionare.class);
+//		/**
+//		 * commons
+//		 */
+//		toCommonUpdateService(Capital.class, Cost.class, Page.class, StudentParent.class, Student.class, Teacher.class,
+//				Profile.class, DonationOrphan.class, StudentQuistionare.class);
+//
+//		/**
+//		 * special
+//		 */
+//		putConfig(User.class, userUpdateService);
+//		putConfig(Menu.class, commonUpdateService);//, EntityUpdateInterceptor.menuInterceptor());
+//		putConfig(CostFlow.class, costFlowUpdateService);
+//		putConfig(CapitalFlow.class, fundUpdateService);
+//		putConfig(DonationThursday.class, fundUpdateService);
+//		putConfig(DonationMonthly.class, fundUpdateService);
+//
+//		/**
+//		 * unable to update
+//		 */
+//		putConfig(CashBalance.class, baseEntityUpdateService);
 
-		/**
-		 * special
-		 */
-		putConfig(User.class, userUpdateService);
-		putConfig(Menu.class, commonUpdateService, EntityUpdateInterceptor.menuInterceptor());
-		putConfig(CostFlow.class, costFlowUpdateService);
-		putConfig(CapitalFlow.class, fundUpdateService);
-		putConfig(DonationThursday.class, fundUpdateService);
-		putConfig(DonationMonthly.class, fundUpdateService);
+		putEntitiesConfig();
+	}
 
-		/**
-		 * unable to update
-		 */
-		putConfig(CashBalance.class, baseEntityUpdateService);
+	private void putEntitiesConfig() throws Exception {
+
+		List<Type> persistenceClasses = webConfigService.getEntityClassess();
+		for (Type type : persistenceClasses) {
+			try {
+				Class<? extends BaseEntity> entityClass = (Class<? extends BaseEntity>) type;
+				Dto dtoInfo = EntityUtil.getClassAnnotation(entityClass, Dto.class);
+				if (null == dtoInfo) {
+					continue;
+				}
+				Class<? extends BaseEntityUpdateService> updateServiceClass = dtoInfo.updateService();
+				BaseEntityUpdateService updateServiceBean = applicationContext.getBean(updateServiceClass);
+				EntityUpdateInterceptor updateInterceptor = ((BaseEntity) entityClass.newInstance())
+						.updateInterceptor();
+
+				log.info("Registering entity config: {}, updateServiceBean: {}", entityClass, updateServiceBean);
+
+				putConfig(entityClass, updateServiceBean, updateInterceptor);
+			} catch (Exception e) {
+				log.error("Error registering entity: {}", type);
+				e.printStackTrace();
+			}
+
+		}
 	}
 
 	/**
@@ -178,7 +156,7 @@ public class EntityRepository {
 
 			throw new InvalidParameterException("JOIN COLUMN INVALID");
 		}
-		
+
 		try {
 			return savev2(baseEntity);
 //			JpaRepository<T, ID> repository = (JpaRepository<T, ID>) findRepo(baseEntity.getClass());
@@ -189,11 +167,12 @@ public class EntityRepository {
 			throw ex;
 		}
 	}
-	
+
 	public <T extends BaseEntity> T savev2(T entity) {
 		return repositoryCustom.saveObject(entity);
 
 	}
+
 	public <T extends BaseEntity> boolean validateJoinColumn(T baseEntity) {
 
 		List<Field> joinColumns = getJoinColumn(baseEntity.getClass());
@@ -249,11 +228,11 @@ public class EntityRepository {
 	 * @param entityClass
 	 * @return
 	 */
-	public < T extends BaseEntity> JpaRepository findRepo(Class<T> entityClass) {
-		
-		 JpaRepository repository = webConfigService.getJpaRepository(entityClass);
-		 
-		 return repository;
+	public <T extends BaseEntity> JpaRepository findRepo(Class<T> entityClass) {
+
+		JpaRepository repository = webConfigService.getJpaRepository(entityClass);
+
+		return repository;
 	}
 
 	/**
@@ -268,7 +247,7 @@ public class EntityRepository {
 		JpaRepository<T, ID> repository = findRepo(clazz);
 
 		log.info("found repo : {} for {}", repository.getClass(), clazz);
-		
+
 		Optional<T> result = repository.findById(ID);
 		if (result.isPresent()) {
 			return result.get();
@@ -290,7 +269,7 @@ public class EntityRepository {
 		}
 		return repository.findAll();
 	}
- 
+
 	/**
 	 * delete entity by id
 	 * 

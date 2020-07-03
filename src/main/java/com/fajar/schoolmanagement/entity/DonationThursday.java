@@ -9,6 +9,7 @@ import javax.persistence.Table;
 import com.fajar.schoolmanagement.annotation.Dto;
 import com.fajar.schoolmanagement.annotation.FormField;
 import com.fajar.schoolmanagement.dto.FieldType;
+import com.fajar.schoolmanagement.service.entity.GeneralFundUpdateService;
 import com.fajar.schoolmanagement.service.transaction.BalanceJournalInfo;
 import com.fajar.schoolmanagement.service.transaction.DonationTrhusdayJournalInfo;
 
@@ -17,7 +18,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Dto ("Infaq Kamis")
+@Dto (value = "Infaq Kamis", updateService = GeneralFundUpdateService.class)
 @Entity
 @Table(name = "donation_thrusday")
 @Data

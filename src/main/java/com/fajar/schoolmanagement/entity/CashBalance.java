@@ -11,6 +11,7 @@ import javax.persistence.Table;
 import com.fajar.schoolmanagement.annotation.Dto;
 import com.fajar.schoolmanagement.annotation.FormField;
 import com.fajar.schoolmanagement.dto.FieldType;
+import com.fajar.schoolmanagement.service.entity.BaseEntityUpdateService;
 import com.fajar.schoolmanagement.service.transaction.CashType;
 
 import lombok.AllArgsConstructor;
@@ -18,7 +19,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Dto(editable = false, value="Jurnal Keuangan")
+@Dto(editable = false, value="Jurnal Keuangan", updateService = BaseEntityUpdateService.class)
 @Entity
 @Table(name="fin_balance")
 @Data

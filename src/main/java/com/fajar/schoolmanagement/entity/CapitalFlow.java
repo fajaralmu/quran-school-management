@@ -11,6 +11,7 @@ import javax.persistence.Table;
 import com.fajar.schoolmanagement.annotation.Dto;
 import com.fajar.schoolmanagement.annotation.FormField;
 import com.fajar.schoolmanagement.dto.FieldType;
+import com.fajar.schoolmanagement.service.entity.GeneralFundUpdateService;
 import com.fajar.schoolmanagement.service.transaction.BalanceJournalInfo;
 import com.fajar.schoolmanagement.service.transaction.FundJournalInfo;
 
@@ -19,7 +20,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Dto("Aliran Dana")
+@Dto(value = "Aliran Dana", updateService = GeneralFundUpdateService.class)
 @Entity
 @Table(name = "fund_flow")
 @Builder

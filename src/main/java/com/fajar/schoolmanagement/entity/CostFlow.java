@@ -13,6 +13,7 @@ import javax.persistence.Table;
 import com.fajar.schoolmanagement.annotation.Dto;
 import com.fajar.schoolmanagement.annotation.FormField;
 import com.fajar.schoolmanagement.dto.FieldType;
+import com.fajar.schoolmanagement.service.entity.CostFlowUpdateService;
 import com.fajar.schoolmanagement.service.transaction.BalanceJournalInfo;
 import com.fajar.schoolmanagement.service.transaction.CostJournalInfo;
 import com.fajar.schoolmanagement.service.transaction.SourceOfFund;
@@ -22,7 +23,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Dto("Aliran Pengeluaran")
+@Dto(value="Aliran Pengeluaran", updateService = CostFlowUpdateService.class)
 @Entity
 @Table(name = "school_cost_flow")
 @Builder

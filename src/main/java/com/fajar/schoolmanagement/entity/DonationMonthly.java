@@ -11,6 +11,7 @@ import javax.persistence.Table;
 import com.fajar.schoolmanagement.annotation.Dto;
 import com.fajar.schoolmanagement.annotation.FormField;
 import com.fajar.schoolmanagement.dto.FieldType;
+import com.fajar.schoolmanagement.service.entity.GeneralFundUpdateService;
 import com.fajar.schoolmanagement.service.transaction.BalanceJournalInfo;
 import com.fajar.schoolmanagement.service.transaction.DonationMonthlyJournalInfo;
 
@@ -19,62 +20,64 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Dto ("Infaq Bulanan Siswa")
+@Dto(value = "Infaq Bulanan Siswa", updateService = GeneralFundUpdateService.class)
 @Entity
 @Table(name = "donation_montly")
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class DonationMonthly extends BaseEntity implements FinancialEntity{
+public class DonationMonthly extends BaseEntity implements FinancialEntity {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 6473541136274411199L;
 
-	 
 	@FormField
 	@Column
 	private Date date;
-	
+
 	@JoinColumn(name = "student_id")
 	@ManyToOne
 	@FormField(type = FieldType.FIELD_TYPE_DYNAMIC_LIST, optionItemName = "fullName")
 	private Student student;
-	
-	@FormField(type = FieldType.FIELD_TYPE_PLAIN_LIST, availableValues = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"})
+
+	@FormField(type = FieldType.FIELD_TYPE_PLAIN_LIST, availableValues = { "1", "2", "3", "4", "5", "6", "7", "8", "9",
+			"10", "11", "12" })
 	@Column
 	private int month;
-	
+
 	@FormField
 	@Column
 	private int year;
-	
+
 	@FormField(type = FieldType.FIELD_TYPE_CURRENCY)
 	@Column
 	private long nominal;
-	
+
 	@FormField(type = FieldType.FIELD_TYPE_TEXTAREA)
 	@Column
 	private String description;
-	
+
 	/** $$$ **/
 	@Override
-	public Date getTransactionDate() { 
+	public Date getTransactionDate() {
 		return date;
 	}
+
 	@Override
 	public String getTransactionName() {
 		return "Infaq Bulanan";
 	}
+
 	@Override
-	public long getTransactionNominal() { 
+	public long getTransactionNominal() {
 		return nominal;
 	}
-	
+
 	@Override
-	public BalanceJournalInfo getBalanceJournalInfo() { 
+	public BalanceJournalInfo getBalanceJournalInfo() {
 		return new DonationMonthlyJournalInfo(this);
 	}
 }

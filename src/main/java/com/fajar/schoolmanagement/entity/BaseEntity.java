@@ -14,44 +14,42 @@ import com.fajar.schoolmanagement.annotation.BaseField;
 import com.fajar.schoolmanagement.annotation.Dto;
 import com.fajar.schoolmanagement.annotation.FormField;
 import com.fajar.schoolmanagement.dto.FieldType;
+import com.fajar.schoolmanagement.service.entity.EntityUpdateInterceptor;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Dto
-@MappedSuperclass 
-public class BaseEntity implements Serializable{
-	 
-	
+@MappedSuperclass
+public class BaseEntity implements Serializable {
+
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -8161890497812023383L;
 	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@FormField
 	@Column
 	private Long id;
 	@BaseField
-	@Column(name="general_color")
+	@Column(name = "general_color")
 	@FormField(type = FieldType.FIELD_TYPE_COLOR, defaultValue = "green")
 	private String color;
 	@BaseField
-	@Column(name="font_color")
+	@Column(name = "font_color")
 	@FormField(type = FieldType.FIELD_TYPE_COLOR, defaultValue = "yellow")
 	private String fontColor;
-	 
-	@Column(name="created_date")
+
+	@Column(name = "created_date")
 	@JsonIgnore
 //	@FormField
 	private Date createdDate;
-	@Column(name="modified_date")
+	@Column(name = "modified_date")
 	@JsonIgnore
 	private Date modifiedDate;
-	@Column(name="deleted")
+	@Column(name = "deleted")
 	@JsonIgnore
 	private boolean deleted;
-	
-	
-	
+
 	public String getFontColor() {
 		return fontColor;
 	}
@@ -100,14 +98,21 @@ public class BaseEntity implements Serializable{
 		this.id = id;
 	}
 
-
 	@PrePersist
 	private void prePersist() {
-		if(this.createdDate == null) {
+		if (this.createdDate == null) {
 			this.createdDate = new Date();
 		}
 		this.modifiedDate = new Date();
-	} 
-	
-	
+	}
+
+	public EntityUpdateInterceptor updateInterceptor() {
+		return new EntityUpdateInterceptor<BaseEntity>() {
+			@Override
+			public BaseEntity preUpdate(BaseEntity baseEntity) {
+				return baseEntity;
+			}
+		};
+	}
+
 }

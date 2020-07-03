@@ -9,6 +9,7 @@ import javax.persistence.Table;
 import com.fajar.schoolmanagement.annotation.Dto;
 import com.fajar.schoolmanagement.annotation.FormField;
 import com.fajar.schoolmanagement.dto.FieldType;
+import com.fajar.schoolmanagement.service.entity.EntityUpdateInterceptor;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -47,5 +48,21 @@ public class Menu extends BaseEntity {
 	@FormField(type = FieldType.FIELD_TYPE_IMAGE, required = false, defaultValue = "DefaultIcon.BMP")
 	@Column(name = "icon_url")
 	private String iconUrl;
+
+	@Override
+	public EntityUpdateInterceptor updateInterceptor() {
+
+		return new EntityUpdateInterceptor<Menu>() {
+
+			@Override
+			public Menu preUpdate(Menu menu) {
+				if (menu.getUrl().startsWith("/") == false) {
+					menu.setUrl("/" + menu.getUrl());
+				}
+				return menu;
+
+			}
+		};
+	}
 
 }
