@@ -96,10 +96,17 @@ public class EntityProperty implements Serializable {
 				removedIndex = i;
 			}
 		}
-		ArrayUtils.remove(groupNamesArray, removedIndex);
+		groupNamesArray = ArrayUtils.remove(groupNamesArray, removedIndex);
 		this.groupNames = String.join(",", groupNamesArray);
 		groupNames+=","+AdditionalQuestionField.DEFAULT_GROUP_NAME;
 	}
+	
+//	static void main(String[] args) {
+//		args =new String[] {"OO", "ff", "fff22"};
+//		for (int i = 0; i < args.length; i++) {
+//			if(args[i] == "OO")
+//		}
+//	}
 
 	public String getGridTemplateColumns() {
 		if(formInputColumn == 2) {
