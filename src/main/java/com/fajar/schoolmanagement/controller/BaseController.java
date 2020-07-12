@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.fajar.schoolmanagement.dto.KeyValue;
-import com.fajar.schoolmanagement.dto.WebRequest;
 import com.fajar.schoolmanagement.entity.Page;
 import com.fajar.schoolmanagement.entity.Profile;
 import com.fajar.schoolmanagement.entity.User;

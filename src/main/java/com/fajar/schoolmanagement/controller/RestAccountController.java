@@ -6,9 +6,6 @@ import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,21 +14,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fajar.schoolmanagement.annotation.Authenticated;
+import com.fajar.schoolmanagement.annotation.CustomRequestInfo;
 import com.fajar.schoolmanagement.config.LogProxyFactory;
 import com.fajar.schoolmanagement.dto.WebRequest;
 import com.fajar.schoolmanagement.dto.WebResponse;
-import com.fajar.schoolmanagement.service.UserAccountService;
-import com.fajar.schoolmanagement.service.UserSessionService;
+
+import lombok.extern.slf4j.Slf4j;
 
 @CrossOrigin
 @RestController
 @RequestMapping("/api/account")
-public class RestAccountController {
-	Logger log = LoggerFactory.getLogger(RestAccountController.class);
-	@Autowired
-	private UserAccountService accountService;
-	@Autowired
-	private UserSessionService userSessionService;
+@Slf4j
+public class RestAccountController extends BaseController {
 
 	public RestAccountController() {
 		log.info("------------------RestAccountController-----------------");
@@ -42,13 +36,14 @@ public class RestAccountController {
 		LogProxyFactory.setLoggers(this);
 	}
 
-//	@PostMapping(value =  "/register", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-//	public WebResponse register(@RequestBody WebRequest request, HttpServletRequest httpRequest,
-//			HttpServletResponse httpResponse) throws IOException {
-//		log.info("register {}", request);
-//		WebResponse response = accountService.registerUser(request);
-//		return response;
-//	}
+	@PostMapping(value = "/register", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	@CustomRequestInfo(withRealtimeProgress = true)
+	public WebResponse register(@RequestBody WebRequest request, HttpServletRequest httpRequest,
+			HttpServletResponse httpResponse) throws Exception {
+		log.info("register {}", request);
+		WebResponse response = accountService.registerUser(request, httpRequest);
+		return response;
+	}
 
 	@PostMapping(value = "/login", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public WebResponse login(@RequestBody WebRequest request, HttpServletRequest httpRequest,
@@ -59,7 +54,6 @@ public class RestAccountController {
 	}
 
 	@PostMapping(value = "/logout", produces = MediaType.APPLICATION_JSON_VALUE)
-	@Authenticated
 	public WebResponse logout(HttpServletRequest httpRequest, HttpServletResponse httpResponse) throws IOException {
 
 		boolean success = false;
@@ -73,11 +67,6 @@ public class RestAccountController {
 	@PostMapping(value = "/getprofile", produces = MediaType.APPLICATION_JSON_VALUE)
 	@Authenticated
 	public WebResponse getprpfile(HttpServletRequest httpRequest, HttpServletResponse httpResponse) throws IOException {
-
-		/*
-		 * if (!userSessionService.hasSession(httpRequest, false)) { return
-		 * WebResponse.failedResponse(); }
-		 */
 
 		return userSessionService.getProfile(httpRequest);
 	}
