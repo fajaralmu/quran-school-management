@@ -10,13 +10,17 @@
 		<div class="card-body">
 
 			<div style="display: grid; grid-template-columns: 20% 70%">
-
+				<div class="centered-align">
+					<img width="90" height="90"
+						src="${host}/${contextPath}/${imagePath}/${profile.iconUrl }" />
+				</div>
+				<div></div>
 				<div>Name</div>
 				<div>${profile.name }</div>
 
 
 				<div>Code</div>
-				<div>${profile.martCode }</div>
+				<div>${profile.appCode }</div>
 
 
 				<div>About</div>
