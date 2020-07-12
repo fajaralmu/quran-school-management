@@ -1,5 +1,6 @@
 package com.fajar.schoolmanagement.entity;
 
+import java.beans.Transient;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -10,6 +11,8 @@ import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.PrePersist;
 
+import org.hibernate.annotations.Type;
+
 import com.fajar.schoolmanagement.annotation.BaseField;
 import com.fajar.schoolmanagement.annotation.Dto;
 import com.fajar.schoolmanagement.annotation.FormField;
@@ -19,26 +22,21 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Dto
 @MappedSuperclass
-public class BaseEntity implements Serializable {
+public class BaseEntity implements Serializable{
 
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = -8161890497812023383L;
+	private static final long serialVersionUID = 5713292970611528372L;
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@FormField
-	@Column
+	@Type(type = "org.hibernate.type.LongType")
+	@Column 
+	@BaseField
 	private Long id;
-	@BaseField
-	@Column(name = "general_color")
-	@FormField(type = FieldType.FIELD_TYPE_COLOR, defaultValue = "green")
-	private String color;
-	@BaseField
-	@Column(name = "font_color")
-	@FormField(type = FieldType.FIELD_TYPE_COLOR, defaultValue = "yellow")
-	private String fontColor;
-
+	
 	@Column(name = "created_date")
 	@JsonIgnore
 //	@FormField
@@ -49,6 +47,14 @@ public class BaseEntity implements Serializable {
 	@Column(name = "deleted")
 	@JsonIgnore
 	private boolean deleted;
+	
+	@Column(name = "general_color")
+	@FormField(lableName = "Background Color", type = FieldType.FIELD_TYPE_COLOR, defaultValue = "#ffffff")
+	private String color;
+	@BaseField
+	@Column(name = "font_color")
+	@FormField(type = FieldType.FIELD_TYPE_COLOR, defaultValue = "#000000")
+	private String fontColor;
 
 	public String getFontColor() {
 		return fontColor;
@@ -104,15 +110,24 @@ public class BaseEntity implements Serializable {
 			this.createdDate = new Date();
 		}
 		this.modifiedDate = new Date();
+		if(this.color == null) {
+			color = "#000000";
+		}
+		if(this.fontColor == null) {
+			fontColor = "#ffffff";
+		}
 	}
 
-	public EntityUpdateInterceptor updateInterceptor() {
-		return new EntityUpdateInterceptor<BaseEntity>() {
+	@JsonIgnore 
+	@Transient
+	public EntityUpdateInterceptor getUpdateInterceptor() {
+		return new EntityUpdateInterceptor<BaseEntity>() { 
+			private static final long serialVersionUID = 2878932467536346251L;
+
 			@Override
 			public BaseEntity preUpdate(BaseEntity baseEntity) {
 				return baseEntity;
 			}
 		};
 	}
-
 }

@@ -4,11 +4,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.annotation.PostConstruct;
+import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.fajar.schoolmanagement.config.LogProxyFactory;
+import com.fajar.schoolmanagement.util.SessionUtil;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -102,6 +104,33 @@ public class ProgressService {
 		} catch (Exception e) {
 			// TODO: handle exception
 		}
+	}
+	
+	public void sendProgress(double progress, double maxProgress, double percent, boolean newProgress,
+			HttpServletRequest httpServletRequest) {
+		String requestId =  getRequestId(httpServletRequest);
+		this.sendProgress(progress, maxProgress, percent, newProgress, requestId);
+	}
+
+	public void sendProgress(double progress, double maxProgress, double percent,
+			HttpServletRequest httpServletRequest) {
+		sendProgress(progress, maxProgress, percent, false, httpServletRequest);
+	}
+
+	public void sendProgress(double percent, HttpServletRequest httpServletRequest) {
+		sendProgress(1, 1, percent, httpServletRequest);
+	}
+	
+	static String getRequestId(HttpServletRequest httpServletRequest) {
+		return SessionUtil.getPageRequestId(httpServletRequest);
+	}
+	
+	public void sendComplete(HttpServletRequest httpServletRequest) {
+		String requestId = getRequestId(httpServletRequest);
+
+		log.info("%%%%%%|COMPLETE PROGRESS|%%%%%%% for {}", requestId);
+		realtimeService.sendProgress(100, requestId);
+
 	}
 	
 	public static void main(String[] ccc) {

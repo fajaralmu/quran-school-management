@@ -50,7 +50,7 @@ public class Menu extends BaseEntity {
 	private String iconUrl;
 
 	@Override
-	public EntityUpdateInterceptor updateInterceptor() {
+	public EntityUpdateInterceptor getUpdateInterceptor() {
 
 		return new EntityUpdateInterceptor<Menu>() {
 

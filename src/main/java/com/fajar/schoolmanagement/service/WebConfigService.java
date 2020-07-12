@@ -11,17 +11,23 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.fajar.schoolmanagement.annotation.Dto;
 import com.fajar.schoolmanagement.config.LogProxyFactory;
 import com.fajar.schoolmanagement.entity.BaseEntity;
+import com.fajar.schoolmanagement.entity.Menu;
+import com.fajar.schoolmanagement.entity.Page;
 import com.fajar.schoolmanagement.entity.Profile;
+import com.fajar.schoolmanagement.entity.User;
+import com.fajar.schoolmanagement.entity.UserRole;
+import com.fajar.schoolmanagement.repository.MenuRepository;
+import com.fajar.schoolmanagement.repository.PageRepository;
 import com.fajar.schoolmanagement.repository.ProfileRepository;
+import com.fajar.schoolmanagement.repository.UserRepository;
+import com.fajar.schoolmanagement.repository.UserRoleRepository;
 import com.fajar.schoolmanagement.util.CollectionUtil;
 import com.fajar.schoolmanagement.util.EntityUtil;
 
@@ -29,42 +35,115 @@ import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * this class is registered in the XML config
+ * this class is autowired via XML
  * 
  * @author Republic Of Gamers
  *
  */
-@Dto
+
 @Data
 @Slf4j
 public class WebConfigService {
 
+	public static final String DEFAULT_ROLE = "00";
+	public static final String SETTING = "setting";
+	public static final String MENU = "menu";
+	public static final String PAGE = "page";
+	public static final String ADMIN = "admin";
+	public static final String ABOUT = "about";
+
 	@Autowired
-	private ProfileRepository shopProfileRepository;
+	private  ProfileRepository ProfileRepository;
 	@Autowired
 	private ApplicationContext applicationContext;
+	@Autowired
+	private UserRepository userRepository;
+	@Autowired
+	private UserRoleRepository userRoleRepository;
+	@Autowired
+	private PageRepository pageRepository;
+	@Autowired
+	private MenuRepository menuRepository;
 
+	/////////////// VARIABLES REGISTERED VIA XML ////////////////
 	private String basePage;
 	private String uploadedImageRealPath;
 	private String uploadedImagePath;
 	private String reportPath;
-	private String martCode;
+	private String appCode;
+	private String DEFAULT_USER_NAME;
+	private String DEFAULT_USER_PWD;
 	
+	private Menu defaultMenuManagementMenu, defaultPageManagementMenu;
+	private Page defaultSettingPage, defaultManagementPage, defaultAdminPage, defaultAboutPage;
+	private User defaultUser;
+	private UserRole defaultUserRole;
+	private Profile defaultProfile;
+	/////////////////////////////////////////////////////////////
+
 	private List<JpaRepository<?, ?>> jpaRepositories = new ArrayList<>();
 	private List<Type> entityClassess = new ArrayList<>();
 	private Map<Class<? extends BaseEntity>, JpaRepository> repositoryMap = new HashMap<>();
 	
-	@PreDestroy
-	public void preDestroy() {
-		System.out.println("========= will destroy ========");
-
+	
+	@PostConstruct
+	public void init() {
+		log.info("WebConfigService INITIALIZE");
+		
+		LogProxyFactory.setLoggers(this);
+		
+		getJpaReporitoriesBean();
+		checkUser();
+		checkDefaultProfile();
+		checkDefaultPages();
 	}
+
+	private void checkDefaultPages() {
+		 
+		defaultAdminPage();
+		defaultAboutPage();
+	}
+
+	private Page defaultAboutPage() {
+		return getPage(ABOUT, defaultAboutPage);
+	}
+
+	private void checkUser() {
+		UserRole userRole = userRoleRepository.findByCode(DEFAULT_ROLE);
+		if (null == userRole) {
+			userRole = defaultRole();
+		}
+		User user = userRepository.findByUsername(DEFAULT_USER_NAME);
+		if (null == user) {
+			user = defaultUser();
+		}
+	}
+
+	private User defaultUser() {
+		User user = userRepository.findByUsername(DEFAULT_USER_NAME);
+		if (null != user) {
+			return user;
+		}
+		user = defaultUser;
+		user.setRole(defaultRole());  
+		
+		return userRepository.save(user);
+	}
+
+	public UserRole defaultRole() {
+		UserRole userRole = userRoleRepository.findByCode(DEFAULT_ROLE);
+		if (null != userRole) {
+			return userRole;
+		}
+		userRole = defaultUserRole;
+
+		return userRoleRepository.save(userRole);
+	}
+
 	private void getJpaReporitoriesBean() {
 		log.info("//////////////GET JPA REPOSITORIES BEANS///////////////");
 		jpaRepositories.clear();
 		entityClassess.clear();
-		repositoryMap.clear();
-		
 		String[] beanNames = applicationContext.getBeanNamesForType(JpaRepository.class);
 		if (null == beanNames)
 			return;
@@ -76,56 +155,105 @@ public class WebConfigService {
 
 			if (null == beanObject)
 				continue;
-			Class<?>[] interfaces = beanObject.getClass().getInterfaces(); 
-			
+			Class<?>[] interfaces = beanObject.getClass().getInterfaces();
+
 			log.info("beanObject: {}", beanObject);
 			if (null == interfaces)
 				continue;
- 
+
 			Type type = getTypeArgument(interfaces[0], 0);
-			
+
 			entityClassess.add(type);
 			jpaRepositories.add(beanObject);
-			
-			repositoryMap.put((Class)type, beanObject);
-			
-			log.info(i + "." + beanName + ". entity type: "+ type);
+
+			repositoryMap.put((Class) type, beanObject);
+
+			log.info(i + "." + beanName + ". entity type: " + type);
 		}
 	}
-	
-	public <T extends BaseEntity>  JpaRepository getJpaRepository(Class<T> _entityClass) {
-		log.info("get JPA Repository for: {}", _entityClass);
-		
-		JpaRepository result = this.repositoryMap.get(_entityClass);
-		
-		log.info("found repo object: {}", result);
-		
-		return result;
+
+	public Profile getProfile() {
+		return checkDefaultProfile();
 	}
 	
+	public Menu getMenu(String code, Menu defaultMenuIfNotExist, Page menuPage) {
+		Page eixsitingPage = getPage(menuPage.getCode(), menuPage);
+		Menu menu = menuRepository.findByCode(code);
+		if (null != menu) {
+			log.info("menu: {} FOUND!", code);
+			return menu;
+		}
 
-	public static ParameterizedType getJpaRepositoryType(Class<?> _class) {
-		Type[] genericInterfaces = _class.getGenericInterfaces();
-		if(CollectionUtil.emptyArray(genericInterfaces)) return null;
+		log.info("WILL SAVE menu with :{}", code);
+
+		menu = defaultMenuIfNotExist; 
+		menu.setMenuPage(eixsitingPage); 
+
+		return menuRepository.save(menu);
+	}
+	
+	public Menu checkDefaultMenu() {
+		return getMenu(MENU, defaultMenuManagementMenu, defaultSettingPage());
+	}
+
+	public Menu checkPageManagementMenu() {
+		return getMenu(PAGE, defaultPageManagementMenu, defaultSettingPage());
+	}
+	
+	private Page getPage(String code, Page defaultPageIfNotExist) {
+		Page page = pageRepository.findByCode(code);
+		if (null != page) {
+			log.info("page with code: {} FOUND!", code);
+			return page;
+		}
+		log.info("WILL SAVE page : {}...", code);
+		return pageRepository.save(defaultPageIfNotExist);
+	}
+	 
+	public Page defaultAdminPage() {
+		return getPage(ADMIN, defaultAdminPage);
+	}
+	
+	public Page defaultSettingPage() {
 		
+		return getPage(SETTING, defaultSettingPage);
+		 
+	}
+
+	public static void main(String[] args) throws IOException {
+//		Class _class = ProductRepository.class;
+//		Type[] interfaces = _class.getGenericInterfaces();
+//		CollectionUtil.printArray(interfaces);
+//		Type type = interfaces[0];
+//		System.out.println("type: "+type);
+//		ParameterizedType parameterizedType = (ParameterizedType) type;
+//		log.info("parameterizedType: {}", parameterizedType );
+	}
+
+	private ParameterizedType getJpaRepositoryType(Class<?> _class) {
+		Type[] genericInterfaces = _class.getGenericInterfaces();
+		if (CollectionUtil.emptyArray(genericInterfaces))
+			return null;
+
 		try {
 			for (int i = 0; i < genericInterfaces.length; i++) {
 				Type genericInterface = genericInterfaces[i];
-				if(genericInterface.getTypeName().startsWith("org.springframework.data.jpa.repository.JpaRepository")) {
+				if (genericInterface.getTypeName()
+						.startsWith("org.springframework.data.jpa.repository.JpaRepository")) {
 					return (ParameterizedType) genericInterface;
 				}
 			}
 			return null;
-		}catch (Exception e) {
+		} catch (Exception e) {
 			return null;
 		}
 	}
 
 	private Type getTypeArgument(Class<?> _class, int argNo) {
 		try {
-			 
+
 			ParameterizedType jpaRepositoryType = getJpaRepositoryType(_class);
-			
+
 			Type[] typeArguments = jpaRepositoryType.getActualTypeArguments();// type.getTypeParameters();
 			CollectionUtil.printArray(typeArguments);
 
@@ -161,75 +289,25 @@ public class WebConfigService {
 		}
 	}
 
-	public static void main(String[] args) throws IOException {
-
-	}
-
-	public static String filter(String content) {
-		String[] lines = (content.split("\n"));
-		String result = "";
-		String firstLine = lines[0].trim();
-		if (firstLine.startsWith("INSERT") == false) {
-			firstLine = firstLine.substring(3, firstLine.length());
-			firstLine = firstLine.replace("MMB", "DEVELOPMENT");
-		}
-
-		for (String string : lines) {
-			if (string.trim().equals(";")) {
-				continue;
-			}
-
-			String insertStatement = string.substring(3, string.length());
-			if (insertStatement.startsWith("INSERT")) {
-				string = string.substring(3, string.length());
-			}
-
-			string = string.trim();
-			if (string.startsWith(",(")) {
-				string = string.substring(0, string.length());
-				string = firstLine + string;
-			}
-			if (string.endsWith(")")) {
-				string += ";";
-			}
-			string = string.replace("MMB", "DEVELOPMENT");
-			string = string.replace("VALUES,", "VALUES");
-			result += "\n" + string;
-
-			System.out.println(string);
-		}
-		return result;
-	}
-
-	@PostConstruct
-	public void init() {
-		LogProxyFactory.setLoggers(this);
-		Profile dbProfile = shopProfileRepository.findByMartCode(martCode);
+	public Profile checkDefaultProfile() {
+		Profile dbProfile = ProfileRepository.findByAppCode(appCode);
 		if (null == dbProfile) {
-			shopProfileRepository.save(defaultProfile());
+			ProfileRepository.save(defaultProfile);
 		}
-		getJpaReporitoriesBean();
+		dbProfile = ProfileRepository.findByAppCode(appCode);
+
+		/* return getProfileFromSession(); */ return EntityUtil.validateDefaultValue(dbProfile);
 	}
+ 
 
-	public Profile getProfile() {
-		Profile dbProfile = shopProfileRepository.findByMartCode(martCode);
+	public <T extends BaseEntity> JpaRepository getJpaRepository(Class<T> _entityClass) {
+		log.info("get JPA Repository for: {}", _entityClass);
 
-		/* return getShopProfileFromSession(); */ return EntityUtil.validateDefaultValue(dbProfile);
-	}
+		JpaRepository result = this.repositoryMap.get(_entityClass);
 
-	private Profile defaultProfile() {
-		Profile profile = new Profile();
-		profile.setName("Universal Good Shop");
-		profile.setAddress("Spring Mvc, Java Virtual Machine, Win 10 64");
-		profile.setContact("087737666614");
-		profile.setWebsite("http://localhost:8080/universal-good-shop");
-		profile.setIconUrl("DefaultIcon.BMP");
-		profile.setBackgroundUrl("DefaultBackground.BMP");
-		profile.setMartCode(martCode);
-		profile.setShortDescription("we provide what u need");
-		profile.setColor("green");
-		profile.setAbout("Nam libero tempore.");
-		return profile;
+		log.info("found repo object: {}", result);
+
+		return result;
 	}
 
 }

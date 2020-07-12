@@ -29,9 +29,9 @@ public class Profile extends BaseEntity{
 	@Column(unique = true)
 	@FormField
 	private String name;
-	@Column(name = "mart_code", unique = true)
+	@Column(name = "app_code", unique = true)
 	@FormField(type = FieldType.FIELD_TYPE_HIDDEN, lableName = "Kode Aplikasi")
-	private String martCode;
+	private String appCode;
 	@Column(name = "short_description")
 	@FormField(type = FieldType.FIELD_TYPE_TEXTAREA, lableName = "Deskripsi Singkat")
 	private String shortDescription;

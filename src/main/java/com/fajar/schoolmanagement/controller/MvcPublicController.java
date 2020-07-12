@@ -43,7 +43,7 @@ public class MvcPublicController extends BaseController {
 	}
 
 	@RequestMapping(value = { "about" })
-	@CustomRequestInfo(title = "About App", pageUrl = "school/about-page")
+	@CustomRequestInfo(title = "About App", pageUrl = "webpage/about-page")
 	public String about(Model model, HttpServletRequest request, HttpServletResponse response) throws IOException {
 //		String imagebasePath = getFullImagePath(request);
 //		model.addAttribute("menus", componentService.getPublicMenus(request)); 

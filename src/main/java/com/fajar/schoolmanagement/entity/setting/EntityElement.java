@@ -16,7 +16,6 @@ import com.fajar.schoolmanagement.annotation.Dto;
 import com.fajar.schoolmanagement.annotation.FormField;
 import com.fajar.schoolmanagement.dto.FieldType;
 import com.fajar.schoolmanagement.entity.BaseEntity;
-import com.fajar.schoolmanagement.exception.InvalidValueException;
 import com.fajar.schoolmanagement.util.EntityUtil;
 import com.fajar.schoolmanagement.util.MyJsonUtil;
 import com.fajar.schoolmanagement.util.StringUtil;
@@ -270,7 +269,7 @@ public class EntityElement implements Serializable {
 
 			List<BaseEntity> referenceEntityList = (List<BaseEntity>) additionalMap.get(field.getName());
 			if (null == referenceEntityList || referenceEntityList.size() == 0) {
-				throw new InvalidValueException(
+				throw new RuntimeException(
 						"Invalid object list provided for key: " + field.getName() + " in EntityElement.AdditionalMap");
 			}
 			log.info("Additional map with key: {} . Length: {}", field.getName(), referenceEntityList.size());

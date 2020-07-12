@@ -7,12 +7,11 @@ import com.fajar.schoolmanagement.entity.BaseEntity;
 import com.fajar.schoolmanagement.entity.User;
 
 @Service
-public class UserUpdateService extends BaseEntityUpdateService{
- 
-	
+public class UserUpdateService extends BaseEntityUpdateService<User> {
+
 	@Override
-	public WebResponse saveEntity(BaseEntity baseEntity, boolean newRecord, EntityUpdateInterceptor updateInterceptor) {
-		User user = (User) copyNewElement(baseEntity, newRecord);
+	public WebResponse saveEntity(User baseEntity, boolean newRecord) {
+		User user = copyNewElement(baseEntity, newRecord);
 		User newUser = saveObject(user);
 		return WebResponse.builder().entity(newUser).build();
 	}

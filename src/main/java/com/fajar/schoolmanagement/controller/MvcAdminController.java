@@ -41,7 +41,7 @@ public class MvcAdminController extends BaseController {
 	}
 
 	@RequestMapping(value = { "/home" })
-	@CustomRequestInfo(title = "Dashboard", pageUrl = "school/home-page")
+	@CustomRequestInfo(title = "Dashboard", pageUrl = "webpage/home-page")
 	public String menuDashboard(Model model, HttpServletRequest request, HttpServletResponse response)
 			throws IOException {
 		Calendar cal = Calendar.getInstance();
@@ -55,7 +55,7 @@ public class MvcAdminController extends BaseController {
 	}
 
 	@RequestMapping(value = { "/report" })
-	@CustomRequestInfo(title = "Report", pageUrl = "school/report-page", stylePaths = { "reportpage" })
+	@CustomRequestInfo(title = "Report", pageUrl = "webpage/report-page", stylePaths = { "reportpage" })
 	public String reportDashboard(Model model, HttpServletRequest request, HttpServletResponse response)
 			throws IOException {
 
@@ -66,7 +66,7 @@ public class MvcAdminController extends BaseController {
 	}
 
 	@RequestMapping(value = { "/pagesequencesetting" })
-	@CustomRequestInfo(title = "Menu Sequence", pageUrl = "school/page-sequence", stylePaths = { "pagesequence" })
+	@CustomRequestInfo(title = "Menu Sequence", pageUrl = "webpage/page-sequence", stylePaths = { "pagesequence" })
 	public String pageSequenceSetting(Model model, HttpServletRequest request, HttpServletResponse response)
 			throws IOException {
 

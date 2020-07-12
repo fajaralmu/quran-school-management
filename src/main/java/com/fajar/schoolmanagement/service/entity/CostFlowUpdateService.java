@@ -13,32 +13,32 @@ import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
-public class CostFlowUpdateService extends BaseEntityUpdateService{ 
+public class CostFlowUpdateService extends BaseEntityUpdateService<CostFlow> {
 
 	@Autowired
 	protected EntityRepository entityRepository;
 	@Autowired
 	private CashBalanceService cashBalanceService;
-	
+
 	private CostFlow theCostFlow;
-	
+
 	@Override
-	public WebResponse saveEntity(BaseEntity entity, boolean newRecord, EntityUpdateInterceptor updateInterceptor) {
-		CostFlow costFlow = (CostFlow) copyNewElement(entity, newRecord); 
-		 
+	public WebResponse saveEntity(CostFlow entity, boolean newRecord) {
+		CostFlow costFlow = copyNewElement(entity, newRecord);
+
 		theCostFlow = saveObject(costFlow);
 		validateCostInfo();
-		
+
 		log.info("Cost Type: {}", theCostFlow.getCostType());
 		cashBalanceService.updateCashBalance(theCostFlow);
-		
+
 		return WebResponse.builder().entity(theCostFlow).build();
 	}
 
-	private void validateCostInfo() { 
-		theCostFlow =  entityRepository.findById(CostFlow.class, theCostFlow.getId());
+	private void validateCostInfo() {
+		theCostFlow = entityRepository.findById(CostFlow.class, theCostFlow.getId());
 		log.info("validated theCostFlow: {}", theCostFlow);
-		if(null == theCostFlow) {
+		if (null == theCostFlow) {
 			throw new RuntimeException("INVALID COST FLOW");
 		}
 	}

@@ -14,5 +14,6 @@ public @interface CustomRequestInfo {
 	public String pageUrl() default "";
 	public String title() default "";
 	public boolean withRealtimeProgress() default false;
+	
 
 }

@@ -21,6 +21,7 @@ import org.apache.commons.lang3.SerializationUtils;
 import com.fajar.schoolmanagement.annotation.AdditionalQuestionField;
 import com.fajar.schoolmanagement.annotation.Dto;
 import com.fajar.schoolmanagement.annotation.FormField;
+import com.fajar.schoolmanagement.dto.FieldType;
 import com.fajar.schoolmanagement.entity.BaseEntity;
 import com.fajar.schoolmanagement.entity.setting.EntityElement;
 import com.fajar.schoolmanagement.entity.setting.EntityProperty;
@@ -45,6 +46,7 @@ public class EntityUtil {
 		try {
 
 			List<Field> fieldList = getDeclaredFields(clazz);
+
 			if (isQuestionare) {
 				Map<String, List<Field>> groupedFields = sortListByQuestionareSection(fieldList);
 				fieldList = CollectionUtil.mapOfListToList(groupedFields);
@@ -428,6 +430,28 @@ public class EntityUtil {
 			e.printStackTrace();
 			return null;
 		}
+	}
+
+	public static List<Field> getFixedListFields(Class<? extends BaseEntity> entityClass) {
+		List<Field> fields = new ArrayList<>();
+		
+		List<Field> declaredFields = getDeclaredFields(entityClass);
+		for (int i = 0; i < declaredFields.size(); i++) {
+			final Field field = declaredFields.get(i);
+			
+			FormField formField = getFieldAnnotation(field, FormField.class);
+			if(null == formField) {
+				continue;
+			}
+			
+			boolean isBaseEntitySubClass = field.getType().getSuperclass().equals(BaseEntity.class);
+			
+			if(isBaseEntitySubClass && formField.type().equals(FieldType.FIELD_TYPE_FIXED_LIST)) {
+				fields.add(field);
+			}
+			
+		}
+		return   fields;
 	}
 
 }

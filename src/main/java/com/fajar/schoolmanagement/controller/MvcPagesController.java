@@ -37,7 +37,7 @@ public class MvcPagesController extends BaseController{
 	 
 	@RequestMapping(value = { "/page/{code}" })
 	@Authenticated
-	@CustomRequestInfo(pageUrl = "school/master-common-page")
+	@CustomRequestInfo(pageUrl = "webpage/master-common-page")
 	public String page(@PathVariable(name = "code") String code,  Model model, HttpServletRequest request, HttpServletResponse response) throws IOException, NotFoundException {
 		
 		Page page = componentService.getPage(code, request);

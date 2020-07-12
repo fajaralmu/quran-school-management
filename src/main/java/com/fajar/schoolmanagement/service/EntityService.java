@@ -18,15 +18,13 @@ import com.fajar.schoolmanagement.dto.Filter;
 import com.fajar.schoolmanagement.dto.WebRequest;
 import com.fajar.schoolmanagement.dto.WebResponse;
 import com.fajar.schoolmanagement.entity.BaseEntity;
-import com.fajar.schoolmanagement.entity.Capital;
-import com.fajar.schoolmanagement.entity.Cost;
 import com.fajar.schoolmanagement.entity.UserRole;
 import com.fajar.schoolmanagement.entity.setting.EntityManagementConfig;
 import com.fajar.schoolmanagement.repository.EntityRepository;
 import com.fajar.schoolmanagement.repository.RepositoryCustomImpl;
 import com.fajar.schoolmanagement.service.entity.BaseEntityUpdateService;
 import com.fajar.schoolmanagement.util.CollectionUtil;
-import com.fajar.schoolmanagement.util.EntityUtil; 
+import com.fajar.schoolmanagement.util.EntityUtil;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -85,8 +83,7 @@ public class EntityService {
 			}
 
 			if (entityValue != null)
-				return updateService.saveEntity((BaseEntity) entityValue, newRecord,
-						entityConfig.getUpdateInterceptor());
+				return updateService.saveEntity((BaseEntity) entityValue, newRecord);
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -210,14 +207,14 @@ public class EntityService {
 	}
 
 //	
-	public List<Cost> getAllCostType() {
-		return findAll(Cost.class);
-	}
- 
-
-	public List<Capital> getAllCapitalType() {
-		return findAll(Capital.class);
-	}
+//	public List<Cost> getAllCostType() {
+//		return findAll(Cost.class);
+//	}
+// 
+//
+//	public List<Capital> getAllCapitalType() {
+//		return findAll(Capital.class);
+//	}
 
 	public <T extends BaseEntity> List<T> findAll(Class<T> _class) {
 		List<T> resultList = entityRepository.findAll(_class);
