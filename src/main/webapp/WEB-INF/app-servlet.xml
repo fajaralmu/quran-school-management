@@ -51,20 +51,7 @@
 		class="org.springframework.data.redis.core.RedisTemplate"
 		p:connection-factory-ref="jedisConnectionFactory">
 	</bean>
-
-	<!-- web app custom config -->
-	<bean id="webAppConfig"
-		class="com.fajar.schoolmanagement.service.WebConfigService">
-		<property name="basePage" value="BASE_PAGE"></property>
-		<property name="martCode" value="SHOP996"></property>
-		<property name="uploadedImageRealPath"
-			value="D:/Development/Files/Web/School1/Images"></property>
-		<property name="uploadedImagePath"
-			value="WebAsset/School1/Images"></property>
-		<property name="reportPath"
-			value="D:/Development/Files/Web/School1/Reports"></property>
-	</bean>
-
+  
 	<!-- persistance -->
 	<bean id="objectMapper"
 		class="com.fasterxml.jackson.databind.ObjectMapper" />
