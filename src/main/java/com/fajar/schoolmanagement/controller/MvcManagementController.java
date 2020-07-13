@@ -85,38 +85,17 @@ public class MvcManagementController extends BaseController {
 		model.addAttribute("entityId", webConfigService.getProfile().getId());
 		model.addAttribute("singleRecord", true);
 		return basePage;
-	}
+	} 
 
-	@RequestMapping(value = { "/menu" })  
-	public String menu(Model model, HttpServletRequest request, HttpServletResponse response) throws Exception {
-
-		try {
-			checkUserAccess(userService.getUserFromSession(request), "/management/menu");
-		} catch (Exception e) {
-			return ERROR_404_PAGE;
-		}
-		HashMap<String, List<?>> listObject = new HashMap<>();
-		List pages = componentService.getAllPages();
-		log.debug("pages: {}", pages);
-		listObject.put("menuPage", pages);
-		EntityProperty entityProperty = EntityUtil.createEntityProperty(Menu.class, listObject);
-		model = constructCommonModel(request, entityProperty, model, "Menu", "management");
-		return basePage;
-	}
-
-	@RequestMapping(value = { "/fundflow" })  
+	@RequestMapping(value = { "/capitalflow" })  
 	public String fundflow(Model model, HttpServletRequest request, HttpServletResponse response) throws Exception {
 
 		try {
-			checkUserAccess(userService.getUserFromSession(request), "/management/fundflow");
+			checkUserAccess(userService.getUserFromSession(request), "/management/capitalflow");
 		} catch (Exception e) {
 			return ERROR_404_PAGE;
 		}
-		HashMap<String, List<?>> listObject = new HashMap<>();
-		List fundTypes = componentService.getAllFundTypes();
-		listObject.put("fundType", fundTypes);
-		EntityProperty entityProperty = EntityUtil.createEntityProperty(CapitalFlow.class, listObject);
-		model = constructCommonModel(request, entityProperty, model, "Fund Flow", "management");
+		entityManagementPageService.setModel(request, model, CapitalFlow.class);
 		return basePage;
 	}
 
@@ -128,54 +107,10 @@ public class MvcManagementController extends BaseController {
 		} catch (Exception e) {
 			return ERROR_404_PAGE;
 		}
-		HashMap<String, List<?>> listObject = new HashMap<>();
-		List costTypes = componentService.getAllCostTypes(); 
-		listObject.put("costType", costTypes);
-		EntityProperty entityProperty = EntityUtil.createEntityProperty(CostFlow.class, listObject);
-		model = constructCommonModel(request, entityProperty, model, "Cost Flow", "management");
+		entityManagementPageService.setModel(request, model, CostFlow.class);
 		return basePage;
 	}
-
-	/** RESTRICTED ACCESS **/
-
-//	@RequestMapping(value = { "/messages" })
-//	public String messages(Model model, HttpServletRequest request, HttpServletResponse response)
-//			throws Exception {
-//
-//		if (!userService.hasSession(request)) {
-//			sendRedirectLogin(request, response);
-//			return basePage;
-//		}
-//		try {
-//			checkUserAccess(userService.getUserFromSession(request), "/management/messages");
-//		} catch (Exception e) {
-//			return ERROR_404_PAGE;
-//		}
-//		EntityProperty entityProperty = EntityUtil.createEntityProperty(Message.class, null); 
-//		entityProperty.setEditable(false);
-//		entityProperty.removeElements("color", "fontColor");
-//		System.out.println("================ELEMENTS:"+MyJsonUtil.listToJson(entityProperty.getElements()));
-//		model = constructCommonModel(request,entityProperty, model, "message", "management");
-//		return basePage;
-//	}
-
-//	@RequestMapping(value = { "/productFlow" })
-//	public String productflow(Model model, HttpServletRequest request, HttpServletResponse response)
-//			throws Exception {
-//
-//		if (!userService.hasSession(request)) {
-//			sendRedirectLogin(request, response);
-//			return basePage;
-//		}
-//		try {
-//			checkUserAccess(userService.getUserFromSession(request), "/management/productFlow");
-//		} catch (Exception e) {
-//			return ERROR_404_PAGE;
-//		}
-//		EntityProperty entityProperty = EntityUtil.createEntityProperty(ProductFlow.class, null); 
-//		model = constructCommonModel(request,entityProperty, model, "productFlow", "management");
-//		return basePage;
-//	}
+ 
 
 	@RequestMapping(value = { "/user" })  
 	public String user(Model model, HttpServletRequest request, HttpServletResponse response) throws Exception {

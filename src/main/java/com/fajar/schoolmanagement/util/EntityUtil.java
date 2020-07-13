@@ -444,7 +444,8 @@ public class EntityUtil {
 				continue;
 			}
 			
-			boolean isBaseEntitySubClass = field.getType().getSuperclass().equals(BaseEntity.class);
+			boolean superClassAvailable = field.getType().getSuperclass()!=null;
+			boolean isBaseEntitySubClass = superClassAvailable && field.getType().getSuperclass().equals(BaseEntity.class);
 			
 			if(isBaseEntitySubClass && formField.type().equals(FieldType.FIELD_TYPE_FIXED_LIST)) {
 				fields.add(field);
