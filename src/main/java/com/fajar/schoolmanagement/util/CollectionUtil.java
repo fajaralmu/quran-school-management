@@ -1,5 +1,6 @@
 package com.fajar.schoolmanagement.util;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -110,6 +111,23 @@ public class CollectionUtil {
 			resultArray[i] = rawArray[i];
 		}
 		return resultArray;
+	}
+
+	public static Object[] objectElementsToArray(final String fieldName, Object...array) {
+		try {
+			Object sampleObject = array[0];
+			Object[] result = new Object[array.length];
+			Field field = EntityUtil.getDeclaredField(sampleObject.getClass(), fieldName);
+			for (int i = 0; i < array.length; i++) {
+				Object object = array[i];
+				Object fieldValue = field.get(object);
+				result[i] = fieldValue;
+			}
+			
+			return result;
+		}catch (Exception e) {
+			return new Object[] {"EMPTY"};
+		}
 	}
 
 }

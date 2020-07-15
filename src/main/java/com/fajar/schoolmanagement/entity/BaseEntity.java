@@ -20,6 +20,7 @@ import com.fajar.schoolmanagement.annotation.Dto;
 import com.fajar.schoolmanagement.annotation.FormField;
 import com.fajar.schoolmanagement.dto.FieldType;
 import com.fajar.schoolmanagement.service.entity.EntityUpdateInterceptor;
+import com.fajar.schoolmanagement.util.CollectionUtil;
 import com.fajar.schoolmanagement.util.EntityUtil;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -134,11 +135,18 @@ public class BaseEntity implements Serializable {
 
 	private void validateNonEmptyAbleFields() throws Exception {
 		List<Field> notEmptyAbleFields = EntityUtil.getNotEmptyAbleField(this.getClass());
+		
+		Object[] array = notEmptyAbleFields.toArray();
+		Object[] fieldNames = CollectionUtil.objectElementsToArray("name", array);
+		String[] fieldNamesStr = CollectionUtil.toArrayOfString(fieldNames);
+		String fieldNamesStrPlain = String.join(",", fieldNamesStr);
+		
 		for (int i = 0; i < notEmptyAbleFields.size(); i++) {
 
 			Field field = notEmptyAbleFields.get(i);
 			Object value = field.get(this);
 			if (value == null || (value.toString().trim().isEmpty())) {
+				log.error("FIELD(s): {} MUST NOT BE EMPTY", fieldNamesStrPlain);
 				throw new RuntimeException("Field is Empty!");
 			}
 
