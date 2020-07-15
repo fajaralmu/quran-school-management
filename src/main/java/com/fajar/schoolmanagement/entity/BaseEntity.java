@@ -111,7 +111,7 @@ public class BaseEntity implements Serializable{
 		}
 		this.modifiedDate = new Date();
 		if(this.color == null) {
-			color = "#000000";
+			color = "#ffffff";
 		}
 		if(this.fontColor == null) {
 			fontColor = "#ffffff";

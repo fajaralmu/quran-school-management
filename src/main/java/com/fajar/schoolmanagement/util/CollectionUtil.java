@@ -102,4 +102,14 @@ public class CollectionUtil {
 		return arr == null || arr.length == 0;
 	}
 
+	public static <T> Object[] toObjectArray(T[] rawArray) {
+		 
+		Object[]  resultArray = new Object[rawArray.length];
+		
+		for (int i = 0; i < rawArray.length; i++) {
+			resultArray[i] = rawArray[i];
+		}
+		return resultArray;
+	}
+
 }

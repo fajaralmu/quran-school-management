@@ -16,6 +16,7 @@ import com.fajar.schoolmanagement.annotation.Dto;
 import com.fajar.schoolmanagement.annotation.FormField;
 import com.fajar.schoolmanagement.dto.FieldType;
 import com.fajar.schoolmanagement.entity.BaseEntity;
+import com.fajar.schoolmanagement.util.CollectionUtil;
 import com.fajar.schoolmanagement.util.EntityUtil;
 import com.fajar.schoolmanagement.util.MyJsonUtil;
 import com.fajar.schoolmanagement.util.StringUtil;
@@ -223,9 +224,10 @@ public class EntityElement implements Serializable {
 	private void processPlainListType() throws Exception {
 
 		String[] availableValues = formField.availableValues();
-
+		Object[] arrayOfObject = CollectionUtil.toObjectArray(availableValues);
+		
 		if (availableValues.length > 0) {
-			setPlainListValues(Arrays.asList(availableValues));
+			setPlainListValues(Arrays.asList(arrayOfObject));
 
 		} else if (field.getType().isEnum()) {
 			Object[] enumConstants = field.getType().getEnumConstants();
