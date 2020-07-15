@@ -23,7 +23,7 @@ public class StudentDonationReportService {
 
 	public File generateMonthlyStudentDonationForOneYearReport(ReportData reportData ) {
 		StudentDonationReportBuilder reportBuilder = new StudentDonationReportBuilder(webConfigService, reportData, progressService); 
-		
+		 
 		File file = reportBuilder.buildReport();
 		log.info("generateMonthlyStudentDonationReport success..");
 		return file;

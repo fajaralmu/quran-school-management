@@ -307,7 +307,7 @@ public class CriteriaBuilder {
 	private Criterion nonStringLikeExp(Field field, Class<?> _class, Object value) {
 
 		String columnName = field.getName();// QueryUtil.getColumnName(field);
-		String tableName = _class.getName();// QueryUtil.getTableName(_class); NOW USING ALIAS
+//		String tableName = _class.getName();// QueryUtil.getTableName(_class); NOW USING ALIAS
 
 		Criterion sqlRestriction = Restrictions
 				.sqlRestriction(currentAlias + "." + columnName + " LIKE '%" + value + "%'");

@@ -181,10 +181,16 @@ public class StudentDonationReportBuilder extends ReportBuilder {
 		return rowData;
 	}
 
-	private <K, V> Map<K, V> fillMapWithMonthKeys(V dafaultValue) {
-		Map<K, V> map = new HashMap<K, V>();
+	/**
+	 *  
+	 * @param <V>
+	 * @param dafaultValue
+	 * @return
+	 */
+	private <V> Map<Integer, V> fillMapWithMonthKeys(V dafaultValue) {
+		Map<Integer, V> map = new HashMap<Integer, V>();
 		for (Integer i = 1; i <= 12; i++) {
-			map.put((K) i, dafaultValue);
+			map.put(i, dafaultValue);
 		}
 
 		return map;

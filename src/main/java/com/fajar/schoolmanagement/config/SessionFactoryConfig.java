@@ -8,6 +8,8 @@ import javax.persistence.EntityManagerFactory;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
+import org.hibernate.service.ServiceRegistry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -41,11 +43,15 @@ public class SessionFactoryConfig {
 		try {
 			org.hibernate.cfg.Configuration configuration = new org.hibernate.cfg.Configuration();
 
-			configuration.setProperties(additionalProperties());
+			configuration.setProperties(hibernateProperties());
 			
 			addAnnotatedClass(configuration);
+			final ServiceRegistry serviceRegistry =  new StandardServiceRegistryBuilder()
+					.applySettings( hibernateProperties() )
+					.build();
+			factory = configuration//./* setInterceptor(new HibernateInterceptor()). */buildSessionFactory();
+					.buildSessionFactory(serviceRegistry);
 			
-			factory = configuration./* setInterceptor(new HibernateInterceptor()). */buildSessionFactory(); 
 			log.info("Session Factory has been initialized");
 			return factory;
 		} catch (Exception ex) {
@@ -67,7 +73,7 @@ public class SessionFactoryConfig {
 	}
 
 	
-	private Properties additionalProperties() {
+	private Properties hibernateProperties() {
 		
 		String dialect = entityManagerFactoryBean.getProperties().get("hibernate.dialect").toString();
 		String ddlAuto = entityManagerFactoryBean.getProperties().get("hibernate.hbm2ddl.auto").toString();

@@ -353,7 +353,7 @@ public class QueryUtil {
 	 * @param filter
 	 * @return
 	 */
-	private static QueryFilterItem getDateFilter(String rawKey, String key, List<Field > fields, Map filter) {
+	private static QueryFilterItem getDateFilter(String rawKey, String key, List<Field > fields, Map<String, Object> filter) {
 		boolean dayFilter 	= rawKey.endsWith(DAY_SUFFIX);
 		boolean monthFilter = rawKey.endsWith(MONTH_SUFFIX);
 		boolean yearFilter 	= rawKey.endsWith(YEAR_SUFFIX);
