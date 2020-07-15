@@ -17,6 +17,7 @@ import com.fajar.schoolmanagement.config.LogProxyFactory;
 import com.fajar.schoolmanagement.controller.BaseController;
 import com.fajar.schoolmanagement.dto.SessionData;
 import com.fajar.schoolmanagement.dto.UserSessionModel;
+import com.fajar.schoolmanagement.util.EntityUtil;
 import com.fajar.schoolmanagement.util.SessionUtil;
 import com.fajar.schoolmanagement.util.StringUtil;
 
@@ -52,7 +53,7 @@ public class RuntimeService {
 	public <T extends Serializable> T getModel(String key) {
 		try {
 			Serializable serializable = SESSION_MAP.get(key);
-			T finalObj = (T) serializable;
+			T finalObj = EntityUtil.castObject(serializable);
 
 			log.info("==registry model: " + finalObj);
 			return finalObj;
@@ -110,7 +111,9 @@ public class RuntimeService {
 		} else {
 
 			model = new UserSessionModel();
-			model.setTokens(new HashMap<String, Object>() {
+			model.setTokens(new HashMap<String, Object>() { 
+				private static final long serialVersionUID = 8139306012579256414L;
+
 				{
 					put(pageRequestId, value);
 				}

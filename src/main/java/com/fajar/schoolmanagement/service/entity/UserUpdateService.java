@@ -3,7 +3,6 @@ package com.fajar.schoolmanagement.service.entity;
 import org.springframework.stereotype.Service;
 
 import com.fajar.schoolmanagement.dto.WebResponse;
-import com.fajar.schoolmanagement.entity.BaseEntity;
 import com.fajar.schoolmanagement.entity.User;
 
 @Service

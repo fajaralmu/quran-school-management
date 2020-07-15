@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.fajar.schoolmanagement.annotation.Dto;
 import com.fajar.schoolmanagement.controller.MvcAdminController;
+import com.fajar.schoolmanagement.entity.BaseEntity;
 import com.fajar.schoolmanagement.entity.Menu;
 import com.fajar.schoolmanagement.entity.Page;
 import com.fajar.schoolmanagement.repository.MenuRepository;
@@ -119,12 +120,12 @@ public class MenuInitiationService {
 
 		this.persistenceEntities = webConfigService.getEntityClassess();
 		for (Type type : persistenceEntities) {
-			validateManagementPage((Class) type);
+			validateManagementPage(EntityUtil.castObject(type));
 
 		}
 	}
 
-	private void validateManagementPage(Class entityClass) {
+	private void validateManagementPage(Class<? extends BaseEntity> entityClass) {
 		Dto dto = EntityUtil.getClassAnnotation(entityClass, Dto.class);
 		if (null == dto)
 			return;
@@ -136,7 +137,7 @@ public class MenuInitiationService {
 
 	}
 
-	private void addNewManagementMenuPageFor(Class entityClass) {
+	private void addNewManagementMenuPageFor(Class<? extends BaseEntity> entityClass) {
 		log.info("Will add default menu for: {}", entityClass.getSimpleName());
 
 		Dto dto = EntityUtil.getClassAnnotation(entityClass, Dto.class);

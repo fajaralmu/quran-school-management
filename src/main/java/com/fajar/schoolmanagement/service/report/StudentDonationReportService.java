@@ -1,13 +1,11 @@
 package com.fajar.schoolmanagement.service.report;
 
 import java.io.File;
-import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.fajar.schoolmanagement.dto.ReportData;
-import com.fajar.schoolmanagement.entity.Student;
 import com.fajar.schoolmanagement.report.builder.StudentDonationReportBuilder;
 import com.fajar.schoolmanagement.service.ProgressService;
 import com.fajar.schoolmanagement.service.WebConfigService;
