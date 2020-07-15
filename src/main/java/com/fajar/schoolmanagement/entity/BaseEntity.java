@@ -2,7 +2,9 @@ package com.fajar.schoolmanagement.entity;
 
 import java.beans.Transient;
 import java.io.Serializable;
+import java.lang.reflect.Field;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
@@ -18,25 +20,29 @@ import com.fajar.schoolmanagement.annotation.Dto;
 import com.fajar.schoolmanagement.annotation.FormField;
 import com.fajar.schoolmanagement.dto.FieldType;
 import com.fajar.schoolmanagement.service.entity.EntityUpdateInterceptor;
+import com.fajar.schoolmanagement.util.EntityUtil;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Dto
+@Slf4j
 @MappedSuperclass
-public class BaseEntity implements Serializable{
+public class BaseEntity implements Serializable {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 5713292970611528372L;
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@FormField
 	@Type(type = "org.hibernate.type.LongType")
-	@Column 
+	@Column
 	@BaseField
 	private Long id;
-	
+
 	@Column(name = "created_date")
 	@JsonIgnore
 //	@FormField
@@ -47,7 +53,7 @@ public class BaseEntity implements Serializable{
 	@Column(name = "deleted")
 	@JsonIgnore
 	private boolean deleted;
-	
+
 	@Column(name = "general_color")
 	@FormField(lableName = "Background Color", type = FieldType.FIELD_TYPE_COLOR, defaultValue = "#ffffff")
 	private String color;
@@ -105,23 +111,44 @@ public class BaseEntity implements Serializable{
 	}
 
 	@PrePersist
-	private void prePersist() {
+	private void prePersist() throws Exception {
+		try {
+			validateNonEmptyAbleFields();
+		} catch (Exception e) {
+			log.error("validateNonEmptyAbleFields ERROR");
+			e.printStackTrace();
+			throw e;
+		}
+
 		if (this.createdDate == null) {
 			this.createdDate = new Date();
 		}
 		this.modifiedDate = new Date();
-		if(this.color == null) {
+		if (this.color == null) {
 			color = "#ffffff";
 		}
-		if(this.fontColor == null) {
+		if (this.fontColor == null) {
 			fontColor = "#ffffff";
 		}
 	}
 
-	@JsonIgnore 
+	private void validateNonEmptyAbleFields() throws Exception {
+		List<Field> notEmptyAbleFields = EntityUtil.getNotEmptyAbleField(this.getClass());
+		for (int i = 0; i < notEmptyAbleFields.size(); i++) {
+
+			Field field = notEmptyAbleFields.get(i);
+			Object value = field.get(this);
+			if (value == null || (value.toString().trim().isEmpty())) {
+				throw new RuntimeException("Field is Empty!");
+			}
+
+		}
+	}
+
+	@JsonIgnore
 	@Transient
 	public EntityUpdateInterceptor getUpdateInterceptor() {
-		return new EntityUpdateInterceptor<BaseEntity>() { 
+		return new EntityUpdateInterceptor<BaseEntity>() {
 			private static final long serialVersionUID = 2878932467536346251L;
 
 			@Override

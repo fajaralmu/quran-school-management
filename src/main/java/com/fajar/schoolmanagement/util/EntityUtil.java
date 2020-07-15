@@ -110,6 +110,45 @@ public class EntityUtil {
 		return field.getAnnotation(Id.class) != null;
 	}
 
+	/**
+	 * 
+	 * @param _class
+	 * @return String type field & non empty able
+	 */
+	public static List<Field> getNotEmptyAbleField(Class<? extends BaseEntity> _class) {
+
+		List<Field> result = new ArrayList<>();
+		List<Field> formFieldAnnotatedField = getFormFieldAnnotatedField(_class);
+		for (int i = 0; i < formFieldAnnotatedField.size(); i++) {
+			Field field = formFieldAnnotatedField.get(i);
+			FormField formField = getFieldAnnotation(field, FormField.class);
+			
+			if(field.getType().equals(String.class) && !formField.emptyAble()) {
+				result.add(field);
+			}
+			
+		}
+		
+		return result;
+	}
+
+	public static List<Field> getFormFieldAnnotatedField(Class<? extends BaseEntity> _class) {
+
+		List<Field> result = new ArrayList<>();
+
+		List<Field> declaredField = getDeclaredFields(_class);
+		for (int i = 0; i < declaredField.size(); i++) {
+			Field field = declaredField.get(i);
+
+			if (getFieldAnnotation(field, FormField.class) != null) {
+				result.add(field);
+			}
+
+		}
+
+		return result;
+	}
+
 	private static Map<String, List<Field>> sortListByQuestionareSection(List<Field> fieldList) {
 		Map<String, List<Field>> temp = MapUtil.singleMap(AdditionalQuestionField.DEFAULT_GROUP_NAME,
 				new ArrayList<>());
