@@ -38,6 +38,7 @@
 	
 	 -->
 	<error-page>
+		
 		<location>/web/app-error</location>
 	</error-page>
 </web-app>

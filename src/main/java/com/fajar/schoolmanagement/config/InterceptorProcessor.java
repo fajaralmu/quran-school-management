@@ -1,6 +1,9 @@
 package com.fajar.schoolmanagement.config;
 
+import static java.lang.System.out;
+
 import java.io.IOException;
+import java.util.Collection;
 import java.util.Objects;
 
 import javax.servlet.http.HttpServletRequest;
@@ -233,7 +236,8 @@ public class InterceptorProcessor {
 
 		return hasRestController || hasPostMapping;
 	}
-
+ 
+	
 	public void postHandle(HttpServletRequest request, HttpServletResponse response, HandlerMethod handler,
 			ModelAndView modelAndView) {
 
@@ -252,14 +256,15 @@ public class InterceptorProcessor {
 			BaseController.addTitle(modelAndView, resourcePath.title());
 			BaseController.addPageUrl(modelAndView, resourcePath.pageUrl());
 
+		}else {
+			
 		}
 
 		if (null != resourcePath && resourcePath.withRealtimeProgress()) {
 			progressService.sendComplete(request);
 		}
 
-	}
-
+	} 
 	public static void validateStylePaths(String[] paths) {
 		if (null == paths)
 			return;
