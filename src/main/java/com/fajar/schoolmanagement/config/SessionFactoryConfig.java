@@ -15,6 +15,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
 import com.fajar.schoolmanagement.service.WebConfigService;
+import com.fajar.schoolmanagement.util.EntityUtil;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -60,7 +61,7 @@ public class SessionFactoryConfig {
 		List<Type> entities = webConfigService.getEntityClassess();
 		for (Type type : entities) {
 			log.info("addAnnotatedClass: {}", type);
-			configuration.addAnnotatedClass((Class) type);
+			configuration.addAnnotatedClass(EntityUtil.castObject(type));
 		}
 		
 	}

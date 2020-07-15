@@ -63,7 +63,8 @@ public class EntityManagementPageService {
 
 			for (int i = 0; i < fixedListFields.size(); i++) {
 				Field field = fixedListFields.get(i);
-				Class<? extends BaseEntity> type = (Class<? extends BaseEntity>) field.getType();
+				Class<?> fieldType = field.getType();
+				Class<? extends BaseEntity> type = EntityUtil.castObject(fieldType);
 				List<? extends BaseEntity> list = entityRepository.findAll(type);
 				listObject.put(field.getName(), CollectionUtil.convertList(list));
 

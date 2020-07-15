@@ -454,5 +454,14 @@ public class EntityUtil {
 		}
 		return   fields;
 	}
+	
+	public static <T> T castObject(Object o) {
+		try {
+			return (T) o;
+		}catch (Exception e) {
+			log.error("Error casting object: {}", o.getClass());
+			throw e;
+		}
+	}
 
 }

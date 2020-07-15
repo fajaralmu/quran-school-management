@@ -7,14 +7,11 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import javax.transaction.SystemException;
 import javax.transaction.Transactional;
 
 import org.hibernate.Criteria;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
-import org.hibernate.criterion.Order;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -33,9 +30,7 @@ import lombok.extern.slf4j.Slf4j;
 public class RepositoryCustomImpl implements RepositoryCustom {
 
 	@PersistenceContext
-	private EntityManager entityManager;
-	@Autowired
-	private SessionFactory sessionFactory;
+	private EntityManager entityManager; 
 	@Autowired
 	private Session hibernateSession;
 
@@ -58,45 +53,7 @@ public class RepositoryCustomImpl implements RepositoryCustom {
 	public RepositoryCustomImpl() {
 	}
 
-	public void testHibernateSession(Class<? extends BaseEntity> entityClass)
-			throws IllegalStateException, SystemException {
-		Transaction tx = null;
-		try {
-
-			hibernateSession = sessionFactory.openSession();
-
-			tx = hibernateSession.beginTransaction();
-
-			Criteria criteria = hibernateSession.createCriteria(entityClass, entityClass.getSimpleName())
-			// .createAlias("transactionHistory.myCashflowCategory", "myCashflowCategory")
-//					.add(Restrictions.naturalId()
-//							//.set("cifNumber", cif)							
-//							.set("myCashflowCategory.module", module)
-////							.set("sessionIdentifier", UUID.randomUUID().toString())
-//					)
-//					.addOrder(orderDate);
-			;
-			Order orderDate = Order.desc("date");
-//				criteria.setMaxResults(limit);
-//				criteria.setFirstResult(offset);
-
-			List resultList = criteria.list();
-
-			tx.commit();
-
-		} catch (Exception e) {
-			if (tx != null)
-				tx.rollback();
-
-			log.error("Error fetching from DB: {}", e);
-			return;
-
-		} finally {
-
-			if (hibernateSession.isOpen())
-				hibernateSession.close();
-		}
-	}
+	
 
 	@Override
 	public <T> List<T> filterAndSort(String sql, Class<? extends T> clazz) {
@@ -288,7 +245,8 @@ public class RepositoryCustomImpl implements RepositoryCustom {
 					log.debug("success add new record of {} with new ID: {}", entity.getClass(), newId);
 				} else {
 					log.debug("Will update entity ");
-					result = (T) hibernateSession.merge(entity);
+					Object mergeResult = hibernateSession.merge(entity);
+					result = EntityUtil.castObject(mergeResult);
 
 					log.debug("success update record of {}", entity.getClass());
 				}

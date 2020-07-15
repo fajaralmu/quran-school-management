@@ -65,7 +65,7 @@ public class CollectionUtil {
 		List<T> newList = new ArrayList<T>();
 		for (Object object : list) {
 			try {
-				newList.add((T) object);
+				newList.add(EntityUtil.castObject(object));
 			} catch (Exception e) {
 
 			}

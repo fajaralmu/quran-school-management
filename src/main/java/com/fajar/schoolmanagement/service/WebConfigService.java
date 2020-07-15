@@ -300,10 +300,10 @@ public class WebConfigService {
 	}
  
 
-	public <T extends BaseEntity> JpaRepository getJpaRepository(Class<T> _entityClass) {
+	public <T extends BaseEntity, ID> JpaRepository<T, ID> getJpaRepository(Class<T> _entityClass) {
 		log.info("get JPA Repository for: {}", _entityClass);
 
-		JpaRepository result = this.repositoryMap.get(_entityClass);
+		JpaRepository<T, ID> result = this.repositoryMap.get(_entityClass);
 
 		log.info("found repo object: {}", result);
 

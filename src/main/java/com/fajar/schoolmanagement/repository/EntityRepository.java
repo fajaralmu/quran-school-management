@@ -1,5 +1,7 @@
 package com.fajar.schoolmanagement.repository;
 
+import static com.fajar.schoolmanagement.util.EntityUtil.castObject;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.Type;
 import java.security.InvalidParameterException;
@@ -73,7 +75,7 @@ public class EntityRepository {
 		List<Type> persistenceClasses = webConfigService.getEntityClassess();
 		for (Type type : persistenceClasses) {
 			try {
-				Class<? extends BaseEntity> entityClass = (Class<? extends BaseEntity>) type;
+				Class<? extends BaseEntity> entityClass = castObject(type);
 				Dto dtoInfo = EntityUtil.getClassAnnotation(entityClass, Dto.class);
 				if (null == dtoInfo) {
 					continue;
@@ -207,9 +209,9 @@ public class EntityRepository {
 	 * @param entityClass
 	 * @return
 	 */
-	public <T extends BaseEntity> JpaRepository findRepo(Class<T> entityClass) {
+	public <T extends BaseEntity, ID> JpaRepository<T, ID> findRepo(Class<T> entityClass) {
 
-		JpaRepository repository = webConfigService.getJpaRepository(entityClass);
+		JpaRepository<T, ID> repository = webConfigService.getJpaRepository(entityClass);
 
 		return repository;
 	}
@@ -241,8 +243,8 @@ public class EntityRepository {
 	 * @param clazz
 	 * @return
 	 */
-	public <T extends BaseEntity> List<T> findAll(Class<T> clazz) {
-		JpaRepository repository = findRepo(clazz);
+	public <T extends BaseEntity, ID> List<T> findAll(Class<T> clazz) {
+		JpaRepository<T, ID> repository = findRepo(clazz);
 		if (repository == null) {
 			return new ArrayList<>();
 		}
