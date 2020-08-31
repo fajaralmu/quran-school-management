@@ -62,7 +62,7 @@
 	</div>
 </div>
 <script type="text/javascript">
-	document.body.style.backgroundColor = "${shopProfile.color}";
+	document.body.style.backgroundColor = "${profile.color}";
 
 	var pagesLink = document.getElementsByClassName("pagelink");
 	var pageMenus = {};

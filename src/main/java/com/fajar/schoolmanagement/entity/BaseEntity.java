@@ -161,6 +161,7 @@ public class BaseEntity implements Serializable {
 
 			@Override
 			public BaseEntity preUpdate(BaseEntity baseEntity) {
+				log.info("Default preUpdate.. Do Nothing");
 				return baseEntity;
 			}
 		};

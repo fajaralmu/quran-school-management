@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import com.fajar.schoolmanagement.annotation.FormField;
 import com.fajar.schoolmanagement.dto.WebResponse;
 import com.fajar.schoolmanagement.entity.BaseEntity;
+import com.fajar.schoolmanagement.entity.Student;
 import com.fajar.schoolmanagement.util.EntityUtil;
 
 import lombok.extern.slf4j.Slf4j;
@@ -26,7 +27,9 @@ public class CommonUpdateService extends BaseEntityUpdateService<BaseEntity> {
 		validateEntityFields(entity, newRecord);
 		interceptPreUpdate(entity);
 		BaseEntity newEntity = entityRepository.save(entity);
-
+		if(null == newEntity) {
+			return WebResponse.failed("Operation Failed");
+		}
 		return WebResponse.builder().entity(newEntity).build();
 	}
 
@@ -42,6 +45,9 @@ public class CommonUpdateService extends BaseEntityUpdateService<BaseEntity> {
 			log.info("Pre Update {}", entity.getClass().getSimpleName());
 			try {
 				updateInterceptor.preUpdate(entity);
+				if(entity instanceof Student) {
+					log.info("IMG: {}", ((Student) entity).getImageUrl());
+				}
 				log.info("success pre update");
 			} catch (Exception e) {
 
@@ -81,12 +87,14 @@ public class CommonUpdateService extends BaseEntityUpdateService<BaseEntity> {
 
 					switch (formfield.type()) {
 					case FIELD_TYPE_IMAGE:
-
+						log.info("validate FIELD_TYPE_IMAGE");
 						if (newRecord == false && fieldValue == null && existingEntity != null) {
+							log.info("not newRecord and fieldValue is null, set to old value" );
 							Object existingImage = field.get(existingEntity);
 							field.set(entity, existingImage);
 						} else {
 							String imageName = updateImage(field, entity);
+							log.info("imageName: {}",imageName );
 							field.set(entity, imageName);
 						}
 						break;
@@ -94,6 +102,7 @@ public class CommonUpdateService extends BaseEntityUpdateService<BaseEntity> {
 					default:
 						break;
 					}
+					log.info("validated field: {}", field.getName());
 				} catch (Exception e) {
 					log.error("Error validating field: {}", field.getName());
 					e.printStackTrace();
