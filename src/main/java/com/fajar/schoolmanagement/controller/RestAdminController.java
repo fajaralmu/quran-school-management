@@ -89,16 +89,7 @@ public class RestAdminController extends BaseController {
 
 		WebResponse response = userSessionService.clearSessions();
 		return response;
-	}
-
-	@PostMapping(value = "/savepagesequence", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public WebResponse savePageSequence(@RequestBody WebRequest request, HttpServletRequest httpRequest,
-			HttpServletResponse httpResponse) throws IOException {
-
-		WebResponse response = componentService.savePageSequence(request);
-		return response;
-	}
-	
+	} 
 	
 	@PostMapping(value =  "/saveentityorder/{entityName}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public WebResponse savePageSequence(@PathVariable("entityName") String entityName, @RequestBody WebRequest request, HttpServletRequest httpRequest,

@@ -5,9 +5,7 @@ import static com.fajar.schoolmanagement.report.builder.ExcelReportUtil.curr;
 import static com.fajar.schoolmanagement.service.report.ReportMappingUtil.getCashflowItemCount;
 import static com.fajar.schoolmanagement.service.report.ReportMappingUtil.getMonthDays;
 import static com.fajar.schoolmanagement.service.report.ReportMappingUtil.sortFinancialEntityByDayOfMonth;
-import static com.fajar.schoolmanagement.util.FileUtil.getFile;
 
-import java.io.File;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
@@ -47,7 +45,7 @@ public class CashflowReportService {
 		this.reportPath = webConfigService.getReportPath();
 	}
 
-	public File generateMonthlyGeneralCashflow(ReportData reportData) {
+	public XSSFWorkbook generateMonthlyGeneralCashflow(ReportData reportData) {
 
 		Filter filter = reportData.getFilter();
 		this.reportData = reportData;
@@ -59,8 +57,8 @@ public class CashflowReportService {
 		XSSFSheet xsheet = xwb.createSheet(sheetName);
 		writeMonthlyGeneralCashflow(xsheet, reportData);
 
-		File file = getFile(xwb, reportName);
-		return file;
+//		File file = getFile(xwb, reportName);
+		return xwb;
 	}
 
 	private void writeMonthlyGeneralCashflow(XSSFSheet xsheet, ReportData reportData) {

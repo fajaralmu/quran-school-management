@@ -33,7 +33,7 @@ public class EntityReportBuilder extends ReportBuilder {
 	}
 	
 	@Override
-	public File buildReport() { 
+	public XSSFWorkbook buildReport() { 
 
 		log.info("Writing entity report of: {}", entityProperty.getEntityName());
 
@@ -41,16 +41,16 @@ public class EntityReportBuilder extends ReportBuilder {
 		String sheetName = entityProperty.getEntityName();
 
 		String reportName = webConfigService.getReportPath() + "/" + sheetName + "_" + time +"_"+ requestId+".xlsx";
-		XSSFWorkbook xwb = new XSSFWorkbook();
-		xsheet = xwb.createSheet(sheetName);
+		xssfWorkbook = new XSSFWorkbook();
+		xsheet = xssfWorkbook.createSheet(sheetName);
 
 		createEntityTable();
 
 		sendProgress(1, 1, 10 );
 		
-		File file = MyFileUtil.getFile(xwb, reportName);
+//		File file = MyFileUtil.getFile(xwb, reportName);
 		sendProgress(1, 1, 10 );
-		return file;
+		return xssfWorkbook;
 	}
 
 	private void createEntityTable() {

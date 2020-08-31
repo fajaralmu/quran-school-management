@@ -1,8 +1,7 @@
 package com.fajar.schoolmanagement.service.report;
  
 
-import java.io.File;
-
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,11 +21,11 @@ public class OrphanDonationReportService {
 	@Autowired
 	private ProgressService progressService;
 
-	public File generateOrphanDonationReport(ReportData reportData) { 
+	public XSSFWorkbook generateOrphanDonationReport(ReportData reportData) { 
 		reportData.setReportName("DANA_YATIM");
 		
 		FundAndSpendingFlowReportMonthly reportBuilder = new FundAndSpendingFlowReportMonthly(reportData, webConfigService, progressService);
-		File file = reportBuilder.buildReport();
+		XSSFWorkbook file = reportBuilder.buildReport();
 		
 		log.info("generated: OrphanDonationReport");
 		return file;

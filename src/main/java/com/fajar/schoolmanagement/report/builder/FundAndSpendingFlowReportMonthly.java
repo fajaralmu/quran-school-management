@@ -170,10 +170,10 @@ public class FundAndSpendingFlowReportMonthly extends ReportBuilder{
 	}
 
 	@Override
-	public File buildReport() {
+	public XSSFWorkbook buildReport() {
 		writeReport();
-		File file = getFile(xssfWorkbook, reportName);
-		return file;
+//		XSSFWorkbook file = getFile(xssfWorkbook, reportName);
+		return xssfWorkbook;
 	}
 	
 	 

@@ -1,6 +1,5 @@
 package com.fajar.schoolmanagement.report.builder;
 
-import java.io.File;
 import java.util.Date;
 
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -10,6 +9,7 @@ import com.fajar.schoolmanagement.dto.ReportData;
 import com.fajar.schoolmanagement.service.ProgressService;
 import com.fajar.schoolmanagement.service.WebConfigService;
 import com.fajar.schoolmanagement.util.DateUtil;
+import com.fajar.schoolmanagement.util.StringUtil;
 
 public abstract class ReportBuilder {
 	protected final WebConfigService webConfigService;
@@ -46,5 +46,10 @@ public abstract class ReportBuilder {
 		progressService.sendProgress(taskProportion, taskSize, totalTaskProportion, false, reportData.getRequestId());
 	}
 
-	public abstract File buildReport();
+	public abstract XSSFWorkbook buildReport();
+
+	public static String randomName(String entity) {
+		String randomNumber = StringUtil.generateRandomNumber(10);
+		return entity+"_"+randomNumber+".xlsx";
+	}
 }

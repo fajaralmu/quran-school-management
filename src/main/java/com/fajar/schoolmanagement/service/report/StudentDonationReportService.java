@@ -1,7 +1,6 @@
 package com.fajar.schoolmanagement.service.report;
 
-import java.io.File;
-
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,10 +20,10 @@ public class StudentDonationReportService {
 	@Autowired
 	private ProgressService progressService;
 
-	public File generateMonthlyStudentDonationForOneYearReport(ReportData reportData ) {
+	public XSSFWorkbook generateMonthlyStudentDonationForOneYearReport(ReportData reportData ) {
 		StudentDonationReportBuilder reportBuilder = new StudentDonationReportBuilder(webConfigService, reportData, progressService); 
 		 
-		File file = reportBuilder.buildReport();
+		XSSFWorkbook file = reportBuilder.buildReport();
 		log.info("generateMonthlyStudentDonationReport success..");
 		return file;
 

@@ -5,11 +5,9 @@ import static com.fajar.schoolmanagement.report.builder.ExcelReportUtil.curr;
 import static com.fajar.schoolmanagement.report.builder.ExcelReportUtil.dateCell;
 import static com.fajar.schoolmanagement.util.DateUtil.getCalendarItem;
 import static com.fajar.schoolmanagement.util.DateUtil.getDaysInOneMonth;
-import static com.fajar.schoolmanagement.util.FileUtil.getFile;
 import static java.util.Calendar.DAY_OF_MONTH;
 import static java.util.Calendar.THURSDAY;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -44,12 +42,12 @@ public class ThrusdayDonationReportService {
 	private ProgressService progressService;
 
 	/////////////////////// DONATION FUND AND SPEND /////////////////////
-	public File generateThrusdayCashflowReport(ReportData reportData) {
+	public XSSFWorkbook generateThrusdayCashflowReport(ReportData reportData) {
 		log.info("generateThrusdayCashflowReport"); 
 		
 		reportData.setReportName("Mutasi_Infaq_Kamis"); 
 		FundAndSpendingFlowReportMonthly reportBuilder = new FundAndSpendingFlowReportMonthly(reportData, webConfigService, progressService);
-		File file = reportBuilder.buildReport();
+		XSSFWorkbook file = reportBuilder.buildReport();
 		
 		log.info("generated ThrusdayCashflowReport");
 		return file;
@@ -60,7 +58,7 @@ public class ThrusdayDonationReportService {
 
 	/////////////// DONATION FUNDS FLOW ONLY ///////////////////////
 
-	public File generateThrusdayDonationReport(ReportData transactionData) {
+	public XSSFWorkbook generateThrusdayDonationReport(ReportData transactionData) {
 		log.info("generateThrusdayDonationReport");
 		String time = ReportMappingUtil.getReportDateString();
 		String sheetName = "Infaq_Kamis";
@@ -71,9 +69,9 @@ public class ThrusdayDonationReportService {
 
 		writeThrusdayDonationFundReport(xsheet, transactionData);
 
-		File file = getFile(xwb, reportName);
+//		File file = getFile(xwb, reportName);
 		log.info("generated ThrusdayDonationReport");
-		return file;
+		return xwb;
 	}
 
 	private void writeThrusdayDonationFundReport(XSSFSheet xsheet, ReportData reportData) {

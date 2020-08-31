@@ -1,10 +1,10 @@
 package com.fajar.schoolmanagement.service.report;
 
-import java.io.File;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -29,7 +29,7 @@ public class EntityReportService {
 	@Autowired
 	private ProgressService progressService;
 
-	public File getEntityReport(List<BaseEntity> entities, Class<? extends BaseEntity> entityClass,
+	public XSSFWorkbook getEntityReport(List<BaseEntity> entities, Class<? extends BaseEntity> entityClass,
 			HttpServletRequest httpRequest) throws Exception {
 		log.info("Generate entity report: {}", entityClass); 
 		User currentUser = SessionUtil.getUserFromRequest(httpRequest); 
@@ -43,8 +43,7 @@ public class EntityReportService {
 		
 		progressService.sendProgress(1, 1, 10, false, requestId);
 
-		File file = reportBuilder.buildReport();
-		
+		XSSFWorkbook file = reportBuilder.buildReport(); 
 		
 		
 		log.info("Entity Report generated");

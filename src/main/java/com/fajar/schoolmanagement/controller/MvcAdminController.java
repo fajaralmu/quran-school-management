@@ -11,7 +11,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.fajar.dormactivity.entity.FoodTaskGroupMember;
 import com.fajar.schoolmanagement.annotation.Authenticated;
 import com.fajar.schoolmanagement.annotation.CustomRequestInfo;
 import com.fajar.schoolmanagement.config.LogProxyFactory;

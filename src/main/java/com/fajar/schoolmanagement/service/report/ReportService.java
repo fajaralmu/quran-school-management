@@ -1,11 +1,11 @@
 package com.fajar.schoolmanagement.service.report;
 
-import java.io.File;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -49,7 +49,7 @@ public class ReportService {
 		LogProxyFactory.setLoggers(this);
 	}
 	
-	public File generateGeneralCashflowMonthlyReport(WebRequest webRequest, HttpServletRequest httpRequest) {
+	public XSSFWorkbook generateGeneralCashflowMonthlyReport(WebRequest webRequest, HttpServletRequest httpRequest) {
 		log.info("generateGeneralCashflowMonthlyReport");
 		
 		String requestId = SessionUtil.getPageRequestId(httpRequest);
@@ -60,7 +60,7 @@ public class ReportService {
 		return cashflowReportService.generateMonthlyGeneralCashflow(transactionData);
 	}
 	
-	public File generateThrusdayDonationCashflowReport(WebRequest webRequest, HttpServletRequest httpRequest) {
+	public XSSFWorkbook generateThrusdayDonationCashflowReport(WebRequest webRequest, HttpServletRequest httpRequest) {
 		log.info("generateThrusdayDonationCashflowReport");
 		
 		String requestId = SessionUtil.getPageRequestId(httpRequest);
@@ -71,7 +71,7 @@ public class ReportService {
 		return thrusdayDonationReportService.generateThrusdayCashflowReport(transactionData);
 	}
 	
-	public File generateYearlyStudentMonthlyDonation(WebRequest webRequest, HttpServletRequest httpRequest) {
+	public XSSFWorkbook generateYearlyStudentMonthlyDonation(WebRequest webRequest, HttpServletRequest httpRequest) {
 		log.info("generateYearlyStudentMonthlyDonation");
 		String requestId = SessionUtil.getPageRequestId(httpRequest);
 		
@@ -85,7 +85,7 @@ public class ReportService {
 		progressService.sendProgress(1, 1, 10, requestId); 
 		
 		
-		File result = studentDonationReportService.generateMonthlyStudentDonationForOneYearReport(transactionData);
+		XSSFWorkbook result = studentDonationReportService.generateMonthlyStudentDonationForOneYearReport(transactionData);
 		return result ;
 	}
  
@@ -94,7 +94,7 @@ public class ReportService {
 		return students;
 	}
 
-	public File generateEntityReport(WebRequest request, HttpServletRequest httpRequest) throws Exception { 
+	public XSSFWorkbook generateEntityReport(WebRequest request, HttpServletRequest httpRequest) throws Exception { 
 		log.info("generateEntityReport");
 //		request.getFilter().setLimit(0);
 		String requestId = SessionUtil.getPageRequestId(httpRequest); 
@@ -103,12 +103,12 @@ public class ReportService {
 		
 		progressService.sendProgress(1, 1, 20, true, requestId);
 		
-		File file = entityReportService.getEntityReport(response.getEntities(), response.getEntityClass(), httpRequest); 
+		XSSFWorkbook file = entityReportService.getEntityReport(response.getEntities(), response.getEntityClass(), httpRequest); 
 		
 		return file ;
 	} 
 
-	public File generateThrusdayDonationFundflowReport(WebRequest webRequest, HttpServletRequest httpRequest) { 
+	public XSSFWorkbook generateThrusdayDonationFundflowReport(WebRequest webRequest, HttpServletRequest httpRequest) { 
 		log.info("generateThrusdayDonationFundflowReport");
 		
 		String requestId = SessionUtil.getPageRequestId(httpRequest);
@@ -120,7 +120,7 @@ public class ReportService {
 		return thrusdayDonationReportService.generateThrusdayDonationReport(transactionData);
 	}
 	
-	public File generateDonationOrphanReport(WebRequest request, HttpServletRequest httpRequest) {
+	public XSSFWorkbook generateDonationOrphanReport(WebRequest request, HttpServletRequest httpRequest) {
 		log.info("generateDonationOrphanReport");
 		
 		String requestId = SessionUtil.getPageRequestId(httpRequest);

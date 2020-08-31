@@ -6,7 +6,6 @@ import static com.fajar.schoolmanagement.report.builder.ExcelReportUtil.createRo
 import static com.fajar.schoolmanagement.report.builder.ExcelReportUtil.curr;
 import static com.fajar.schoolmanagement.report.builder.ExcelReportUtil.dateCell;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -25,7 +24,6 @@ import com.fajar.schoolmanagement.service.WebConfigService;
 import com.fajar.schoolmanagement.service.report.ReportMappingUtil;
 import com.fajar.schoolmanagement.util.CollectionUtil;
 import com.fajar.schoolmanagement.util.DateUtil;
-import com.fajar.schoolmanagement.util.MyFileUtil;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -43,17 +41,17 @@ public class StudentDonationReportBuilder extends ReportBuilder {
 	}
 
 	@Override
-	public File buildReport() {
+	public XSSFWorkbook buildReport() {
 		log.info("generateMonthlyStudentDonationReport");
 
 		writeMonthlyStudentDonationReport();
 
-		File file = MyFileUtil.getFile(xssfWorkbook, reportName);
+//		File file = MyFileUtil.getFile(xssfWorkbook, reportName);
 		log.info("generated: MonthlyStudentDonationReport");
 		
 		sendProgress(1, 1, 10);
 		
-		return file;
+		return xssfWorkbook;
 	}
 
 	@Override
