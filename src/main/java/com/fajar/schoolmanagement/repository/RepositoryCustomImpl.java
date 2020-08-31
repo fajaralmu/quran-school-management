@@ -233,6 +233,7 @@ public class RepositoryCustomImpl implements RepositoryCustom {
 
 			@Override
 			public T doPersist(Session hibernateSession) {
+				notKeepingTransaction();
 				T result, entity;
 				try {
 					entity = validateJoinColumns(rawEntity);
@@ -248,7 +249,7 @@ public class RepositoryCustomImpl implements RepositoryCustom {
 					Long newId = (Long) hibernateSession.save(entity);
 					result = entity;
 					result.setId(newId);
-					notKeepingTransaction();
+					
 					log.debug("success add new record of {} with new ID: {}", entity.getClass(), newId);
 				} else {
 					log.debug("Will update entity ");

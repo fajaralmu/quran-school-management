@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 import com.fajar.schoolmanagement.annotation.FormField;
 import com.fajar.schoolmanagement.dto.WebResponse;
 import com.fajar.schoolmanagement.entity.BaseEntity;
-import com.fajar.schoolmanagement.entity.Student;
 import com.fajar.schoolmanagement.util.EntityUtil;
 
 import lombok.extern.slf4j.Slf4j;
@@ -43,12 +42,13 @@ public class CommonUpdateService extends BaseEntityUpdateService<BaseEntity> {
 		EntityUpdateInterceptor<BaseEntity> updateInterceptor = entity.getUpdateInterceptor();
 		if (null != updateInterceptor && null != entity) {
 			log.info("Pre Update {}", entity.getClass().getSimpleName());
+			
 			try {
 				updateInterceptor.preUpdate(entity);
-				if(entity instanceof Student) {
-					log.info("IMG: {}", ((Student) entity).getImageUrl());
-				}
-				log.info("success pre update");
+//				if(entity instanceof Student) {
+//					log.info("IMG: {}", ((Student) entity).getImageUrl());
+//				}
+				log.info("success pre update: {}", entity );
 			} catch (Exception e) {
 
 				log.error("Error pre update entity");
@@ -88,11 +88,14 @@ public class CommonUpdateService extends BaseEntityUpdateService<BaseEntity> {
 					switch (formfield.type()) {
 					case FIELD_TYPE_IMAGE:
 						log.info("validate FIELD_TYPE_IMAGE");
+						
 						if (newRecord == false && fieldValue == null && existingEntity != null) {
+							
 							log.info("not newRecord and fieldValue is null, set to old value" );
 							Object existingImage = field.get(existingEntity);
 							field.set(entity, existingImage);
 						} else {
+							
 							String imageName = updateImage(field, entity);
 							log.info("imageName: {}",imageName );
 							field.set(entity, imageName);
@@ -104,12 +107,13 @@ public class CommonUpdateService extends BaseEntityUpdateService<BaseEntity> {
 					}
 					log.info("validated field: {}", field.getName());
 				} catch (Exception e) {
+					
 					log.error("Error validating field: {}", field.getName());
 					e.printStackTrace();
 				}
 			}
 		} catch (Exception e) {
-			//
+			
 			log.error("Error validating entity {}", entity.getClass().getSimpleName());
 			e.printStackTrace();
 		}
