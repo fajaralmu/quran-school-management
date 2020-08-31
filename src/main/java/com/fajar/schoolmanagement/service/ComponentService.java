@@ -11,11 +11,14 @@ import org.springframework.stereotype.Service;
 
 import com.fajar.schoolmanagement.dto.WebRequest;
 import com.fajar.schoolmanagement.dto.WebResponse;
+import com.fajar.schoolmanagement.entity.BaseEntity;
 import com.fajar.schoolmanagement.entity.Capital;
 import com.fajar.schoolmanagement.entity.Cost;
 import com.fajar.schoolmanagement.entity.Menu;
 import com.fajar.schoolmanagement.entity.Page;
+import com.fajar.schoolmanagement.entity.Sequenced;
 import com.fajar.schoolmanagement.entity.User;
+import com.fajar.schoolmanagement.entity.setting.EntityManagementConfig;
 import com.fajar.schoolmanagement.repository.CapitalRepository;
 import com.fajar.schoolmanagement.repository.CostRepository;
 import com.fajar.schoolmanagement.repository.EntityRepository;
@@ -197,16 +200,17 @@ public class ComponentService {
 
 		return WebResponse.builder().entities(CollectionUtil.convertList(menus)).build();
 	}
+  
+	public WebResponse saveEntitySequence(WebRequest request, String entityName) {
 
-	public WebResponse savePageSequence(WebRequest request) {
-
-		List<Page> pages = request.getPages();
-
+		List<BaseEntity> orderedEntities = request.getOrderedEntities();
+		EntityManagementConfig entityConfig = entityRepository.getConfig(entityName);
+		Class<? extends BaseEntity> cls = entityConfig.getEntityClass();
 		try {
 
-			for (int i = 0; i < pages.size(); i++) {
-				Page page = pages.get(i);
-				updateSequence(i, page.getId());
+			for (int i = 0; i < orderedEntities.size(); i++) {
+				BaseEntity page = orderedEntities.get(i);
+				updateSequence(i, page.getId(), cls);
 			}
 
 			WebResponse response = WebResponse.success();
@@ -219,14 +223,14 @@ public class ComponentService {
 		}
 	}
 
-	private void updateSequence(int sequence, Long id) {
-
-		Optional<Page> pageDB = pageRepository.findById(id);
-		if (pageDB.isPresent()) {
-			Page page = pageDB.get();
-			page.setSequence(sequence);
-			entityRepository.save(page);
+	private void updateSequence(int sequence, Long id, Class<? extends BaseEntity> cls) {
+		
+		final BaseEntity dbRecord = entityRepository.findById(cls, id);
+		if (dbRecord != null) {
+			 
+			((Sequenced)dbRecord).setSequence(sequence);
+			entityRepository.save(dbRecord);
 		}
-	}
+	} 
 
 }

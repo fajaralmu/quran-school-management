@@ -79,7 +79,8 @@ public class WebRequest implements Serializable {
 	private String destination;
 	private String username;
 	private String value;
-	private List<Page> pages;
+//	private List<Page> pages;
+	private List<BaseEntity> orderedEntities;
 	
 	 
 

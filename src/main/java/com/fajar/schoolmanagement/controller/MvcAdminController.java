@@ -11,10 +11,13 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.fajar.dormactivity.entity.FoodTaskGroupMember;
 import com.fajar.schoolmanagement.annotation.Authenticated;
 import com.fajar.schoolmanagement.annotation.CustomRequestInfo;
 import com.fajar.schoolmanagement.config.LogProxyFactory;
+import com.fajar.schoolmanagement.entity.Page;
 import com.fajar.schoolmanagement.util.DateUtil;
+import com.fajar.schoolmanagement.util.EntityUtil;
 import com.fajar.schoolmanagement.util.MvcUtil;
 
 import lombok.extern.slf4j.Slf4j;
@@ -66,11 +69,14 @@ public class MvcAdminController extends BaseController {
 	}
 
 	@RequestMapping(value = { "/pagesequencesetting" })
-	@CustomRequestInfo(title = "Menu Sequence", pageUrl = "webpage/page-sequence", stylePaths = { "pagesequence" })
+	@CustomRequestInfo(title = "Menu Sequence", pageUrl = "webpage/sequenceordering", stylePaths = { "sequenceordering" })
 	public String pageSequenceSetting(Model model, HttpServletRequest request, HttpServletResponse response)
 			throws IOException {
 
-		model.addAttribute("pages", componentService.getAllPages());
+		model.addAttribute("idField", EntityUtil.getIdFieldOfAnObject(Page.class).getName());
+		model.addAttribute("displayField", "name");
+		model.addAttribute("entityName", "page"); 
+//		model.addAttribute("pages", componentService.getAllPages());
 
 		return basePage;
 

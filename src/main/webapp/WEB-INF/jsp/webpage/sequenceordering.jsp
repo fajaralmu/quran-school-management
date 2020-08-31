@@ -3,12 +3,13 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
- 
+
 <div class="content" style="width: 100%">
 
 	<div id="content-report">
 		<h2>Report Page</h2>
-		<p>Good ${timeGreeting}, ${loggedUser.displayName}. Please set the menu display order</p>
+		<p>Good ${timeGreeting}, ${loggedUser.displayName}. Please set the
+			${entityName } order</p>
 
 
 		<div style="display: grid; grid-template-columns: 70% 20%;">
@@ -20,12 +21,21 @@
 		</div>
 		<button class="btn btn-success" onclick="save()">Save</button>
 	</div>
+	<c:if test="${withAdditionalSetting}">
+		<div class="menu-and-page-setting">
+			<h4>Additional Setting</h4>
+			<a id="btn-reset-all-menus" class="btn btn-danger"
+				href="<spring:url value="${resetSequenceLink }"></spring:url>">Reset
+				All Menus</a>
+		</div>
+	</c:if>
 </div>
 <script type="text/javascript">
 	var contentItems;
 	var selectedId = 0;
 	var pagesContainer = document.getElementById("pages");
 	var pages = {};
+	const btnResetMenus = _byId("btn-reset-all-menus");
 
 	function initEvents() {
 		contentItems = document.getElementsByClassName("page-item");
@@ -34,6 +44,16 @@
 			contentItem.onclick = function(e) {
 
 				contentItemOnClick(contentItem);
+			}
+		}
+
+		btnResetMenusOnClick();
+	}
+
+	function btnResetMenusOnClick() {
+		btnResetMenus.onclick = function(e) {
+			if (!confirm("Are you sure want to reset all pages and menus?")) {
+				e.preventDefault();
 			}
 		}
 	}
@@ -55,17 +75,28 @@
 	function createEntityElements(entity) {
 
 		var className = "page-item";
-		if (entity.id == selectedId) {
+		if (entity["${idField}"] == selectedId) {
 			className = "page-item page-selected";
 		}
 
-		const div = createHtmlTag( {
-			'tagName': "div",
-			"id" : entity.id,
+		var displayField = "${displayField}";
+
+		var displayValue;
+
+		if (displayField.split(".").length > 1) {
+			const rawField = displayField.split(".");
+			displayValue = entity[rawField[0]][rawField[1]];
+		} else {
+			displayValue = entity[displayField];
+		}
+
+		const div = createHtmlTag({
+			'tagName' : "div",
+			"id" : entity["${idField}"],
 			"class" : className,
 			"child" : createHtmlTag({
-				'tagName': "h3", 
-				"innerHTML" : entity.name
+				'tagName' : "h3",
+				"innerHTML" : displayValue
 			})
 		});
 		return div;
@@ -88,7 +119,7 @@
 
 		for (var i = 0; i < pages.length; i++) {
 			const page = pages[i];
-			if (page.id == selectedId) {
+			if (page["${idField}"] == selectedId) {
 
 				const newIndex = getNewIndexUp(i, pages.length);
 				swapArray(newIndex, i, pages);
@@ -128,7 +159,7 @@
 	function down() {
 		for (var i = 0; i < pages.length; i++) {
 			const page = pages[i];
-			if (page.id == selectedId) {
+			if (page["${idField}"] == selectedId) {
 
 				const newIndex = getNewIndexDown(i, pages.length);
 				swapArray(newIndex, i, pages);
@@ -142,12 +173,12 @@
 
 	function fetchPages() {
 		var requestObject = {
-			"entity" : "page",
+			"entity" : "${entityName}",
 			"filter" : {
 				"limit" : 0,
 				"page" : 0,
-				"orderBy":"sequence",
-				"orderType":"asc"
+				"orderBy" : "sequence",
+				"orderType" : "asc"
 			}
 		};
 
@@ -162,7 +193,7 @@
 
 	function getPageById(id) {
 		for (var i = 0; i < pages.length; i++) {
-			if (pages[i].id == id) {
+			if (pages[i]["${idField}"] == id) {
 				return pages[i];
 			}
 		}
@@ -171,18 +202,19 @@
 
 	function save() {
 		const reqObj = {
-			"pages" : pages
+			"orderedEntities" : pages
 		};
-		postReq("<spring:url value="/api/admin/savepagesequence" />", reqObj,
-				function(xhr) {
+		postReq(
+				"<spring:url value="/api/admin/saveentityorder/${entityName}" />",
+				reqObj, function(xhr) {
 					var response = xhr.data;
 					console.log("RESPONSE: ", response)
-					if(response.code == "00"){
+					if (response.code == "00") {
 						alert("DONE..");
-					}else{
-						alert("Error: "+response.message+response.code);
+					} else {
+						alert("Error: " + response.message + response.code);
 					}
-					 
+
 					infoDone();
 				});
 	}
