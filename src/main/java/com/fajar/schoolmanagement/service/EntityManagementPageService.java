@@ -16,6 +16,7 @@ import com.fajar.schoolmanagement.entity.BaseEntity;
 import com.fajar.schoolmanagement.entity.Menu;
 import com.fajar.schoolmanagement.entity.setting.EntityManagementConfig;
 import com.fajar.schoolmanagement.entity.setting.EntityProperty;
+import com.fajar.schoolmanagement.entity.setting.EntityPropertyBuilder;
 import com.fajar.schoolmanagement.repository.EntityRepository;
 import com.fajar.schoolmanagement.util.CollectionUtil;
 import com.fajar.schoolmanagement.util.EntityUtil;
@@ -45,8 +46,7 @@ public class EntityManagementPageService {
 		}
 
 		HashMap<String, List<?>> additionalListObject = getFixedListObjects(entityConfig.getEntityClass());
-		EntityProperty entityProperty = EntityUtil.createEntityProperty(entityConfig.getEntityClass(),
-				additionalListObject);
+		EntityProperty entityProperty = new EntityPropertyBuilder(entityConfig.getEntityClass(), additionalListObject).createEntityProperty();
 		model = constructCommonModel(request, entityProperty, model, entityConfig.getEntityClass().getSimpleName(),
 				"management");
 

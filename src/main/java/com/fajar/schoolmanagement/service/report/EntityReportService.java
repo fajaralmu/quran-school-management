@@ -12,6 +12,7 @@ import com.fajar.schoolmanagement.dto.ReportData;
 import com.fajar.schoolmanagement.entity.BaseEntity;
 import com.fajar.schoolmanagement.entity.User;
 import com.fajar.schoolmanagement.entity.setting.EntityProperty;
+import com.fajar.schoolmanagement.entity.setting.EntityPropertyBuilder;
 import com.fajar.schoolmanagement.report.builder.EntityReportBuilder;
 import com.fajar.schoolmanagement.service.ProgressService;
 import com.fajar.schoolmanagement.service.WebConfigService;
@@ -35,7 +36,7 @@ public class EntityReportService {
 		User currentUser = SessionUtil.getUserFromRequest(httpRequest); 
 		String requestId = currentUser.getRequestId();
 		
-		EntityProperty entityProperty = EntityUtil.createEntityProperty(entityClass, null);
+		EntityProperty entityProperty = new EntityPropertyBuilder(entityClass ).createEntityProperty();
 		ReportData reportData = ReportData.builder().entities(entities).entityProperty(entityProperty).requestId(requestId).build(); 
 	
 		EntityReportBuilder reportBuilder = new EntityReportBuilder(webConfigService, reportData);

@@ -31,70 +31,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class EntityUtil {
 
-	public static EntityProperty createEntityProperty(Class<?> clazz, HashMap<String, List<?>> additionalObjectList)
-			throws Exception {
-		if (clazz == null || getClassAnnotation(clazz, Dto.class) == null) {
-			return null;
-		}
-
-		Dto dto = (Dto) getClassAnnotation(clazz, Dto.class);
-		final boolean ignoreBaseField = dto.ignoreBaseField();
-		final boolean isQuestionare = dto.quistionare();
-
-		EntityProperty entityProperty = EntityProperty.builder().ignoreBaseField(ignoreBaseField)
-				.entityName(clazz.getSimpleName().toLowerCase()).isQuestionare(isQuestionare).build();
-		try {
-
-			List<Field> fieldList = getDeclaredFields(clazz);
-
-			if (isQuestionare) {
-				Map<String, List<Field>> groupedFields = sortListByQuestionareSection(fieldList);
-				fieldList = CollectionUtil.mapOfListToList(groupedFields);
-				Set<String> groupKeys = groupedFields.keySet();
-				String[] keyNames = CollectionUtil.toArrayOfString(groupKeys.toArray());
-
-				entityProperty.setGroupNames(keyNames);
-			}
-			List<EntityElement> entityElements = new ArrayList<>();
-			List<String> fieldNames = new ArrayList<>();
-			String fieldToShowDetail = "";
-
-			for (Field field : fieldList) {
-
-				final EntityElement entityElement = new EntityElement(field, entityProperty, additionalObjectList);
-
-				if (false == entityElement.build()) {
-					continue;
-				}
-				if (entityElement.isDetailField()) {
-					fieldToShowDetail = entityElement.getId();
-				}
-
-				fieldNames.add(entityElement.getId());
-				entityElements.add(entityElement);
-			}
-
-			entityProperty.setAlias(dto.value().isEmpty() ? clazz.getSimpleName() : dto.value());
-			entityProperty.setEditable(dto.editable());
-			entityProperty.setElementJsonList();
-			entityProperty.setElements(entityElements);
-			entityProperty.setDetailFieldName(fieldToShowDetail);
-			entityProperty.setDateElementsJson(MyJsonUtil.listToJson(entityProperty.getDateElements()));
-			entityProperty.setFieldNames(MyJsonUtil.listToJson(fieldNames));
-			entityProperty.setFieldNameList(fieldNames);
-			entityProperty.setFormInputColumn(dto.formInputColumn().value);
-			entityProperty.determineIdField();
-
-			log.info("============ENTITY PROPERTY: {} ", entityProperty);
-
-			return entityProperty;
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw e;
-		}
-
-	}
-
+	
 	public static void main(String[] args) {
 //		List<Field> fields = getDeclaredFields(StudentParent.class);
 //		fields = sortListByQuestionareSection(fields);
@@ -149,37 +86,7 @@ public class EntityUtil {
 		return result;
 	}
 
-	private static Map<String, List<Field>> sortListByQuestionareSection(List<Field> fieldList) {
-		Map<String, List<Field>> temp = MapUtil.singleMap(AdditionalQuestionField.DEFAULT_GROUP_NAME,
-				new ArrayList<>());
-
-		String key = AdditionalQuestionField.DEFAULT_GROUP_NAME;
-		for (Field field : fieldList) {
-			FormField formField = field.getAnnotation(FormField.class);
-			boolean isIDField = isIdField(field);
-
-			if (null == formField) {
-				continue;
-			}
-			AdditionalQuestionField additionalQuestionField = field.getAnnotation(AdditionalQuestionField.class);
-			if (null == additionalQuestionField || isIDField) {
-				key = "OTHER";
-				log.debug("{} has no additionalQuestionareField", field.getName());
-			} else {
-				key = additionalQuestionField.value();
-			}
-			if (temp.get(key) == null) {
-				temp.put(key, new ArrayList<>());
-			}
-			temp.get(key).add(field);
-			log.debug("{}: {}", key, field.getName());
-		}
-		log.debug("QUestionare Map: {}", temp);
-		return (temp);
-
-	}
-
-	public static <T extends Annotation> T getClassAnnotation(Class<?> entityClass, Class<T> annotation) {
+		public static <T extends Annotation> T getClassAnnotation(Class<?> entityClass, Class<T> annotation) {
 		try {
 			return entityClass.getAnnotation(annotation);
 		} catch (Exception e) {

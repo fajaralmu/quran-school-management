@@ -20,14 +20,13 @@ import com.fajar.schoolmanagement.annotation.CustomRequestInfo;
 import com.fajar.schoolmanagement.config.LogProxyFactory;
 import com.fajar.schoolmanagement.entity.CapitalFlow;
 import com.fajar.schoolmanagement.entity.CostFlow;
-import com.fajar.schoolmanagement.entity.Menu;
 import com.fajar.schoolmanagement.entity.Profile;
 import com.fajar.schoolmanagement.entity.User;
 import com.fajar.schoolmanagement.entity.setting.EntityProperty;
+import com.fajar.schoolmanagement.entity.setting.EntityPropertyBuilder;
 import com.fajar.schoolmanagement.service.EntityManagementPageService;
 import com.fajar.schoolmanagement.service.EntityService;
 import com.fajar.schoolmanagement.util.CollectionUtil;
-import com.fajar.schoolmanagement.util.EntityUtil;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -77,7 +76,7 @@ public class MvcManagementController extends BaseController {
 	@RequestMapping(value = { "/profile" })  
 	public String profile(Model model, HttpServletRequest request, HttpServletResponse response) throws Exception {
 
-		EntityProperty entityProperty = EntityUtil.createEntityProperty(Profile.class, null);
+		EntityProperty entityProperty = new EntityPropertyBuilder(Profile.class).createEntityProperty();
 
 		model = constructCommonModel(request, entityProperty, model, Profile.class.getSimpleName().toLowerCase(),
 				"management");
@@ -122,7 +121,7 @@ public class MvcManagementController extends BaseController {
 		}
 		HashMap<String, List<?>> listObject = new HashMap<>();
 		listObject.put("userRole", CollectionUtil.convertList(entityService.getAllUserRole()));
-		EntityProperty entityProperty = EntityUtil.createEntityProperty(User.class, listObject);
+		EntityProperty entityProperty = new EntityPropertyBuilder(User.class, listObject).createEntityProperty();
 		model = constructCommonModel(request, entityProperty, model, "User", "management");
 		return basePage;
 	}

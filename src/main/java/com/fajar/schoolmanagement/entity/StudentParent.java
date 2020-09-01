@@ -16,7 +16,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Dto(value = "Wali Siswa", quistionare = true, ignoreBaseField = true)
+@Dto(value = "Wali Siswa", quistionare = true)
 @Entity
 @Table(name = "student_parent")
 @Data
